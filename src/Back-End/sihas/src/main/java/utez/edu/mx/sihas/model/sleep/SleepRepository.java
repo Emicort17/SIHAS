@@ -1,4 +1,4 @@
 package utez.edu.mx.sihas.model.sleep;
 
-public interface SleepRepository {
+public interface SleepRepository extends JpaRepository<Sleep,Long> {
 }
