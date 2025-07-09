@@ -7,7 +7,7 @@ import SplashScreenComponent from './components/SplashScreeen';
 import LoginScreen from './screens/auth/Login';
 import RegisterScreen from './screens/auth/Register';
 import HomeUserScreen from './screens/user/Home';
-
+import ProfileScreen from './screens/user/Profile';
 
 
 export default function App() {
@@ -26,6 +26,7 @@ export default function App() {
         <Stack.Screen name="Login" options={{headerShown:false,}} component={LoginScreen} />
         <Stack.Screen name="Register" options={{headerShown:false,}} component={RegisterScreen} />
         <Stack.Screen name="HomeUser" component={HomeUserScreen} />
+        <Stack.Screen name="Profile" component={ProfileScreen} />
       </Stack.Navigator>
     );
   }
