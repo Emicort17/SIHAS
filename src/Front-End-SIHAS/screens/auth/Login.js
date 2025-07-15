@@ -1,21 +1,23 @@
 import React, { useState } from "react";
 import { Text, StyleSheet, View, TextInput, SafeAreaView, TouchableOpacity, Image } from "react-native";
 import Icon from 'react-native-vector-icons/Feather';
+import { useAuth } from "./context/AuthContext";
 
 export default function LoginScreen({ navigation }) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [erroMessage, setErrorMessage] = useState(false);
     const [passwordVisible, setPasswordVisible] = useState(false);
+    const { login } = useAuth();
 
     const handleInputChange = (email) => {
         if (!email) {
             setErrorMessage(true)
         } else {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if(emailRegex.test(email) === true){
+            if (emailRegex.test(email) === true) {
                 setEmail(email)
-            }else{
+            } else {
                 setErrorMessage(true)
             }
         }
@@ -26,9 +28,9 @@ export default function LoginScreen({ navigation }) {
             setErrorMessage(true)
         } else {
             const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
-            if(passwordRegex.test(password)===true){
+            if (passwordRegex.test(password) === true) {
                 setPassword(password)
-            }else{
+            } else {
                 setErrorMessage(true)
             }
         }
@@ -40,14 +42,21 @@ export default function LoginScreen({ navigation }) {
                 setErrorMessage(true)
             } else {
                 setErrorMessage(false)
-                alert(email)
+                const loggedInUser = await login(email, password);
+                if (!loggedInUser) {
+                    Alert.alert("Error", "Credenciales incorrectas")
+                } else if (loggedInUser?.role === "user") {
+                    navigation.replace("UserStack");
+                } else if (loggedInUser?.role === "admin") {
+                    navigation.replace("MedicStack");
+                }
+                setErrorMessage(false)
             }
         } catch {
             setErrorMessage('');
             setTimeout(() => setErrorMessage('Usuario o contraseña incorrectos'), 10);
         }
     }
-
 
     const toggleVisibility = () => {
         setPasswordVisible(!passwordVisible)
@@ -72,7 +81,7 @@ export default function LoginScreen({ navigation }) {
             <View style={styles.container}>
                 <Text style={styles.inputext}>Contraseña</Text>
                 <View style={styles.div}>
-                    <TextInput onChangeText={handlePasswordChange} style={styles.input} secureTextEntry={!passwordVisible} placeholder="Contraseña" required/>
+                    <TextInput onChangeText={handlePasswordChange} style={styles.input} secureTextEntry={!passwordVisible} placeholder="Contraseña" required />
                     <TouchableOpacity onPress={toggleVisibility} style={styles.icon}>
                         <Icon name={passwordVisible ? 'eye' : 'eye-off'} size={20} color="#666" />
                     </TouchableOpacity>
@@ -89,7 +98,7 @@ export default function LoginScreen({ navigation }) {
             </View>
 
             <Text style={styles.linkRegister}>¿Aún no tienes una cuenta?
-                <Text style={styles.register} onPress={()=> navigation.navigate('Register')}> Registrate aqui</Text>
+                <Text style={styles.register} onPress={() => navigation.navigate('Register')}> Registrate aqui</Text>
             </Text>
 
 
