@@ -27,12 +27,18 @@ export default function PersonalInformationCard({ title, data }) {
 
     switch (dato) {
       case "nombre":
+        if (!value.trim()) {
+          errorMessage = "Campo Obligatorio";
+        } else if (!/^([A-ZÑÁÉÍÓÚ]{1}[a-zñáéíóú]+)(\s[A-ZÑÁÉÍÓÚ]{1}[a-zñáéíóú]+)?$/.test(value)) {
+          errorMessage = "Cada nombre debe iniciar con mayúscula.";
+        }
+        break;
       case "apellidoPaterno":
       case "apellidoMaterno":
         if (!value.trim()) {
           errorMessage = "Campo Obligatorio";
-        } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(value)) {
-          errorMessage = "Solo letras y espacios";
+        } else if (!/^[A-ZÑÁÉÍÓÚ]{1}[a-zñáéíóú]+$/.test(value)) {
+          errorMessage = "El apellido debe iniciar con mayúscula.";
         }
         break;
 
@@ -64,21 +70,26 @@ export default function PersonalInformationCard({ title, data }) {
     let valid = true;
     let newErrors = {};
 
-    const nameRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+    const lastnameRegex = /^[A-ZÑÁÉÍÓÚ]{1}[a-zñáéíóú]+$/;
+    const nameRegex =
+      /^([A-ZÑÁÉÍÓÚ]{1}[a-zñáéíóú]+)(\s[A-ZÑÁÉÍÓÚ]{1}[a-zñáéíóú]+)?$/;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!form.nombre || !nameRegex.test(form.nombre)) {
-      newErrors.nombre = "Nombre inválido. Por favor de ingresar un nombre valido.";
+      newErrors.nombre =
+        "Nombre inválido. Por favor de ingresar un nombre valido.";
       valid = false;
     }
 
-    if (!form.apellidoPaterno || !nameRegex.test(form.apellidoPaterno)) {
-      newErrors.apellidoPaterno = "Apellido paterno inválido. Por favor de ingresar un apellido valido.";
+    if (!form.apellidoPaterno || !lastnameRegex.test(form.apellidoPaterno)) {
+      newErrors.apellidoPaterno =
+        "Apellido paterno inválido. Por favor de ingresar un apellido valido.";
       valid = false;
     }
 
-    if (!form.apellidoMaterno || !nameRegex.test(form.apellidoMaterno)) {
-      newErrors.apellidoMaterno = "Apellido materno inválido. Por favor de ingresar un apellido valido.";
+    if (!form.apellidoMaterno || !lastnameRegex.test(form.apellidoMaterno)) {
+      newErrors.apellidoMaterno =
+        "Apellido materno inválido. Por favor de ingresar un apellido valido.";
       valid = false;
     }
 
@@ -89,7 +100,8 @@ export default function PersonalInformationCard({ title, data }) {
     }
 
     if (!form.email || !emailRegex.test(form.email)) {
-      newErrors.email = "Correo inválido. Por favor de ingresar un correo valido.";
+      newErrors.email =
+        "Correo inválido. Por favor de ingresar un correo valido.";
       valid = false;
     }
 
@@ -101,7 +113,6 @@ export default function PersonalInformationCard({ title, data }) {
     if (validateFields()) {
       setEditing(false);
       console.log("Datos guardados:", form);
-
     }
   };
 
@@ -192,7 +203,7 @@ export default function PersonalInformationCard({ title, data }) {
       ) : (
         <>
           <Text style={styles.text}>
-            <Text style={styles.label}>Nombre:</Text> {form.nombre}
+            <Text style={styles.label}>Nombre:</Text> {form.nombre} {form.apellidoPaterno} {form.apellidoMaterno}
           </Text>
           <Text style={styles.text}>
             <Text style={styles.label}>Email:</Text> {form.email}

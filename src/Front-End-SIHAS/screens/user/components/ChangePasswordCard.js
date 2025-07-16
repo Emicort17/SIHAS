@@ -25,6 +25,10 @@ export default function ChangePasswordCard() {
 
   const toggleVisibility = () => setPasswordVisible(!passwordVisible);
 
+  const handleExpand = () => {
+    setExpanded(true);
+  };
+
   const handleChange = (key, value) => {
     setForm({ ...form, [key]: value });
     
@@ -126,54 +130,31 @@ export default function ChangePasswordCard() {
   };
 
   return (
-    <>
-      {!expanded && (
-        <TouchableOpacity
-          style={styles.touchableCard}
-          onPressIn={() => setIsPressed(true)}
-          onPressOut={() => setIsPressed(false)}
-          onPress={() => setExpanded(true)}
-          activeOpacity={0.8}
-        >
-          <View style={[
-            styles.containerCard,
-            isPressed && styles.containerCardPressed
-          ]}>
-            <View style={styles.ContainerHead}>
-              <View style={styles.leftContent}>
-                <Icon
-                  name="lock-outline"
-                  type="material-community"
-                  color="black"
-                  size={24}
-                />
-                <Text style={[styles.title, { marginLeft: 10 }]}>
-                  Cambiar Contraseña
-                </Text>
-              </View>
-              <Icon
-                name="chevron-right"
-                type="material-community"
-                color="#666"
-                size={30}
-              />
-            </View>
-          </View>
+    <View style={styles.containerCard}>
+      <View style={styles.ContainerHead}>
+        <View style={styles.leftContent}>
+          <Icon
+            name="lock-outline"
+            type="material-community"
+            color="black"
+            size={24}
+          />
+          <Text style={[styles.title, { marginLeft: 10 }]}>
+            Cambiar Contraseña
+          </Text>
+        </View>
+        <TouchableOpacity onPress={expanded ? handleCancel : handleExpand}>
+          <Icon
+            name={expanded ? "close" : "chevron-right"}
+            type="material-community"
+            color={expanded ? "black" : "#666"}
+            size={expanded ? 24 : 30}
+          />
         </TouchableOpacity>
-      )}
+      </View>
 
       {expanded && (
-        <View style={styles.containerCard}>
-          <View style={styles.ContainerHead}>
-            <View style={styles.leftContent}>
-              <Icon name="lock-outline" type="material-community" color="black" size={24} />
-              <Text style={[styles.title, { marginLeft: 10 }]}>Cambiar Contraseña</Text>
-            </View>
-            <TouchableOpacity onPress={handleCancel}>
-              <Icon name="close" type="material-community" size={24} />
-            </TouchableOpacity>
-          </View>
-
+        <>
           <Text style={styles.label}>Nueva Contraseña</Text>
           <View style={styles.inputWrapper}>
             <TextInput
@@ -227,9 +208,9 @@ export default function ChangePasswordCard() {
               <Text style={styles.buttonText}>Guardar</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </>
       )}
-    </>
+    </View>
   );
 }
 
@@ -238,7 +219,6 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 12,
     padding: 16,
-    marginBottom: 20,
     width: "100%",
     maxWidth: 400,
     shadowColor: "#000",
@@ -246,15 +226,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
-  },
-  touchableCard: {
-    width: "100%",
-    height: 100,
     marginBottom: 20,
-  },
-  containerCardPressed: {
-    backgroundColor: "#F5F5F5",
-    opacity: 0.95,
   },
   ContainerHead: {
     flexDirection: "row",
@@ -289,7 +261,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingRight: 40,
   },
-
   icon: {
     position: "absolute",
     right: 10,
@@ -332,6 +303,6 @@ const styles = StyleSheet.create({
   errorText: {
     color: "red",
     fontSize: 12,
-    marginBottom: 8,
+    marginBottom: 6,
   },
 });

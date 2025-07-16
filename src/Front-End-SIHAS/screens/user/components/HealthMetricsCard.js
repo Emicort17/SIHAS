@@ -161,14 +161,17 @@ export default function HealthMetricsCard({ data }) {
           <View style={styles.metricItem}>
             <Text style={styles.metricValue}>{metrics.peso}</Text>
             <Text style={styles.metricLabel}>Kg</Text>
+            <Text style={styles.metricLabel2}>(Kilogramos)</Text>
           </View>
           <View style={styles.metricItem}>
             <Text style={styles.metricValue}>{metrics.altura}</Text>
             <Text style={styles.metricLabel}>Mts</Text>
+            <Text style={styles.metricLabel2}>(Metros)</Text>
           </View>
           <View style={styles.metricItem}>
             <Text style={styles.metricValue}>{metrics.imc}</Text>
             <Text style={styles.metricLabel}>IMC</Text>
+            <Text style={styles.metricLabel2}>(Indice de Masa Corporal)</Text>
           </View>
         </View>
       )}
@@ -189,6 +192,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+        marginBottom: 20,
   },
   ContainerHead: {
     flexDirection: "row",
@@ -261,7 +265,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   metricValue: {
-    fontSize: 24,
+    fontSize: 28,
     fontFamily: "Poppins-ExtraBold",
     fontWeight: "bold",
     color: "#333",
@@ -273,8 +277,13 @@ const styles = StyleSheet.create({
   metricLabel: {
     fontSize: 16,
     color: "#666",
-    fontWeight: "500",
+    fontWeight: "700",
   },
+  metricLabel2: {
+    fontSize: 12,
+    color: "#666",
+    justifyContent: "center",
+    textAlign: "center",},
   imcResultado: {
     textAlign: "center",
     fontSize: 16,

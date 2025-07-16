@@ -18,7 +18,7 @@ export default function Profile() {
   return (
     <SafeAreaView edges={["top"]}>
       <ScrollView
-        style={{ backgroundColor: "white", height: "100%", paddingBottom: 10 }}
+        style={{ backgroundColor: "white", height: "100%", paddingBottom: 20 }}
       >
         <View style={styles.container}>
           <PersonalInformationCard
@@ -39,7 +39,6 @@ export default function Profile() {
               imc: "24.4",
             }}
           />
-
           <ChangePasswordCard />
 
           <TouchableOpacity
@@ -59,7 +58,7 @@ export default function Profile() {
                   <Icon
                     name="logout"
                     type="material-community"
-                    color="black"
+                    color="#D32F2F"
                     size={24}
                   />
                   <Text style={[styles.title, { marginLeft: 10 }]}>
@@ -80,20 +79,23 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     backgroundColor: "#FFFFFF",
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingTop: 36,
+    paddingBottom: 20,
   },
   containerCard: {
-    backgroundColor: "white",
+    backgroundColor: "#FFEBEE", // Color de fondo suave rojo para resaltar
     borderRadius: 12,
     padding: 16,
-    marginBottom: 20,
     width: "100%",
     maxWidth: 400,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3,
+    levation: 3,
+    borderWidth: 1,
+    borderColor: "#FFCDD2", // Borde sutil del mismo tono
   },
   touchableCard: {
     width: "100%",
@@ -102,7 +104,7 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   containerCardPressed: {
-    backgroundColor: "#F5F5F5",
+    backgroundColor: "#FFCDD2", // Color más intenso al presionar
     opacity: 0.95,
   },
   ContainerHead: {
@@ -117,5 +119,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: "bold",
+    color: "#D32F2F", // Color del texto para que combine
   },
 });
