@@ -50,14 +50,12 @@ export default function HealthMetricsCard({ data }) {
     let valid = true;
     let newErrors = {};
 
-    // Cambiar form.peso por metrics.peso
     const pesoNum = parseFloat(metrics.peso);
     if (!metrics.peso || isNaN(pesoNum) || pesoNum < 30 || pesoNum > 300) {
       newErrors.peso = "Peso inválido. Favor de ingresar un peso valido.";
       valid = false;
     }
 
-    // Cambiar form.altura por metrics.altura
     const alturaNum = parseFloat(metrics.altura);
     if (!metrics.altura || 
         metrics.altura.trim() === '' || 

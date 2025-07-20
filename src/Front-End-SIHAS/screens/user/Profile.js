@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import {
   View,
   Text,
+  Alert,
   StyleSheet,
   TouchableOpacity,
   ScrollView,
@@ -11,9 +12,13 @@ import { Icon } from "@rneui/base";
 import PersonalInformationCard from "./components/PersonalInformationCard";
 import HealthMetricsCard from "./components/HealthMetricsCard";
 import ChangePasswordCard from "./components/ChangePasswordCard";
+import WelcomeModal from "./components/WelcomeModal";
+import BiologicalDataCard from "./components/BiologicalDataCard";
 
 export default function Profile() {
   const [isLogoutCardPressed, setIsLogoutCardPressed] = useState(false);
+  const [showModal, setShowModal] = useState(true);
+  const [biologicalData, setBiologicalData] = useState(null);
 
   return (
     <SafeAreaView edges={["top"]}>
@@ -27,17 +32,26 @@ export default function Profile() {
               nombre: "Victor Alejandro",
               apellidoPaterno: "Oliva",
               apellidoMaterno: "Quiroz",
-              edad: "22",
+              edad: null,
               email: "alejandro2312@gmail.com",
             }}
           />
 
-          <HealthMetricsCard
-            data={{
-              altura: "1.73",
-              peso: "73",
-              imc: "24.4",
-            }}
+          {!biologicalData ? (
+            <BiologicalDataCard onSave={(data) => setBiologicalData(data)} />
+          ) : (
+            <HealthMetricsCard
+              data={{
+                altura: "1.73",
+                peso: "73",
+                imc: "24.4",
+              }}
+            />
+          )}
+
+          <WelcomeModal
+            visible={showModal}
+            onClose={() => setShowModal(false)}
           />
           <ChangePasswordCard />
 

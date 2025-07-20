@@ -209,7 +209,7 @@ export default function PersonalInformationCard({ title, data }) {
             <Text style={styles.label}>Email:</Text> {form.email}
           </Text>
           <Text style={styles.text}>
-            <Text style={styles.label}>Edad:</Text> {form.edad}
+            <Text style={styles.label}>Edad:</Text> {form.edad ? form.edad : "Su edad aun no la ha registrado"}
           </Text>
         </>
       )}

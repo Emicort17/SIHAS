@@ -10,7 +10,7 @@ export default function RegisterScreen() {
     const [password, setPassword] = useState("");
     const [erroMessage, setErrorMessage] = useState(false);
     const [erroPasswordMessage, setErroPasswordMessage] = useState(false);
-    const [passwordVisible, setPasswordVisible] = useState(false);
+    const [passwordVisible, setPasswordVisible] = useState(false); nj
 
 
     const handleInputEmailChange = (email) => {
