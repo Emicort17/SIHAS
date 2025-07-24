@@ -1,11 +1,11 @@
 import React from "react";
 import { Text, StyleSheet, View } from "react-native";
 
-export default function HomeAdminScreen() {
+export default function ProfileAdminScreen() {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Home</Text>
+            <Text style={styles.title}>Perfil</Text>
         </View>
     );
 }
