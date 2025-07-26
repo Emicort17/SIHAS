@@ -1,105 +1,103 @@
 package utez.edu.mx.sihas.model.sleep;
 import jakarta.persistence.*;
+import utez.edu.mx.sihas.model.alert.Alert;
 import utez.edu.mx.sihas.model.user.User;
 
-import java.time.LocalDateTime;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
 
 @Entity
 @Table(name = "Sueño")
 public class Sleep {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_sueño;
+    @Column(name = "id_sueño")
+    private Long idSleep;
 
-    @Column(name = "fecha",columnDefinition = "DATE")
-    private Date fecha;
+    @Column(name = "fecha", columnDefinition = "DATE")
+    private LocalDate date;
 
-    @Column(name = "hora_inicio",columnDefinition = "DATETIME")
-    private LocalDateTime hora_inicio;
+    @Column(name = "hora_inicio", columnDefinition = "TIME")
+    private LocalTime startTime;
 
-    @Column(name = "hora_final",columnDefinition = "DATETIME")
-    private LocalDateTime hora_final;
+    @Column(name = "hora_final", columnDefinition = "TIME")
+    private LocalTime endTime;
 
-    @Column(name = "total_horas",columnDefinition = "DOUBLE")
-    private double total_horas;
-    /*
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User usuario;
-    */
-    public Sleep() {
-    }
-    //, User usuario
-    public Sleep(Long id_sueño, Date fecha, LocalDateTime hora_inicio, LocalDateTime hora_final, double total_horas) {
-            this.id_sueño = id_sueño;
-            this.fecha = fecha;
-            this.hora_inicio = hora_inicio;
-            this.hora_final = hora_final;
-            this.total_horas = total_horas;
-           // this.usuario = usuario;
-        }
+    @Column(name = "total_horas", columnDefinition = "DOUBLE")
+    private Double totalHours;
 
- 
-    public Long getId_sueño() {
-        return id_sueño;
+    @OneToOne
+    @JoinColumn(name = "id_usuario")
+    private User user;
+
+    public LocalDate getDate() {
+        return date;
     }
 
-    public void setId_sueño(Long id_sueño) {
-        this.id_sueño = id_sueño;
+    public void setDate(LocalDate date) {
+        this.date = date;
     }
 
-    public Date getFecha() {
-        return fecha;
+    public LocalTime getEndTime() {
+        return endTime;
     }
 
-    public void setFecha(Date fecha) {
-        this.fecha = fecha;
+    public void setEndTime(LocalTime endTime) {
+        this.endTime = endTime;
     }
 
-    public LocalDateTime getHora_inicio() {
-        return hora_inicio;
+    public LocalTime getStartTime() {
+        return startTime;
     }
 
-    public void setHora_inicio(LocalDateTime hora_inicio) {
-        this.hora_inicio = hora_inicio;
+    public void setStartTime(LocalTime startTime) {
+        this.startTime = startTime;
     }
 
-    public LocalDateTime getHora_final() {
-        return hora_final;
+    public Long getIdSleep() {
+        return idSleep;
     }
 
-    public void setHora_final(LocalDateTime hora_final) {
-        this.hora_final = hora_final;
+    public void setIdSleep(Long idSleep) {
+        this.idSleep = idSleep;
     }
 
-    public double getTotal_horas() {
-        return total_horas;
+    public Double getTotalHours() {
+        return totalHours;
     }
 
-    public void setTotal_horas(double total_horas) {
-        this.total_horas = total_horas;
-    }
-    /*
-    public User getUsuario() {
-        return usuario;
+    public void setTotalHours(Double totalHours) {
+        this.totalHours = totalHours;
     }
 
-    public void setUsuario(User usuario) {
-        this.usuario = usuario;
+    public User getUser() {
+        return user;
     }
-    ", usuario=" + usuario +
-    */
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     @Override
     public String toString() {
         return "Sleep{" +
-                "id_sueño=" + id_sueño +
-                ", fecha=" + fecha +
-                ", hora_inicio=" + hora_inicio +
-                ", hora_final=" + hora_final +
-                ", total_horas=" + total_horas +
-                
+                "idSleep=" + idSleep +
+                ", date=" + date +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                ", totalHours=" + totalHours +
                 '}';
+    }
+
+    public Sleep() {
+    }
+
+    public Sleep(LocalDate date, LocalTime endTime, LocalTime startTime, Long idSleep, Double totalHours) {
+        this.date = date;
+        this.endTime = endTime;
+        this.startTime = startTime;
+        this.idSleep = idSleep;
+        this.totalHours = totalHours;
     }
 }
