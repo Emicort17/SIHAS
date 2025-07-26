@@ -1,20 +1,29 @@
-import React from "react";
-import { Text, StyleSheet, View, TouchableOpacity } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-
+import React,{useEffect,useState} from "react";
+import { Text, StyleSheet, View } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage"; // ← Importación faltante
+import WelcomeModal from "./components/WelcomeModal";
 export default function HomeUserScreen() {
-    const navigation = useNavigation();
-
-    const goToProfile = () => {
-        navigation.navigate('Profile');
+  const [showModal, setShowModal] = useState(false);
+  useEffect(() => {
+    const checkFormStatus = async () => {
+      try {
+        const formCompleted = await AsyncStorage.getItem('formCompleted');
+        console.log('Form completed status:', formCompleted); // Para debug
+        if (formCompleted === 'false') {
+          setShowModal(true); 
+        }
+      } catch (error) {
+        console.error('Error reading AsyncStorage:', error);
+      }
     };
+
+    checkFormStatus();
+  }, []);
 
     return (
         <View style={styles.container}>
+                  <WelcomeModal visible={showModal} onClose={() => setShowModal(false)} />
             <Text style={styles.title}>Home</Text>
-            <TouchableOpacity style={styles.button} onPress={goToProfile}>
-                <Text style={styles.buttonText}>Ir a Perfil</Text>
-            </TouchableOpacity>
         </View>
     );
 }

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Text, StyleSheet, View, TextInput, SafeAreaView, TouchableOpacity, Image, ScrollView } from "react-native";
 import Icon from 'react-native-vector-icons/Feather';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function RegisterScreen() {
     const [email, setEmail] = useState("");
@@ -10,7 +11,7 @@ export default function RegisterScreen() {
     const [password, setPassword] = useState("");
     const [erroMessage, setErrorMessage] = useState(false);
     const [erroPasswordMessage, setErroPasswordMessage] = useState(false);
-    const [passwordVisible, setPasswordVisible] = useState(false); nj
+    const [passwordVisible, setPasswordVisible] = useState(false); 
 
 
     const handleInputEmailChange = (email) => {
@@ -98,6 +99,10 @@ export default function RegisterScreen() {
                 setErroPasswordMessage(true)
             } else {
                 // Llamada a mi api
+        await AsyncStorage.setItem("formCompleted", "false");
+        const value = await AsyncStorage.getItem("formCompleted");
+        console.log("Valor guardado en AsyncStorage:", value); // Debería imprimir 'false'
+
             }
         } catch {
             setErrorMessage('');

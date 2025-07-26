@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import { Modal, View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { useNavigation } from '@react-navigation/native';
 
 export default function WelcomeModal({ visible, onClose }) {
+  const navigation = useNavigation();
+
   return (
     <Modal transparent visible={visible} animationType="fade">
       <View style={styles.modalBackground}>
@@ -15,7 +18,7 @@ export default function WelcomeModal({ visible, onClose }) {
             style={styles.button}
             onPress={() => {
               onClose();
-              navigation.navigate("FormularioScreen");
+              navigation.navigate("Profile");
             }}
           >
             <Text style={styles.buttonText}>Completar perfil ahora</Text>

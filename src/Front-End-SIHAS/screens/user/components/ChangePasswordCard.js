@@ -71,7 +71,6 @@ export default function ChangePasswordCard() {
     let valid = true;
     let newErrors = {};
 
-    // Validar nueva contraseña
     if (!form.nueva.trim()) {
       newErrors.nueva = "Nueva contraseña es obligatoria";
       valid = false;
@@ -83,7 +82,6 @@ export default function ChangePasswordCard() {
       valid = false;
     }
 
-    // Validar confirmar contraseña
     if (!form.confirmar.trim()) {
       newErrors.confirmar = "Confirmar contraseña es obligatorio";
       valid = false;
@@ -92,7 +90,6 @@ export default function ChangePasswordCard() {
       valid = false;
     }
 
-    // Validar contraseña antigua
     if (!form.antigua.trim()) {
       newErrors.antigua = "Contraseña actual es obligatoria";
       valid = false;
@@ -101,7 +98,6 @@ export default function ChangePasswordCard() {
       valid = false;
     }
 
-    // Validar que la nueva contraseña sea diferente a la antigua
     if (form.nueva && form.antigua && form.nueva === form.antigua) {
       newErrors.nueva = "La nueva contraseña debe ser diferente a la actual";
       valid = false;
@@ -113,9 +109,7 @@ export default function ChangePasswordCard() {
 
   const handleSave = () => {
     if (validateFields()) {
-      // Aquí iría la lógica para guardar la contraseña
       console.log("Contraseña válida, guardando...");
-      // Limpiar formulario después de guardar
       setForm({ nueva: "", confirmar: "", antigua: "" });
       setErrors({ nueva: "", confirmar: "", antigua: "" });
       setExpanded(false);
@@ -123,7 +117,6 @@ export default function ChangePasswordCard() {
   };
 
   const handleCancel = () => {
-    // Limpiar formulario y errores al cancelar
     setForm({ nueva: "", confirmar: "", antigua: "" });
     setErrors({ nueva: "", confirmar: "", antigua: "" });
     setExpanded(false);
@@ -155,8 +148,8 @@ export default function ChangePasswordCard() {
 
       {expanded && (
         <>
-          <Text style={styles.label}>Nueva Contraseña</Text>
-          <View style={styles.inputWrapper}>
+          <Text style={[styles.label,{marginTop: 20}]}>Nueva Contraseña</Text>
+          <View style={[styles.inputWrapper]}>
             <TextInput
               style={styles.input}
               placeholder="Nueva contraseña"
@@ -232,7 +225,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 20,
   },
   leftContent: {
     flexDirection: "row",

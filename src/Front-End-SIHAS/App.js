@@ -1,19 +1,21 @@
 import { useState } from 'react';
+import { NavigationContainer } from "@react-navigation/native"
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { NavigationContainer } from '@react-navigation/native';
+import { AuthProvider, useAuth } from '../Front-End-SIHAS/screens/auth/context/AuthContext'
 
 import SplashScreenComponent from './components/SplashScreeen';
 
 import LoginScreen from './screens/auth/Login';
 import RegisterScreen from './screens/auth/Register';
-import HomeUserScreen from './screens/user/Home';
-import ProfileScreen from './screens/user/Profile';
+import HomeMedicScreen from './screens/medic/Home';
+import UserNavigator from './screens/navigation/UserNavigation';
+import MedicNavigator from './screens/navigation/MedicNavigation';
 
 
 export default function App() {
   const Stack = createNativeStackNavigator();
   const [isAppReady, SetisAppReady] = useState(false);
-
+  
   if (!isAppReady) {
     return <SplashScreenComponent
       onFinish={(isCancelled) => !isCancelled && SetisAppReady(true)}
@@ -21,20 +23,29 @@ export default function App() {
   }
 
   function MyStack() {
+    const { user } = useAuth()
     return (
-      <Stack.Navigator>
-        <Stack.Screen name="Login" options={{headerShown:false,}} component={LoginScreen} />
-        <Stack.Screen name="Register" options={{headerShown:false,}} component={RegisterScreen} />
-        <Stack.Screen name="HomeUser" component={HomeUserScreen} />
-        <Stack.Screen name="Profile" component={ProfileScreen} />
-      </Stack.Navigator>
+      <NavigationContainer>
+        <Stack.Navigator screenListeners={{ headerShown: false }}>
+          {!user ? (
+            <>
+              <Stack.Screen name="Login" options={{ headerShown: false, }} component={LoginScreen} />
+              <Stack.Screen name="Register" options={{ headerShown: false, }} component={RegisterScreen} />
+            </>
+          ) : user.role === "user" ? (
+            <Stack.Screen name="UserStack" component={UserNavigator} />
+          ) : (
+            <Stack.Screen name="MedicStack" component={MedicNavigator} />
+          )}
+        </Stack.Navigator>
+      </NavigationContainer>
     );
   }
 
-  return(
-    <NavigationContainer>
-      <MyStack/>
-    </NavigationContainer>
+  return (
+    <AuthProvider>
+      <MyStack />
+    </AuthProvider>
   )
 
 }

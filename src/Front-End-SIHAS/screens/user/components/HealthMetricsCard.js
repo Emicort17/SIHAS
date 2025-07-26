@@ -82,13 +82,14 @@ export default function HealthMetricsCard({ data }) {
     
     if (!isNaN(altura) && !isNaN(peso) && altura > 0) {
       const imc = peso / (altura * altura);
-
+      
       if (imc < 10 || imc > 60) {
         setImcError(
           "Valores inválidos: el IMC calculado está fuera de un rango realista."
         );
         return;
       }
+       setEditing(false);
       setMetrics({ ...metrics, imc: imc.toFixed(1) });
     }
   };
