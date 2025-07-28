@@ -72,11 +72,11 @@ public class Exercise {
     public Exercise() {
     }
 
-    public Exercise(Boolean status, LocalDate date, LocalTime time, Long idExercise) {
-        this.status = status;
+    public Exercise( LocalDate date, LocalTime time, Boolean status, User user) {
         this.date = date;
         this.time = time;
-        this.idExercise = idExercise;
+        this.status = status;
+        this.user = user;
     }
 
     @Override

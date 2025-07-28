@@ -76,10 +76,10 @@ public class FoodSchedule {
     public FoodSchedule() {
     }
 
-    public FoodSchedule(LocalDate date, LocalTime time, Long idFoodSchedule) {
+    public FoodSchedule( LocalDate date, LocalTime time, User user) {
         this.date = date;
         this.time = time;
-        this.idFoodSchedule = idFoodSchedule;
+        this.user = user;
     }
 
     @Override

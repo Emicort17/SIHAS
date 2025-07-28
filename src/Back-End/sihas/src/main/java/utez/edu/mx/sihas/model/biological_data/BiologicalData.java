@@ -102,14 +102,14 @@ public class BiologicalData {
     public BiologicalData() {
     }
 
-    public BiologicalData(Double height, Integer age, Date date, Long idData, Double bmi, Double weight, Double fatPercentage) {
+    public BiologicalData(Date date, Double weight, Double height, Integer age, Double bmi, Double fatPercentage, User user) {
+        this.date = date;
+        this.weight = weight;
         this.height = height;
         this.age = age;
-        this.date = date;
-        this.idData = idData;
         this.bmi = bmi;
-        this.weight = weight;
         this.fatPercentage = fatPercentage;
+        this.user = user;
     }
 
     @Override

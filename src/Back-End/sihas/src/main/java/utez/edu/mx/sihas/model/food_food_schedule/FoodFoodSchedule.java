@@ -19,4 +19,36 @@ public class FoodFoodSchedule {
     @ManyToOne
     @JoinColumn(name = "id_horario_alimento")
     private FoodSchedule foodSchedule;
+
+    public FoodFoodSchedule(Food food, FoodSchedule foodSchedule) {
+        this.food = food;
+        this.foodSchedule = foodSchedule;
+    }
+    public FoodFoodSchedule() {
+
+    }
+
+    public Long getIdFoodFoodSchedule() {
+        return idFoodFoodSchedule;
+    }
+
+    public void setIdFoodFoodSchedule(Long idFoodFoodSchedule) {
+        this.idFoodFoodSchedule = idFoodFoodSchedule;
+    }
+
+    public Food getFood() {
+        return food;
+    }
+
+    public void setFood(Food food) {
+        this.food = food;
+    }
+
+    public FoodSchedule getFoodSchedule() {
+        return foodSchedule;
+    }
+
+    public void setFoodSchedule(FoodSchedule foodSchedule) {
+        this.foodSchedule = foodSchedule;
+    }
 }

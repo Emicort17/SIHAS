@@ -93,11 +93,11 @@ public class Sleep {
     public Sleep() {
     }
 
-    public Sleep(LocalDate date, LocalTime endTime, LocalTime startTime, Long idSleep, Double totalHours) {
+    public Sleep(LocalDate date, LocalTime startTime, LocalTime endTime, Double totalHours, User user) {
         this.date = date;
-        this.endTime = endTime;
         this.startTime = startTime;
-        this.idSleep = idSleep;
+        this.endTime = endTime;
         this.totalHours = totalHours;
+        this.user = user;
     }
 }

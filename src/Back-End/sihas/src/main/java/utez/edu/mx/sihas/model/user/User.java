@@ -37,6 +37,9 @@ public class User {
     @Column(name = "contrasena")
     private String password;
 
+    @Column(name = "status", columnDefinition = "boolean")
+    private boolean status;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_roles",
@@ -172,16 +175,23 @@ public class User {
         this.roles = roles;
     }
 
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
+
     public User() {
     }
 
-    public User(String email, String lastname, String name, String password, String surname) {
-        this.email = email;
-        this.id_user = id_user;
-        this.lastname = lastname;
+    public User(String name, String surname, String lastname, String email, String password, boolean status) {
         this.name = name;
-        this.password = password;
         this.surname = surname;
+        this.lastname = lastname;
+        this.email = email;
+        this.password = password;
+        this.status = status;
     }
-
 }

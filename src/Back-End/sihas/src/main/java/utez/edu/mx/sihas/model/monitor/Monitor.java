@@ -69,8 +69,7 @@ public class Monitor {
     public Monitor() {
     }
 
-    public Monitor(Long idMonitor, String requestStatus, Date requestDate, Date responseDate) {
-        this.idMonitor = idMonitor;
+    public Monitor(String requestStatus, Date requestDate, Date responseDate) {
         this.requestStatus = requestStatus;
         this.requestDate = requestDate;
         this.responseDate = responseDate;
