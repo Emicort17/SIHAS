@@ -275,8 +275,8 @@ const styles = StyleSheet.create({
   buttonCancel: {
     width: "45%",
     height: 45,
-    backgroundColor: "#FFFFFF",
-    borderColor: "#C8E6C9",
+    backgroundColor: "#EBECF0",
+    borderColor: "#DDDDDD",
     borderWidth: 1,
     borderRadius: 12,
     justifyContent: "center",
@@ -288,7 +288,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   buttonTextCancel: {
-    color: "#C8E6C9",
+    color: "#8C8C8C",
     fontSize: 16,
     fontWeight: "600",
   },
