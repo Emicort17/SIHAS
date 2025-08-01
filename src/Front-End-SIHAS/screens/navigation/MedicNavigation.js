@@ -8,7 +8,8 @@ import ProfileAdminScreen from "../medic/Profile";
 import NutritionAdminScreen from "../medic/Nutrition";
 import RunAdminScreen from "../medic/Run";
 import SleepAdminScreen from "../medic/Sleep";
-import GroupAdminScreen from "../medic/Group";
+import listAdminScreen from "../medic/patient/PatientListScreen";
+import PatientDetailScreen from "../medic/patient/PatientDetailScreen";
 import HomeSIcon from "../../assets/icons/home-s.svg";
 import HomeDIcon from "../../assets/icons/home-d.svg";
 import PersonSIcon from "../../assets/icons/person-s.svg";
@@ -79,9 +80,9 @@ function MedicTabs() {
       />
       <Tab.Screen
         name="GroupUser"
-        component={GroupAdminScreen}
+        component={listAdminScreen}
         options={{
-          tabBarLabel: "Grupo",
+          tabBarLabel: "Pacientes",
           tabBarIcon: ({ focused }) =>
             focused ? <GroupSIcon width={24} height={24} /> : <GroupDIcon width={24} height={24} />,
         }}
@@ -107,6 +108,11 @@ export default function MedicNavigator() {
         component={MedicTabs}
         options={{ headerShown: false }}
       />
+        <Stack.Screen
+            name="Detail"
+            component={PatientDetailScreen}
+            options={{ title: 'Detalle de Paciente' }} // Puedes ocultarlo si quieres
+        />
     </Stack.Navigator>
   );
 }
