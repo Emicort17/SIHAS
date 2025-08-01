@@ -2,45 +2,37 @@
 
 import React, { createContext, useContext, useState } from "react"
 
-// Datos de usuarios simulados (estáticos)
-const MOCK_USERS = [
-  {
-    id: "1",
-    email: "alejandro@gmail.com",
-    password: "Alejandro123",
-    role: "user",
-    name: "Alejandro Oliva Quiroz",
-  },
-  {
-    id: "2",
-    email: "doctor@sihas.com",
-    password: "Doctor123",
-    role: "medic",
-    name: "Dr. García",
-  },
-]
 
 const AuthContext = createContext(undefined)
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
-  const isLoading = false 
+  const isLoading = false
 
   const login = async (email, password) => {
-    const foundUser = MOCK_USERS.find(
-      (u) => u.email === email && u.password === password
-    )
+    try {
+      const response = await fetch("http://192.168.0.12:8080/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password })
+      });
 
-    if (foundUser) {
+      if (!response.ok) {
+        throw new Error("Credeciales incorrectas")
+      }
+
+      const data = await response.json();
       setUser({
-        id: foundUser.id,
-        email: foundUser.email,
-        role: foundUser.role,
-        name: foundUser.name,
+        token: data.jwt,
+        userId: data.userId,
+        username: data.username,
       })
-      return foundUser;
+      return data;
+    } catch (err) {
+      console.error("Error en el login: ", err)
     }
-
     return false
   }
 
