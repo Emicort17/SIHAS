@@ -7,6 +7,5 @@ import utez.edu.mx.sihas.model.monitor.Monitor;
 import java.util.List;
 
 public interface MonitorUserRepository extends JpaRepository<MonitorUser,Long> {
-    List<Monitor> findMonitoreosPorUsuario(@Param("userId") Long userId);
-
+    void deleteAllById(Long id);
 }

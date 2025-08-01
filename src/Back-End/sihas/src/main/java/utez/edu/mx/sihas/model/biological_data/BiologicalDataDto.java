@@ -30,7 +30,7 @@ public class BiologicalDataDto {
     @NotBlank(groups = {BiologicalDataDto.Register.class, BiologicalDataDto.Modify.class})
     private Double fatPercentage;
     @NotBlank(groups = {BiologicalDataDto.Register.class, BiologicalDataDto.Modify.class})
-    private User user;
+    private Long user;
 
     public Long getIdData() {
         return idData;
@@ -88,11 +88,11 @@ public class BiologicalDataDto {
         this.fatPercentage = fatPercentage;
     }
 
-    public User getUser() {
+    public Long getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(Long user) {
         this.user = user;
     }
 

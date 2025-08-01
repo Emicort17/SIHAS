@@ -14,10 +14,12 @@ import utez.edu.mx.sihas.model.monitoreo_user.MonitorUserRepository;
 
 import utez.edu.mx.sihas.model.user.User;
 import utez.edu.mx.sihas.model.user.UserDto;
+import utez.edu.mx.sihas.model.user.UserRepository;
 import utez.edu.mx.sihas.utils.Message;
 import utez.edu.mx.sihas.utils.TypesResponse;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -28,14 +30,17 @@ public class MonitorService {
 
     private final MonitorUserRepository monitorUserRepository;
     private final MonitorRepository monitorRepository;
+    private final UserRepository userRepository;
+
     @Autowired
-    public MonitorService(MonitorUserRepository monitorUserRepository, MonitorRepository monitorRepository) {
+    public MonitorService(MonitorUserRepository monitorUserRepository, MonitorRepository monitorRepository, UserRepository userRepository) {
         this.monitorUserRepository = monitorUserRepository;
         this.monitorRepository = monitorRepository;
+        this.userRepository = userRepository;
     }
 
     @Transactional(rollbackFor = {SQLException.class})
-    public ResponseEntity<Message> save(MonitorDto monitorDto, Long idUser) {
+    public ResponseEntity<Message> save(MonitorDto monitorDto) {
 
         if (monitorDto.getRequestStatus().length()> 30) {
             return new ResponseEntity<>(new Message("El estado de solicitud excede el número de caracteres", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
@@ -43,27 +48,39 @@ public class MonitorService {
         if (monitorDto.getRequestDate() == null) {
             return new ResponseEntity<>(new Message("La fecha de solicitud es necesaria", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
         }
-        if (monitorDto.getRequestDate() == null) {
-            return new ResponseEntity<>(new Message("La fecha de respues es necesaria", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+        List<User> ListOfUsers = userRepository.findAllById(monitorDto.getUser());
+
+        if (ListOfUsers.isEmpty()) {
+            return new ResponseEntity<>(new Message("El usuario no existe", TypesResponse.ERROR), HttpStatus.NOT_FOUND);
         }
 
-        Monitor saveMonitor = new Monitor(monitorDto.getRequestStatus(),monitorDto.getRequestDate(),monitorDto.getResponseDate());
+
+        Monitor saveMonitor = new Monitor(
+                monitorDto.getRequestStatus(),
+                monitorDto.getRequestDate(),
+                monitorDto.getResponseDate(),
+                new ArrayList<>()
+        );
         saveMonitor = monitorRepository.saveAndFlush(saveMonitor);
-        if (saveMonitor == null) {
-            return new ResponseEntity<>(new Message("El control  no se pudo ingresar", TypesResponse.ERROR), HttpStatus.BAD_REQUEST);
+        List<MonitorUser> monitorUsers = new ArrayList<>();
+        for (User user : ListOfUsers) {
+            MonitorUser monitorUser = new MonitorUser(user, saveMonitor);
+            monitorUserRepository.saveAndFlush(monitorUser);
+            monitorUsers.add(monitorUser);
+            saveMonitor.getMonitoreosUsuario().add(monitorUser);
         }
-        User userSave = new User();
-        userSave.setId_user(idUser);
-        MonitorUser saveMonitorUser = new MonitorUser(userSave,saveMonitor);
-        monitorUserRepository .saveAndFlush(saveMonitorUser);
 
-        return new ResponseEntity<>(new Message(saveMonitor, "El control se registro correctamente", TypesResponse.SUCCESS), HttpStatus.OK);
+        saveMonitor.setMonitoreosUsuario(monitorUsers);
+        if (saveMonitor == null) {
+            return new ResponseEntity<>(new Message("El monitoreo no se pudo ingresar", TypesResponse.ERROR), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(new Message(saveMonitor, "El monitoreo se registro correctamente", TypesResponse.SUCCESS), HttpStatus.OK);
     }
 
     @Transactional(rollbackFor = {SQLException.class})
     public ResponseEntity<Message> update(MonitorDto monitorDto) {
-        Optional<Monitor> monitorUserOptional = monitorRepository.findById(monitorDto.getIdMonitor());
-        if(!monitorUserOptional.isPresent()){
+        Optional<Monitor> monitorOptional = monitorRepository.findById(monitorDto.getIdMonitor());
+        if(!monitorOptional.isPresent()){
             return new ResponseEntity<>(new Message("El user no existe",TypesResponse.ERROR),HttpStatus.NOT_FOUND);
         }
 
@@ -73,46 +90,37 @@ public class MonitorService {
         if (monitorDto.getRequestDate() == null) {
             return new ResponseEntity<>(new Message("La fecha de solicitud es necesaria", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
         }
-        if (monitorDto.getResponseDate() == null) {
-            return new ResponseEntity<>(new Message("La fecha de respues es necesaria", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+
+        Monitor monitorToUpdate = monitorOptional.get();
+        monitorToUpdate.setRequestStatus(monitorDto.getRequestStatus());
+        monitorToUpdate.setRequestDate(monitorDto.getRequestDate());
+        monitorToUpdate.setResponseDate(monitorDto.getResponseDate());
+        monitorToUpdate = monitorRepository.saveAndFlush(monitorToUpdate);
+
+        List<User> listOfUsers = userRepository.findAllById(monitorDto.getUser());
+        if (listOfUsers.size() != monitorDto.getUser().size()) {
+            return new ResponseEntity<>(new Message("Uno o más IDs de usuarios proporcionados no existen", TypesResponse.ERROR), HttpStatus.NOT_FOUND);
         }
 
-        Monitor monitorUserUpdate = monitorUserOptional.get();
-        monitorUserUpdate.setRequestStatus(monitorDto.getRequestStatus());
-        monitorUserUpdate.setRequestDate(monitorDto.getRequestDate());
-        monitorUserUpdate.setResponseDate(monitorUserUpdate.getResponseDate());
+        monitorUserRepository.deleteAllById(monitorToUpdate.getIdMonitor());
 
-        monitorUserUpdate = monitorRepository.saveAndFlush(monitorUserUpdate);
+        List<MonitorUser> newMonitorUsers = new ArrayList<>();
+        for (User user : listOfUsers) {
+            MonitorUser monitorUser = new MonitorUser(user, monitorToUpdate);
+            newMonitorUsers.add(monitorUser);
+        }
 
-        if(monitorUserUpdate == null){
+        monitorToUpdate.setMonitoreosUsuario(newMonitorUsers);
+
+        if(monitorToUpdate == null){
             return new ResponseEntity<>(new Message("El monitor de sueño no se actualizó",TypesResponse.ERROR),HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(new Message(monitorUserUpdate,"El monitor de sueño se actualizó correctamente",TypesResponse.SUCCESS),HttpStatus.OK);
+        return new ResponseEntity<>(new Message(monitorToUpdate,"El monitor de sueño se actualizó correctamente",TypesResponse.SUCCESS),HttpStatus.OK);
     }
 
     public ResponseEntity<Message> findMonitorPorUsuario(Long id) {
-        List<Monitor> monitorUsersList = monitorUserRepository.findMonitoreosPorUsuario(id);
+        List<Monitor> monitorUsersList = monitorRepository.findMonitoreosPorUsuario(id);
         return new ResponseEntity<>(new Message(monitorUsersList,"Listado de monitor usuario", TypesResponse.SUCCESS), HttpStatus.OK);
     }
 
-    @Transactional(readOnly = true)
-    public ResponseEntity<Message> findAllByMonitorAllId(Long id) {
-        List<Monitor> listMonitor = monitorUserRepository.findMonitoreosPorUsuario(id);
-        return new ResponseEntity<>(new Message(listMonitor,"Listado de monitor usuario", TypesResponse.SUCCESS), HttpStatus.OK);
-    }
-
-
-    /*
-    @Transactional(readOnly = true)
-    public ResponseEntity<Message> findAllById(Long id) {
-        List<MonitorUser> monitorUsersList = monitorUserRepository.findAllById(Collections.singleton(id));
-        return new ResponseEntity<>(new Message(monitorUsersList,"Listado de monitor usuario", TypesResponse.SUCCESS), HttpStatus.OK);
-    }
-
-    @Transactional(readOnly = true)
-    public ResponseEntity<Message> findByID(Long  id) {
-        Optional<MonitorUser> monitorUserById = monitorUserRepository.findById(id);
-        return new ResponseEntity<>(new Message(monitorUserById,"Listado de monitor by id", TypesResponse.SUCCESS), HttpStatus.OK);
-    }
-    */
 }

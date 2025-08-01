@@ -1,4 +1,5 @@
 package utez.edu.mx.sihas.model.sleep;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import utez.edu.mx.sihas.model.alert.Alert;
 import utez.edu.mx.sihas.model.user.User;
@@ -29,6 +30,7 @@ public class Sleep {
 
     @OneToOne
     @JoinColumn(name = "id_usuario")
+    @JsonIgnore
     private User user;
 
     public LocalDate getDate() {

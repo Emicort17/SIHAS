@@ -11,6 +11,7 @@ import utez.edu.mx.sihas.model.sleep.SleepDto;
 import utez.edu.mx.sihas.model.sleep.SleepRepository;
 import utez.edu.mx.sihas.model.user.User;
 import utez.edu.mx.sihas.model.user.UserDto;
+import utez.edu.mx.sihas.model.user.UserRepository;
 import utez.edu.mx.sihas.utils.Message;
 import utez.edu.mx.sihas.utils.TypesResponse;
 
@@ -21,11 +22,15 @@ import java.util.Set;
 @Transactional
 @Service
 public class SleepService {
+
     private final SleepRepository sleepRepository;
 
+    private final UserRepository userRepository;
+
     @Autowired
-    public SleepService(SleepRepository sleepRepository) {
+    public SleepService(SleepRepository sleepRepository, UserRepository userRepository) {
         this.sleepRepository = sleepRepository;
+        this.userRepository = userRepository;
     }
     @Transactional(rollbackFor = {SQLException.class})
     public ResponseEntity<Message> save( SleepDto sleep) {
@@ -42,9 +47,10 @@ public class SleepService {
             return new ResponseEntity<>(new Message("Total horas necesarias", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
         }
 
-        Sleep sleepSave = new  Sleep(sleep.getDate(),sleep.getStartTime(),sleep.getEndTime(),sleep.getTotalHours(),sleep.getUser());
+        User user = userRepository.findById(sleep.getUser())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-
+        Sleep sleepSave = new  Sleep(sleep.getDate(),sleep.getStartTime(),sleep.getEndTime(),sleep.getTotalHours(), user);
 
         sleepSave = sleepRepository.saveAndFlush(sleepSave);
         if (sleepSave == null) {

@@ -27,7 +27,7 @@ public class UserDto {
     @NotBlank(groups = {Register.class,Modify.class})
     private String status;
     @NotBlank(groups = {Register.class,Modify.class})
-    private List<Rol> roles;
+    private String rol;
 
     public Long getId_user() {
         return id_user;
@@ -85,12 +85,12 @@ public class UserDto {
         this.status = status;
     }
 
-    public List<Rol> getRoles() {
-        return roles;
+    public String getRol() {
+        return rol;
     }
 
-    public void setRoles(List<Rol> roles) {
-        this.roles = roles;
+    public void setRol(String rol) {
+        this.rol = rol;
     }
 
     public interface Register{}

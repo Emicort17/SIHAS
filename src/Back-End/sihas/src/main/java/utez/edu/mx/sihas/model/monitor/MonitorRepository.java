@@ -12,9 +12,9 @@ import java.util.List;
 public interface MonitorRepository extends JpaRepository<Monitor,Long>{
 
     @Query("""
-        SELECT m FROM MonitoreoUsuario mu
-        JOIN mu.monitoreo m
-        WHERE mu.usuario.id = :idUsuario
+        SELECT m FROM MonitorUser mu
+        JOIN mu.monitor m
+        WHERE mu.user.id_user = :idUsuario
     """)
     List<Monitor> findMonitoreosPorUsuario(@Param("idUsuario") Long idUsuario);
 }

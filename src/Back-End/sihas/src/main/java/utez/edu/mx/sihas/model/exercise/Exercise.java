@@ -1,5 +1,6 @@
 package utez.edu.mx.sihas.model.exercise;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import utez.edu.mx.sihas.model.user.User;
 
@@ -27,6 +28,7 @@ public class Exercise {
 
     @OneToOne
     @JoinColumn(name = "id_usuario")
+    @JsonIgnore
     private User user;
 
     public Boolean getStatus() {

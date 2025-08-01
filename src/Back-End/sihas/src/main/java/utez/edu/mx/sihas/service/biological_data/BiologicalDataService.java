@@ -8,6 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 import utez.edu.mx.sihas.model.biological_data.BiologicalData;
 import utez.edu.mx.sihas.model.biological_data.BiologicalDataDto;
 import utez.edu.mx.sihas.model.biological_data.BiologicalDataRepository;
+import utez.edu.mx.sihas.model.user.User;
+import utez.edu.mx.sihas.model.user.UserRepository;
 import utez.edu.mx.sihas.utils.Message;
 import utez.edu.mx.sihas.utils.TypesResponse;
 
@@ -20,9 +22,13 @@ public class BiologicalDataService {
 
     private final BiologicalDataRepository  biologicalDataRepository;
 
+    private final UserRepository userRepository;
+
     @Autowired
-    public BiologicalDataService(BiologicalDataRepository biologicalDataRepository) {
+    public BiologicalDataService(BiologicalDataRepository biologicalDataRepository,
+                                  UserRepository userRepository) {
         this.biologicalDataRepository = biologicalDataRepository;
+        this.userRepository = userRepository;
     }
 
     @Transactional(rollbackFor = {SQLException.class})
@@ -46,9 +52,11 @@ public class BiologicalDataService {
             return new ResponseEntity<>(new Message("El porcentaje de grasa es necesario", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
         }
 
-        BiologicalData biolicaDataSave = new BiologicalData(biologicalData.getDate(),biologicalData.getWeight(),biologicalData.getHeight()
-                ,biologicalData.getAge(),biologicalData.getBmi(),biologicalData.getFatPercentage(),biologicalData.getUser());
+        User user = userRepository.findById(biologicalData.getUser())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
+        BiologicalData biolicaDataSave = new BiologicalData(biologicalData.getDate(),biologicalData.getWeight(),biologicalData.getHeight()
+                ,biologicalData.getAge(),biologicalData.getBmi(),biologicalData.getFatPercentage(), user);
 
         biolicaDataSave = biologicalDataRepository.saveAndFlush(biolicaDataSave);
         if (biolicaDataSave == null) {

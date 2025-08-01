@@ -8,8 +8,8 @@ import utez.edu.mx.sihas.model.biological_data.BiologicalDataDto;
 import utez.edu.mx.sihas.service.biological_data.BiologicalDataService;
 import utez.edu.mx.sihas.utils.Message;
 
-@Controller
-@RequestMapping("/usuario/biologicalData")
+@RestController
+@RequestMapping("/api/usuario/datosbiologicos")
 public class BiologicalDataController {
     private final BiologicalDataService biologicalDataService;
 

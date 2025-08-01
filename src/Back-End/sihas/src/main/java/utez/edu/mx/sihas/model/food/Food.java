@@ -103,14 +103,13 @@ public class Food {
     public Food() {
     }
 
-    public Food(String name, Integer quantity, Double calories, Double proteins, Double fats, Double carbohydrates, List<FoodFoodSchedule> foodFoodSchedules) {
+    public Food(String name, Integer quantity, Double calories, Double proteins, Double fats, Double carbohydrates) {
         this.name = name;
         this.quantity = quantity;
         this.calories = calories;
         this.proteins = proteins;
         this.fats = fats;
         this.carbohydrates = carbohydrates;
-        this.foodFoodSchedules = foodFoodSchedules;
     }
 
     @Override

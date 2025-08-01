@@ -9,8 +9,8 @@ import utez.edu.mx.sihas.model.monitor.MonitorDto;
 import utez.edu.mx.sihas.service.food.FoodService;
 import utez.edu.mx.sihas.utils.Message;
 
-@Controller
-@RequestMapping("/usuario/alimento")
+@RestController
+@RequestMapping("/api/usuario/alimento")
 public class FoodController {
 
     private final FoodService foodService;
@@ -26,23 +26,18 @@ public class FoodController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Message> updateMonitorSleep(@RequestBody FoodDto foodDto) {
+    public ResponseEntity<Message> updateAlimento(@RequestBody FoodDto foodDto) {
         return foodService.update(foodDto);
     }
 
-    @GetMapping("/findById/{id}")
-    public ResponseEntity<Message> getAllMonitorById(@PathVariable Long id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<Message> getAlimentoById(@PathVariable Long id) {
         return foodService.findByID(id);
     }
 
     @GetMapping("/all")
-    public ResponseEntity<Message> getAllPesonas() {
+    public ResponseEntity<Message> getAllAlimento() {
         return foodService.findAll();
-    }
-
-    @GetMapping("/all/food/by/user/{id}")
-    public ResponseEntity<Message> getAllfoodByUserID (@PathVariable Long id) {
-        return foodService.findAllFood(id);
     }
 
 }

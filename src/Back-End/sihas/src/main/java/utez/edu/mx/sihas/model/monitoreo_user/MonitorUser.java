@@ -1,5 +1,6 @@
 package utez.edu.mx.sihas.model.monitoreo_user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import utez.edu.mx.sihas.model.monitor.Monitor;
 import utez.edu.mx.sihas.model.user.User;
@@ -21,6 +22,7 @@ public class MonitorUser {
 
     @ManyToOne
     @JoinColumn(name = "id_monitoreo")
+    @JsonIgnore
     private Monitor monitor;
 
     public MonitorUser() {

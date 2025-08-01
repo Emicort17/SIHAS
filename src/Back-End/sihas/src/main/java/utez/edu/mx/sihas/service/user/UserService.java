@@ -3,6 +3,7 @@ package utez.edu.mx.sihas.service.user;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import utez.edu.mx.sihas.model.rol.Rol;
@@ -22,11 +23,13 @@ import java.util.Set;
 public class UserService {
     private final UserRepository userRepository;
     private final RolRepository rolRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository, RolRepository rolRepository) {
+    public UserService(UserRepository userRepository, RolRepository rolRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.rolRepository = rolRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Transactional(rollbackFor = {SQLException.class})
@@ -43,18 +46,28 @@ public class UserService {
         if (user.getEmail().length() > 30) {
             return new ResponseEntity<>(new Message("El nombre excede el número de caracteres", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
         }
-        if (user.getRoles().isEmpty()) {
+
+        Rol rol = rolRepository.findByName(user.getRol()).orElseThrow(
+                () -> new RuntimeException("Rol no encontrado"));
+
+        if (user.getRol() == null) {
             return new ResponseEntity<>(new Message("El rol debe ser necesario", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
         }
 
-        Rol rol = rolRepository.findByName(user.getRoles().get(0).getName()).orElseThrow(
-                () -> new RuntimeException("Rol no encontrado"));
+        if(user.getPassword().length() > 8){
+            return new ResponseEntity<>(new Message("La contraseña debe tener un máximo de 8 caracteres", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+        }
 
+        Optional<User> userFindByEmail = userRepository.findByEmail(user.getEmail());
+
+        if (userFindByEmail.isPresent()) {
+            return new ResponseEntity<>(new Message("El correo ya existe", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+        }
 
         User saveUser = new User(user.getName(), user.getSurname(), user.getLastname(), user.getEmail()
-                , user.getPassword(), false);
+                , passwordEncoder.encode(user.getPassword()), false);
 
-        saveUser.setRoles((Set<Rol>) rol);
+        saveUser.setRoles(Set.of(rol));
         saveUser = userRepository.saveAndFlush(saveUser);
         if (saveUser == null) {
             return new ResponseEntity<>(new Message("El usuario no se pudo ingresar", TypesResponse.ERROR), HttpStatus.BAD_REQUEST);
@@ -106,21 +119,18 @@ public class UserService {
     }
 
 
-    public ResponseEntity<Message> updateStatus(Long id, Boolean status) {
+    public ResponseEntity<Message> updateStatus(Long id) {
         Optional<User> userOptional = userRepository.findById(id);
 
         if (!userOptional.isPresent()) {
             return new ResponseEntity<>(new Message("Usuario no encontrado",TypesResponse.ERROR),HttpStatus.BAD_REQUEST);
         }
-        if (status == null) {
-            return new ResponseEntity<>(new Message("El estatus es obligatorio",TypesResponse.ERROR),HttpStatus.BAD_REQUEST);
-        }
 
         User userUpdate = userOptional.get();
-        userUpdate.setStatus(status);
+        userUpdate.setStatus(!userUpdate.isStatus());
         userRepository.saveAndFlush(userUpdate);
 
-        return new ResponseEntity<>(new Message("Se ha atualizado", TypesResponse.SUCCESS), HttpStatus.OK);
+        return new ResponseEntity<>(new Message(userUpdate.isStatus(),"Se ha atualizado", TypesResponse.SUCCESS), HttpStatus.OK);
 
     }
 

@@ -1,5 +1,6 @@
 package utez.edu.mx.sihas.model.rol;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import utez.edu.mx.sihas.model.user.User;
 
@@ -18,6 +19,7 @@ public class Rol {
     private String name;
 
     @ManyToMany(mappedBy = "roles")
+    @JsonIgnore
     private Set<User> users = new HashSet<>();
 
     public Set<User> getUsers() {

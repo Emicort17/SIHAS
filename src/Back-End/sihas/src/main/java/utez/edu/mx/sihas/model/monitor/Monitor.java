@@ -1,5 +1,6 @@
 package utez.edu.mx.sihas.model.monitor;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import utez.edu.mx.sihas.model.monitoreo_user.MonitorUser;
 
@@ -69,10 +70,11 @@ public class Monitor {
     public Monitor() {
     }
 
-    public Monitor(String requestStatus, Date requestDate, Date responseDate) {
+    public Monitor(String requestStatus, Date requestDate, Date responseDate, List<MonitorUser> monitoreosUsuario) {
         this.requestStatus = requestStatus;
         this.requestDate = requestDate;
         this.responseDate = responseDate;
+        this.monitoreosUsuario = monitoreosUsuario;
     }
 
     @Override

@@ -1,13 +1,9 @@
 package utez.edu.mx.sihas.model.food;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Column;
-import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.Modifying;
 import utez.edu.mx.sihas.model.exercise.ExerciseDto;
-import utez.edu.mx.sihas.model.food_food_schedule.FoodFoodSchedule;
 
 import java.util.List;
 
@@ -34,8 +30,6 @@ public class FoodDto  {
     @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
     private Double carbohydrates;
 
-    @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
-    private List<FoodFoodSchedule> foodFoodSchedules;
 
     public Long getId_food() {
         return id_food;
@@ -91,14 +85,6 @@ public class FoodDto  {
 
     public void setCarbohydrates(Double carbohydrates) {
         this.carbohydrates = carbohydrates;
-    }
-
-    public List<FoodFoodSchedule> getFoodFoodSchedules() {
-        return foodFoodSchedules;
-    }
-
-    public void setFoodFoodSchedules(List<FoodFoodSchedule> foodFoodSchedules) {
-        this.foodFoodSchedules = foodFoodSchedules;
     }
 
     public interface Register{}

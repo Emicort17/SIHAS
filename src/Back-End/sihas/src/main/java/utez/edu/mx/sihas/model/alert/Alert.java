@@ -1,5 +1,6 @@
 package utez.edu.mx.sihas.model.alert;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import utez.edu.mx.sihas.model.user.User;
 
@@ -29,6 +30,7 @@ public class Alert {
 
     @ManyToOne
     @JoinColumn(name = "id_user")
+    @JsonIgnore
     private User user;
 
     public String getDescription() {

@@ -9,8 +9,8 @@ import utez.edu.mx.sihas.model.user.UserRepository;
 import utez.edu.mx.sihas.service.user.UserService;
 import utez.edu.mx.sihas.utils.Message;
 
-@Controller
-@RequestMapping("/usuario")
+@RestController
+@RequestMapping("/api/usuario")
 public class UserController {
     private final UserService userService;
 
@@ -19,14 +19,14 @@ public class UserController {
         this.userService = userService;
     }
 
+    @PostMapping("/register")
+    public  ResponseEntity<Message> saveUser(@RequestBody UserDto  userDto) {
+        return userService.save(userDto);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Message> getUseByID(@PathVariable Long id) {
         return userService.findByID(id);
-    }
-
-    @PostMapping("/save")
-    public  ResponseEntity<Message> saveUser(@RequestBody UserDto  userDto) {
-        return userService.save(userDto);
     }
 
     @PutMapping("/update")
@@ -34,51 +34,9 @@ public class UserController {
         return userService.update(userDto);
     }
 
-    @PutMapping("/update/status/true")
-    public ResponseEntity<Message> updateStatusTrue(@PathVariable Long id) {
-        return userService.updateStatus(id,true);
+    @PutMapping("/status/{id}")
+    public ResponseEntity<Message> updateStatus(@PathVariable Long id) {
+        return userService.updateStatus(id);
     }
 
-    @PutMapping("/update/status/false")
-    public ResponseEntity<Message> updateStatusFalse(@PathVariable Long id) {
-        return userService.updateStatus(id,false);
-    }
-
-    /*
-
-    @GetMapping("/all")
-    public ResponseEntity<Message> getAllProducts() {
-        return questionsService.findAll();
-    }
-
-    @GetMapping("/all/activos")
-    public  ResponseEntity<Message> getAllActivos() {
-        return questionsService.findByStatusActivo();
-    }
-    @GetMapping("/all/inactivos")
-    public  ResponseEntity<Message> getAllInactivos() {
-        return questionsService.findByStatusInactive();
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Message> getProductById(@PathVariable Long id) {
-        return questionsService.findById(id);
-    }
-
-    @PostMapping("/save")
-    public  ResponseEntity<Message> saveProduct(@RequestBody QuestionsDto questionsDto) {
-        return questionsService.save(questionsDto);
-    }
-
-    @PutMapping("/update")
-    public ResponseEntity<Message> updateProduct(@RequestBody QuestionsDto questionsDto) {
-        return questionsService.update(questionsDto);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Message> deleteProduct(@PathVariable Long id) {
-
-        return questionsService.changeStatus(id);
-    }
-     */
 }

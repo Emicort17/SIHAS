@@ -1,16 +1,13 @@
 package utez.edu.mx.sihas.model.food_schedule;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.Modifying;
 import utez.edu.mx.sihas.model.exercise.ExerciseDto;
-import utez.edu.mx.sihas.model.user.User;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 public class FoodScheduleDto {
 
@@ -24,38 +21,49 @@ public class FoodScheduleDto {
     private LocalTime time;
 
     @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
-    private User user;
+    private Long user;
 
-    public User getUser() {
-        return user;
-    }
+    @NotNull(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
+    private List<Long> foods;
 
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public LocalTime getTime() {
-        return time;
-    }
-
-    public void setTime(LocalTime time) {
-        this.time = time;
-    }
-
-    public LocalDate getDate() {
+    public @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class}) LocalDate getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(@NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class}) LocalDate date) {
         this.date = date;
     }
 
-    public Long getIdFoodSchedule() {
+    public @NotNull(groups = {Modifying.class, ExerciseDto.ChangeStatus.class}) Long getIdFoodSchedule() {
         return idFoodSchedule;
     }
 
-    public void setIdFoodSchedule(Long idFoodSchedule) {
+    public void setIdFoodSchedule(@NotNull(groups = {Modifying.class, ExerciseDto.ChangeStatus.class}) Long idFoodSchedule) {
         this.idFoodSchedule = idFoodSchedule;
+    }
+
+    public @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class}) LocalTime getTime() {
+        return time;
+    }
+
+    public void setTime(@NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class}) LocalTime time) {
+        this.time = time;
+    }
+
+    public @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class}) Long getUser() {
+        return user;
+    }
+
+    public void setUser(@NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class}) Long user) {
+        this.user = user;
+    }
+
+    public @NotNull(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class}) List<Long> getFoods() {
+        return foods;
+    }
+
+    public void setFoods(@NotNull(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class}) List<Long> foods) {
+        this.foods = foods;
     }
 
     public interface Register{}

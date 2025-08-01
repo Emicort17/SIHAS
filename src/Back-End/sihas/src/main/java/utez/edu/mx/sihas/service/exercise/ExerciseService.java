@@ -10,6 +10,7 @@ import utez.edu.mx.sihas.model.exercise.ExerciseDto;
 import utez.edu.mx.sihas.model.exercise.ExerciseRepository;
 import utez.edu.mx.sihas.model.user.User;
 import utez.edu.mx.sihas.model.user.UserDto;
+import utez.edu.mx.sihas.model.user.UserRepository;
 import utez.edu.mx.sihas.utils.Message;
 import utez.edu.mx.sihas.utils.TypesResponse;
 
@@ -21,10 +22,12 @@ import java.util.Optional;
 @Service
 public class ExerciseService {
     private final ExerciseRepository exerciseRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public ExerciseService(ExerciseRepository exerciseRepository) {
+    public ExerciseService(ExerciseRepository exerciseRepository, UserRepository userRepository) {
         this.exerciseRepository = exerciseRepository;
+        this.userRepository = userRepository;
     }
 
     @Transactional(readOnly = true)
@@ -45,7 +48,11 @@ public class ExerciseService {
         if(exerciseDto.getTime() == null){
             return new ResponseEntity<>(new Message("El Dato requerido", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
         }
-        Exercise exercise = new Exercise(exerciseDto.getDate(),exerciseDto.getTime(),true,exerciseDto.getUser());
+
+        User user = userRepository.findById(exerciseDto.getUser())
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con ID: " + exerciseDto.getUser()));
+
+        Exercise exercise = new Exercise(exerciseDto.getDate(),exerciseDto.getTime(),true, user);
         exercise = exerciseRepository.saveAndFlush(exercise);
 
         if(exercise == null){

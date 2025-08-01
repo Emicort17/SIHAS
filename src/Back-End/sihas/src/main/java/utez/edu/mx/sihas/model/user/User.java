@@ -46,7 +46,6 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    @JsonIgnore
     private Set<Rol> roles = new HashSet<>();
 
     @OneToMany(mappedBy = "user")
@@ -54,9 +53,11 @@ public class User {
     private List<FoodSchedule> foodSchedules;
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private List<MonitorUser> monitoreosUsuario;
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private List<Alert> alerts;
 
     @OneToOne(mappedBy = "user")

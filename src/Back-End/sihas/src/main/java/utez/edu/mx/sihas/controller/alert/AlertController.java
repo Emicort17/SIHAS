@@ -9,15 +9,17 @@ import utez.edu.mx.sihas.model.biological_data.BiologicalDataDto;
 import utez.edu.mx.sihas.service.alert.AlertService;
 import utez.edu.mx.sihas.utils.Message;
 
-@Controller
-@RequestMapping("/usuario/alert")
+@RestController
+@RequestMapping("/api/usuario/alert")
 public class AlertController {
 
     public final AlertService alertService;
+
     @Autowired
     public AlertController(AlertService alertService) {
         this.alertService = alertService;
     }
+
     @PostMapping("/save")
     public ResponseEntity<Message> saveAlert(@RequestBody AlertDto alertDto ) {
         return alertService.save(alertDto);
@@ -30,7 +32,7 @@ public class AlertController {
 
     @PutMapping("/status/{id}")
     public ResponseEntity<Message> updateStatus(@PathVariable Long id) {
-        return alertService.updateStatus(id,true);
+        return alertService.updateStatus(id);
     }
 
     @GetMapping("/all")

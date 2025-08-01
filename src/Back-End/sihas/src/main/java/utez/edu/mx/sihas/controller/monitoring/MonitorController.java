@@ -8,8 +8,8 @@ import utez.edu.mx.sihas.model.monitor.MonitorDto;
 import utez.edu.mx.sihas.service.monitor.MonitorService;
 import utez.edu.mx.sihas.utils.Message;
 
-@Controller
-@RequestMapping("/usuario/sleepMonitor")
+@RestController
+@RequestMapping("/api/profesional/monitor")
 public class MonitorController {
 
     private final MonitorService monitorService;
@@ -18,9 +18,10 @@ public class MonitorController {
     public MonitorController(MonitorService monitorService) {
         this.monitorService = monitorService;
     }
-    @PostMapping("/save/{idUser}")
-    public ResponseEntity<Message> saveMonitorSleep(@RequestBody MonitorDto sleepMonitorDto, @PathVariable Long idUser) {
-        return monitorService.save(sleepMonitorDto,idUser);
+
+    @PostMapping("/save")
+    public ResponseEntity<Message> saveMonitorSleep(@RequestBody MonitorDto sleepMonitorDto) {
+        return monitorService.save(sleepMonitorDto);
     }
 
     @PutMapping("/update")
@@ -32,15 +33,4 @@ public class MonitorController {
     public ResponseEntity<Message> getAllMonitorById(@PathVariable Long id) {
         return monitorService.findMonitorPorUsuario(id);
     }
-
-    @GetMapping("/findAll/monitor/all/{id}")
-    public ResponseEntity<Message> getAllMonitorUserById(@PathVariable Long id) {
-        return monitorService.findMonitorPorUsuario(id);
-    }
-    /*
-    @GetMapping("/finby/{id}")
-    public ResponseEntity<Message> getMonitorByID(@PathVariable Long id) {
-        return monitorService.findByID(id);
-    }
-     */
 }

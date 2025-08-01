@@ -27,10 +27,10 @@ public class FoodSchedule {
 
     @ManyToOne
     @JoinColumn(name = "id_usuario")
+    @JsonIgnore
     private User user;
 
     @OneToMany(mappedBy = "foodSchedule")
-    @JsonIgnore
     private List<FoodFoodSchedule> foodFoodSchedules;
 
     public LocalDate getDate() {

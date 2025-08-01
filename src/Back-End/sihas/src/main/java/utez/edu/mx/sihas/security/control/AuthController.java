@@ -1,6 +1,5 @@
 package utez.edu.mx.sihas.security.control;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -35,7 +34,7 @@ public class AuthController {
         this.userRepository = userRepository;
     }
 
-    @PostMapping("/login")
+    @PostMapping("/api/login")
     public AuthResponse login(@RequestBody AuthRequest authRequest) throws Exception {
         try {
             authenticationManager.authenticate(

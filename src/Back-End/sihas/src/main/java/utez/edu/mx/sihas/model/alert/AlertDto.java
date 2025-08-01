@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 public class AlertDto {
 
     @NotNull(groups = {Modifying.class, ExerciseDto.ChangeStatus.class})
-    private Long id_alerta;
+    private Long id_alert;
 
     @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
     private String type_alert;
@@ -30,14 +30,14 @@ public class AlertDto {
     private Long idRelacionado;
 
     @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
-    private User user;
+    private Long user;
 
-    public Long getId_alerta() {
-        return id_alerta;
+    public Long getId_alert() {
+        return id_alert;
     }
 
-    public void setId_alerta(Long id_alerta) {
-        this.id_alerta = id_alerta;
+    public void setId_alert(Long id_alerta) {
+        this.id_alert = id_alerta;
     }
 
     public String getType_alert() {
@@ -80,11 +80,11 @@ public class AlertDto {
         this.idRelacionado = idRelacionado;
     }
 
-    public User getUser() {
+    public Long getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(Long user) {
         this.user = user;
     }
 

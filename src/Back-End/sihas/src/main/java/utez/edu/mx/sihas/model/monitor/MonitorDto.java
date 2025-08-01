@@ -22,35 +22,33 @@ public class MonitorDto {
     @NotBlank(groups = {MonitorDto.Register.class, MonitorDto.Modify.class})
     private Date requestDate;
 
-    @NotBlank(groups = {MonitorDto.Register.class, MonitorDto.Modify.class})
     private Date responseDate;
 
     @NotBlank(groups = {MonitorDto.Register.class, MonitorDto.Modify.class})
-    private List<MonitorUser> monitoreosUsuario;
+    private List<Long> user;
 
-
-    public Long getIdMonitor() {
+    public @NotNull(groups = {Modifying.class, ChangeStatus.class}) Long getIdMonitor() {
         return idMonitor;
     }
 
-    public void setIdMonitor(Long idMonitor) {
+    public void setIdMonitor(@NotNull(groups = {Modifying.class, ChangeStatus.class}) Long idMonitor) {
         this.idMonitor = idMonitor;
     }
 
-    public String getRequestStatus() {
-        return requestStatus;
-    }
-
-    public void setRequestStatus(String requestStatus) {
-        this.requestStatus = requestStatus;
-    }
-
-    public Date getRequestDate() {
+    public @NotBlank(groups = {Register.class, Modify.class}) Date getRequestDate() {
         return requestDate;
     }
 
-    public void setRequestDate(Date requestDate) {
+    public void setRequestDate(@NotBlank(groups = {Register.class, Modify.class}) Date requestDate) {
         this.requestDate = requestDate;
+    }
+
+    public @NotBlank(groups = {Register.class, Modify.class}) String getRequestStatus() {
+        return requestStatus;
+    }
+
+    public void setRequestStatus(@NotBlank(groups = {Register.class, Modify.class}) String requestStatus) {
+        this.requestStatus = requestStatus;
     }
 
     public Date getResponseDate() {
@@ -61,12 +59,12 @@ public class MonitorDto {
         this.responseDate = responseDate;
     }
 
-    public List<MonitorUser> getMonitoreosUsuario() {
-        return monitoreosUsuario;
+    public @NotBlank(groups = {Register.class, Modify.class}) List<Long> getUser() {
+        return user;
     }
 
-    public void setMonitoreosUsuario(List<MonitorUser> monitoreosUsuario) {
-        this.monitoreosUsuario = monitoreosUsuario;
+    public void setUser(@NotBlank(groups = {Register.class, Modify.class}) List<Long> user) {
+        this.user = user;
     }
 
     public interface Register{}

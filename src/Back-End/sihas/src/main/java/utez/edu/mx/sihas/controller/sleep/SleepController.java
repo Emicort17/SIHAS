@@ -8,8 +8,8 @@ import utez.edu.mx.sihas.model.sleep.SleepDto;
 import utez.edu.mx.sihas.service.sleep.SleepService;
 import utez.edu.mx.sihas.utils.Message;
 
-@Controller
-@RequestMapping("/usuario/sleep")
+@RestController
+@RequestMapping("/api/usuario/horariosueño")
 public class SleepController {
 
     public final SleepService sleepService;

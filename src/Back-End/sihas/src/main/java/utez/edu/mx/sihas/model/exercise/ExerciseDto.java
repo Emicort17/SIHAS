@@ -25,7 +25,7 @@ public class ExerciseDto {
     private Boolean status;
 
     @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
-    private User user;
+    private Long user;
 
     public Long getIdExercise() {
         return idExercise;
@@ -59,11 +59,11 @@ public class ExerciseDto {
         this.status = status;
     }
 
-    public User getUser() {
+    public Long getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(Long user) {
         this.user = user;
     }
 

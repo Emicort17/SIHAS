@@ -10,6 +10,8 @@ import utez.edu.mx.sihas.model.alert.AlertDto;
 import utez.edu.mx.sihas.model.alert.AlertRepository;
 import utez.edu.mx.sihas.model.biological_data.BiologicalData;
 import utez.edu.mx.sihas.model.biological_data.BiologicalDataDto;
+import utez.edu.mx.sihas.model.user.User;
+import utez.edu.mx.sihas.model.user.UserRepository;
 import utez.edu.mx.sihas.utils.Message;
 import utez.edu.mx.sihas.utils.TypesResponse;
 
@@ -22,10 +24,13 @@ import java.util.Optional;
 public class AlertService {
 
     private final AlertRepository alertRepository;
+    private final UserRepository userRepository;
+
 
     @Autowired
-    public AlertService(AlertRepository alertRepository) {
+    public AlertService(AlertRepository alertRepository, UserRepository userRepository) {
         this.alertRepository = alertRepository;
+        this.userRepository = userRepository;
     }
 
     @Transactional(rollbackFor = {SQLException.class})
@@ -42,9 +47,12 @@ public class AlertService {
         if (alertDto.getIdRelacionado() == 0||alertDto.getIdRelacionado() == null ) {
             return new ResponseEntity<>(new Message("El id relacionado es necesario", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
         }
+        User user = userRepository.findById(alertDto.getUser())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
         Alert alert= new Alert(alertDto.getType_alert()
                 ,alertDto.getDescription(),true,alertDto.getScheduled_date(),alertDto.getIdRelacionado()
-                ,alertDto.getUser());
+                , user);
 
 
         alert = alertRepository.saveAndFlush(alert);
@@ -59,7 +67,7 @@ public class AlertService {
 
     @Transactional(rollbackFor = {SQLException.class})
     public ResponseEntity<Message> update(AlertDto alertDto) {
-        Optional<Alert> alertaOptional = alertRepository.findById(alertDto.getId_alerta());
+        Optional<Alert> alertaOptional = alertRepository.findById(alertDto.getId_alert());
 
         if(!alertaOptional.isPresent()){
             return new ResponseEntity<>(new Message("La alerta no existe",TypesResponse.ERROR),HttpStatus.NOT_FOUND);
@@ -92,20 +100,17 @@ public class AlertService {
     }
 
 
-    public ResponseEntity<Message> updateStatus(Long id, Boolean status) {
+    public ResponseEntity<Message> updateStatus(Long id) {
         Optional<Alert> alertaOptional = alertRepository.findById(id);
 
         if (!alertaOptional.isPresent()) {
             return new ResponseEntity<>(new Message("Alerta no encontrada",TypesResponse.ERROR),HttpStatus.BAD_REQUEST);
         }
-        if (status == null) {
-            return new ResponseEntity<>(new Message("El estatus es obligatorio",TypesResponse.ERROR),HttpStatus.BAD_REQUEST);
-        }
         Alert alerUpdate = alertaOptional.get();
-        alerUpdate.setStatus(status);
+        alerUpdate.setStatus(!alerUpdate.getStatus());
         alertRepository.saveAndFlush(alerUpdate);
 
-        return new ResponseEntity<>(new Message("Se ha atualizado el status", TypesResponse.SUCCESS), HttpStatus.OK);
+        return new ResponseEntity<>(new Message(alerUpdate.getStatus(), "Se ha atualizado el status", TypesResponse.SUCCESS), HttpStatus.OK);
 
     }
 

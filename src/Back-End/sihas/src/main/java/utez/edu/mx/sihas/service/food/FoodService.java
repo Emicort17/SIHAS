@@ -10,6 +10,8 @@ import utez.edu.mx.sihas.model.alert.AlertDto;
 import utez.edu.mx.sihas.model.food.Food;
 import utez.edu.mx.sihas.model.food.FoodDto;
 import utez.edu.mx.sihas.model.food.FoodRepository;
+import utez.edu.mx.sihas.model.food_food_schedule.FoodFoodSchedule;
+import utez.edu.mx.sihas.model.food_food_schedule.FoodFoodScheduleRepository;
 import utez.edu.mx.sihas.utils.Message;
 import utez.edu.mx.sihas.utils.TypesResponse;
 
@@ -51,7 +53,7 @@ public class FoodService {
 
         Food fodSave = new  Food(foodDto.getName()
                ,foodDto.getQuantity(),foodDto.getCalories(),foodDto.getProteins()
-               ,foodDto.getFats(),foodDto.getCarbohydrates(),foodDto.getFoodFoodSchedules());
+               ,foodDto.getFats(),foodDto.getCarbohydrates());
 
         fodSave = foodRepository.saveAndFlush(fodSave);
         if (fodSave == null) {
@@ -104,41 +106,18 @@ public class FoodService {
         return new ResponseEntity<>(new Message(foodUpdate, "El alimento se actualizo correctamente", TypesResponse.SUCCESS), HttpStatus.OK);
     }
 
-    /*
-    public ResponseEntity<Message> updateStatus(Long id, Boolean status) {
-        Optional<Alert> alertaOptional = alertRepository.findById(id);
-
-        if (!alertaOptional.isPresent()) {
-            return new ResponseEntity<>(new Message("Alerta no encontrada",TypesResponse.ERROR),HttpStatus.BAD_REQUEST);
-        }
-        if (status == null) {
-            return new ResponseEntity<>(new Message("El estatus es obligatorio",TypesResponse.ERROR),HttpStatus.BAD_REQUEST);
-        }
-        Alert alerUpdate = alertaOptional.get();
-        alerUpdate.setStatus(status);
-        alertRepository.saveAndFlush(alerUpdate);
-
-        return new ResponseEntity<>(new Message("Se ha atualizado el status", TypesResponse.SUCCESS), HttpStatus.OK);
-
-    }
-    */
     @Transactional(readOnly = true)
     public ResponseEntity<Message> findAll() {
         List<Food> foodList = foodRepository.findAll();
-        return new ResponseEntity<>(new Message(foodList,"Listado de alertas", TypesResponse.SUCCESS), HttpStatus.OK);
+        return new ResponseEntity<>(new Message(foodList,"Listado de alimentos", TypesResponse.SUCCESS), HttpStatus.OK);
     }
 
     @Transactional(readOnly = true)
     public ResponseEntity<Message> findByID(Long  id) {
         Optional<Food> foodList = foodRepository.findById(id);
 
-        return new ResponseEntity<>(new Message(foodList,"Listado de alimentos por ID", TypesResponse.SUCCESS), HttpStatus.OK);
+        return new ResponseEntity<>(new Message(foodList,"Alimento por ID", TypesResponse.SUCCESS), HttpStatus.OK);
     }
 
 
-    @Transactional(readOnly = true)
-    public ResponseEntity<Message> findAllFood(Long id) {
-        List<Food> foodList = foodRepository.findAlimentosPorUsuario(id);
-        return new ResponseEntity<>(new Message(foodList,"Listado de alimentos con hora ", TypesResponse.SUCCESS), HttpStatus.OK);
-    }
 }

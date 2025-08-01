@@ -23,7 +23,7 @@ public class DataInitializer {
 
                 Optional<User> optionalUser = userRepository.findByEmail("20223tn012@utez.edu.mx");
                 if (!optionalUser.isPresent()) {
-                    User userNormal = new User("20223tn012@utez.edu.mx", "Carrera", "Maximiliano",passwordEncoder.encode("password123"), "Oropeza");
+                    User userNormal = new User("Maximiliano", "Carrera", "Oropeza", "20223tn012@utez.edu.mx", passwordEncoder.encode("password123"), true);
                     userNormal.getRoles().add(roleUsuario);
                     userRepository.saveAndFlush(userNormal);
                 }
@@ -36,7 +36,7 @@ public class DataInitializer {
 
                 Optional<User> optionalUser = userRepository.findByEmail("20223tn021@utez.edu.mx");
                 if (!optionalUser.isPresent()) {
-                    User userProfesional = new User("20223tn021@utez.edu.mx", "Jaimez", "Diego Eduardo",passwordEncoder.encode("password123"), "Flores");
+                    User userProfesional = new User("Diego Eduardo", "Jaimez", "Flores", "20223tn021@utez.edu.mx", passwordEncoder.encode("password123"), true);
                     userProfesional.getRoles().add(roleProfesional);
                     userRepository.saveAndFlush(userProfesional);
                 }
