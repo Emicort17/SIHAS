@@ -2,7 +2,6 @@
 
 import React, { createContext, useContext, useState } from "react"
 
-
 const AuthContext = createContext(undefined)
 
 export function AuthProvider({ children }) {
