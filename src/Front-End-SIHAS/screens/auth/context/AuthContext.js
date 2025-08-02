@@ -41,29 +41,39 @@ export function AuthProvider({ children }) {
     setUser(null)
   }
 
-  const Register = async (name,surname,lastname,email,password,rol) => {
+  const Register = async (name, surname, lastname, email, password, status, isProfessional) => {
     try {
-      const response = await fetch("http://192.168.0.12:8080/api/login", {
+      const rol = isProfessional ? "PROFESIONAL" : "USUARIO";
+
+      const response = await fetch("http://192.168.0.12:8080/api/usuario/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ name, surname, lastname, email, password, status, rol })
       });
+
       if (!response.ok) {
-        throw new Error("Error al registrar")
+        throw new Error("Error al registrar");
       }
+
       const data = await response.json();
-      console.log(data)
-      return data;
+
+      if (data.type === "SUCCESS") {
+        console.log("Registro exitoso:", data.result);
+        return data.result;
+      } else {
+        console.warn("Registro no exitoso:", data.text);
+        return false;
+      }
     } catch (err) {
-      console.error("Error en el login: ", err)
+      console.error("Error en el registro:", err);
+      return false;
     }
-    return false
-  }
+  };
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, logout }}>
+    <AuthContext.Provider value={{ user, isLoading, login, logout, Register }}>
       {children}
     </AuthContext.Provider>
   )

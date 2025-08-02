@@ -1,94 +1,79 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Text, StyleSheet, View, TextInput, SafeAreaView, TouchableOpacity, Image, ScrollView, Switch, Alert, } from "react-native";
 import Icon from 'react-native-vector-icons/Feather';
 import { useAuth } from "../auth/context/AuthContext";
 
-export default function RegisterScreen() {
+export default function RegisterScreen({ navigation }) {
     const [doctor, setDoctor] = useState(false);
     const [email, setEmail] = useState("");
     const [name, setName] = useState("");
     const [Lastname, setLastname] = useState("");
     const [SecondLastname, setSecondLastname] = useState("");
     const [password, setPassword] = useState("");
+    const [trypassword, setTryPassword] = useState("");
     const [erroMessage, setErrorMessage] = useState(false);
     const [erroPasswordMessage, setErroPasswordMessage] = useState(false);
     const [passwordVisible, setPasswordVisible] = useState(false);
 
     const { Register } = useAuth();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const textRegex = /^[a-zA-Z]+$/;
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+    const handleInputEmailChange = (email) => setEmail(email);
+    const handleInputNameChange = (name) => setName(name);
+    const handleInputLastNameChange = (lastname) => setLastname(lastname);
+    const handleInputSecondLastNameChange = (secondLastname) => setSecondLastname(secondLastname);
+    const handlePasswordChange = (password) => setPassword(password);
+    const verifyPassword = (value) => { setTryPassword(value); }
 
-
-    const handleInputEmailChange = (email) => {
-        if (!email) {
-            setErrorMessage(true)
+    useEffect(() => {
+        if (trypassword === "") {
+            setErroPasswordMessage(false);
         } else {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (emailRegex.test(email) === true) {
-                setEmail(email)
-            } else {
-                setErrorMessage(true)
-            }
+            setErroPasswordMessage(trypassword !== password);
         }
-    };
+    }, [trypassword, password]);
 
-
-    const handleInputNameChange = (name) => {
-        if (!name) {
-            setErrorMessage(true)
+    useEffect(() => {
+        if (email === "") {
+            setErrorMessage(false);
         } else {
-            const textRegex = /^[a-zA-Z]+$/;
-            if (textRegex.test(name) === true) {
-                setName(name)
-            } else {
-                setErrorMessage(true)
-            }
+            setErrorMessage(!emailRegex.test(email));
         }
-    };
+    }, [email]);
 
-    const handleInputLastNameChange = (Lastname) => {
-        if (!Lastname) {
-            setErrorMessage(true)
+    useEffect(() => {
+        if (name === "") {
+            setErrorMessage(false);
         } else {
-            const textRegex = /^[a-zA-Z]+$/;
-            if (textRegex.test(Lastname) === true) {
-                setLastname(Lastname)
-            } else {
-                setErrorMessage(true)
-            }
+            setErrorMessage(!textRegex.test(name));
         }
-    };
+    }, [name]);
 
-    const handleInputSecondLastNameChange = (Lastname) => {
-        if (!Lastname) {
-            setErrorMessage(true)
+    useEffect(() => {
+        if (Lastname === "") {
+            setErrorMessage(false);
         } else {
-            const textRegex = /^[a-zA-Z]+$/;
-            if (textRegex.test(Lastname) === true) {
-                setSecondLastname(Lastname)
-            } else {
-                setErrorMessage(true)
-            }
+            setErrorMessage(!textRegex.test(Lastname));
         }
-    };
+    }, [Lastname]);
 
-
-    const handlePasswordChange = (password) => {
-        if (!password) {
-            setErrorMessage(true)
+    useEffect(() => {
+        if (SecondLastname === "") {
+            setErrorMessage(false);
         } else {
-            const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
-            if (passwordRegex.test(password) === true) {
-                setPassword(password)
-            } else {
-                setErrorMessage(true)
-            }
+            setErrorMessage(!textRegex.test(SecondLastname));
         }
-    };
+    }, [SecondLastname]);
 
-    const verifyPassword = (trypassword) => {
-        if (trypassword != password) {
-            setErroPasswordMessage(true)
+    useEffect(() => {
+        if (password === "") {
+            setErrorMessage(false);
+        } else {
+            setErrorMessage(!passwordRegex.test(password));
         }
-    }
+    }, [password]);
+
 
     const toggleVisibility = () => {
         setPasswordVisible(!passwordVisible)
@@ -100,8 +85,8 @@ export default function RegisterScreen() {
                 setErrorMessage(true)
                 setErroPasswordMessage(true)
             } else {
-                const RegisterUser = await Register(name,Lastname,SecondLastname,email,password,doctor)
-                if (!RegisterUser){
+                const RegisterUser = await Register(name, Lastname, SecondLastname, email, password, 'True', doctor)
+                if (!RegisterUser) {
                     Alert.alert("Error", "No se pudo registrar al usuario")
                 } else if (RegisterUser.result) {
                     navigation.replace("Login")
