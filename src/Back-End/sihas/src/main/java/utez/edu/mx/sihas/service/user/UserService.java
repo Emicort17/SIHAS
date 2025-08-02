@@ -65,7 +65,7 @@ public class UserService {
         }
 
         User saveUser = new User(user.getName(), user.getSurname(), user.getLastname(), user.getEmail()
-                , passwordEncoder.encode(user.getPassword()), false);
+                , passwordEncoder.encode(user.getPassword()), user.isStatus());
 
         saveUser.setRoles(Set.of(rol));
         saveUser = userRepository.saveAndFlush(saveUser);
