@@ -25,7 +25,7 @@ public class UserDto {
     @NotBlank(groups = {Register.class,Modify.class})
     private String password;
     @NotBlank(groups = {Register.class,Modify.class})
-    private String status;
+    private boolean status;
     @NotBlank(groups = {Register.class,Modify.class})
     private String rol;
 
@@ -77,11 +77,11 @@ public class UserDto {
         this.password = password;
     }
 
-    public String getStatus() {
+    public boolean isStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(boolean status) {
         this.status = status;
     }
 

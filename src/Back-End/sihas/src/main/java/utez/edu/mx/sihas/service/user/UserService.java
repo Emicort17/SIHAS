@@ -108,7 +108,7 @@ public class UserService {
         userUpdate.setSurname(user.getSurname());
         userUpdate.setLastname(user.getLastname());
         userUpdate.setEmail(user.getEmail());
-
+        userUpdate.setStatus(user.isStatus());
 
         userUpdate = userRepository.saveAndFlush(userUpdate);
 
