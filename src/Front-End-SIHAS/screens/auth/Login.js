@@ -11,7 +11,7 @@ export default function LoginScreen({ navigation }) {
     const [passwordError, setPasswordError] = useState(false);
     const [passwordVisible, setPasswordVisible] = useState(false);
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+    const passwordRegex = /^(?=(?:[^A-Z]*[A-Z]){1}[^A-Z]*$)[A-Za-z\d]{8}$/;
 
     const { login } = useAuth();
 
@@ -50,9 +50,9 @@ export default function LoginScreen({ navigation }) {
                 if (!loggedInUser) {
                     Alert.alert("Error", "Credenciales incorrectas")
                 } else if (loggedInUser?.rol === "USUARIO") {
-                    navigation.replace("UserStack");
+                    
                 } else if (loggedInUser?.rol === "PROFESIONAL") {
-                    navigation.replace("MedicStack");
+                    
                 }
                 setErrorMessage(false)
             }

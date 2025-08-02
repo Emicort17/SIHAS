@@ -13,6 +13,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import java.util.List;
+
 @Configuration
 public class SecurityConfig {
     private final JwtRequestFilter jwtRequestFilter;
@@ -26,14 +28,22 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/register").permitAll()
-                        .requestMatchers("/profesional/**").hasAuthority("PROFESIONAL")
-                        .requestMatchers("/usuario/**").hasAuthority("USUARIO")
+                        .requestMatchers("/api/login", "/api/usuario/register").permitAll()
+                        .requestMatchers("/api/profesional/**").hasAuthority("PROFESIONAL")
+                        .requestMatchers("/api/usuario/**").hasAuthority("USUARIO")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
-
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
+                .cors(cors -> cors.configurationSource(request -> {
+                    var corsConfig = new org.springframework.web.cors.CorsConfiguration();
+                    corsConfig.setAllowedOrigins(List.of("*"));
+                    corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+                    corsConfig.setAllowedHeaders(List.of("*"));
+                    corsConfig.setAllowCredentials(true);
+                    corsConfig.addExposedHeader("Authorization");
+                    return corsConfig.applyPermitDefaultValues();
+                }));
         return http.build();
     }
 

@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-import { Text, StyleSheet, View, TextInput, SafeAreaView, TouchableOpacity, Image, ScrollView } from "react-native";
+import { Text, StyleSheet, View, TextInput, SafeAreaView, TouchableOpacity, Image, ScrollView, Switch, Alert, } from "react-native";
 import Icon from 'react-native-vector-icons/Feather';
+import { useAuth } from "../auth/context/AuthContext";
 
 export default function RegisterScreen() {
+    const [doctor, setDoctor] = useState(false);
     const [email, setEmail] = useState("");
     const [name, setName] = useState("");
     const [Lastname, setLastname] = useState("");
@@ -11,6 +13,8 @@ export default function RegisterScreen() {
     const [erroMessage, setErrorMessage] = useState(false);
     const [erroPasswordMessage, setErroPasswordMessage] = useState(false);
     const [passwordVisible, setPasswordVisible] = useState(false);
+
+    const { Register } = useAuth();
 
 
     const handleInputEmailChange = (email) => {
@@ -80,7 +84,6 @@ export default function RegisterScreen() {
         }
     };
 
-
     const verifyPassword = (trypassword) => {
         if (trypassword != password) {
             setErroPasswordMessage(true)
@@ -97,7 +100,13 @@ export default function RegisterScreen() {
                 setErrorMessage(true)
                 setErroPasswordMessage(true)
             } else {
-                // Llamada a mi api
+                const RegisterUser = await Register(name,Lastname,SecondLastname,email,password,doctor)
+                if (!RegisterUser){
+                    Alert.alert("Error", "No se pudo registrar al usuario")
+                } else if (RegisterUser.result) {
+                    navigation.replace("Login")
+                }
+                setErrorMessage(false)
             }
         } catch {
             setErrorMessage('');
@@ -167,6 +176,17 @@ export default function RegisterScreen() {
                     </View>
                 </View>
                 {erroPasswordMessage && (<Text style={styles.linkError}>Por Favor coloca una contraseña valida</Text>)}
+
+
+                <View style={styles.div_select}>
+                    <Text style={styles.label_select}>Eres Doctor o Entrenador</Text>
+                    <Switch
+                        value={doctor}
+                        onValueChange={setDoctor}
+                        trackColor={{ false: "#ccc", true: "#b4f0c2" }}
+                        thumbColor={doctor ? "#4caf50" : "#f4f3f4"}
+                    />
+                </View>
 
                 <View style={styles.divbutton}>
                     <TouchableOpacity style={styles.button} onPress={handleRegister}>
@@ -281,4 +301,17 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    label_select: {
+        fontSize: 16,
+        marginRight: 2,
+        color: '#333'
+    },
+    div_select: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: '8r0%',
+        alignSelf: 'center',
+        marginBottom: 10
+    }
 })

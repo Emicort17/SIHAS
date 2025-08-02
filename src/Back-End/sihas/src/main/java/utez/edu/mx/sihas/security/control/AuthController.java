@@ -1,6 +1,5 @@
 package utez.edu.mx.sihas.security.control;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -9,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import utez.edu.mx.sihas.model.rol.Rol;
 import utez.edu.mx.sihas.model.user.User;
 import utez.edu.mx.sihas.model.user.UserRepository;
 import utez.edu.mx.sihas.security.JwtUtil;
@@ -35,7 +35,7 @@ public class AuthController {
         this.userRepository = userRepository;
     }
 
-    @PostMapping("/login")
+    @PostMapping("/api/login")
     public AuthResponse login(@RequestBody AuthRequest authRequest) throws Exception {
         try {
             authenticationManager.authenticate(
@@ -52,6 +52,11 @@ public class AuthController {
 
         long expirationTime = jwtUtil.getExpirationTime();
 
-        return new AuthResponse(jwt, user.getId_user(), user.getEmail(), expirationTime);
+        String rolString =  user.getRoles().stream()
+                .findFirst()
+                .map(Rol::getName)
+                .orElse("Sin rol");
+
+        return new AuthResponse(jwt, user.getId_user(), user.getEmail(), rolString,expirationTime);
     }
 }

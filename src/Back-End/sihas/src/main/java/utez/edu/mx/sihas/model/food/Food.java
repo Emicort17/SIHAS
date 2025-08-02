@@ -7,7 +7,7 @@ import utez.edu.mx.sihas.model.food_food_schedule.FoodFoodSchedule;
 import java.util.List;
 
 @Entity
-@Table(name = "Alimento")
+@Table(name = "alimento")
 public class Food {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -103,14 +103,13 @@ public class Food {
     public Food() {
     }
 
-    public Food(Double calories, Double carbohydrates, Double fats, Long id_food, String name, Double proteins, Integer quantity) {
-        this.calories = calories;
-        this.carbohydrates = carbohydrates;
-        this.fats = fats;
-        this.id_food = id_food;
+    public Food(String name, Integer quantity, Double calories, Double proteins, Double fats, Double carbohydrates) {
         this.name = name;
-        this.proteins = proteins;
         this.quantity = quantity;
+        this.calories = calories;
+        this.proteins = proteins;
+        this.fats = fats;
+        this.carbohydrates = carbohydrates;
     }
 
     @Override

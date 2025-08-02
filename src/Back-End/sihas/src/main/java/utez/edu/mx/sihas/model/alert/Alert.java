@@ -1,5 +1,6 @@
 package utez.edu.mx.sihas.model.alert;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import utez.edu.mx.sihas.model.user.User;
 
@@ -29,6 +30,7 @@ public class Alert {
 
     @ManyToOne
     @JoinColumn(name = "id_user")
+    @JsonIgnore
     private User user;
 
     public String getDescription() {
@@ -90,12 +92,13 @@ public class Alert {
     public Alert() {
     }
 
-    public Alert(Long id_alerta, String type_alert, String description, Boolean status, LocalDateTime scheduled_date) {
-        this.id_alerta = id_alerta;
+    public Alert(String type_alert, String description, Boolean status, LocalDateTime scheduled_date, Long idRelacionado, User user) {
         this.type_alert = type_alert;
         this.description = description;
         this.status = status;
         this.scheduled_date = scheduled_date;
+        this.idRelacionado = idRelacionado;
+        this.user = user;
     }
 
     @Override

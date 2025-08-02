@@ -27,9 +27,9 @@ export function AuthProvider({ children }) {
         token: data.jwt,
         userId: data.userId,
         username: data.username,
-        rol:data.rol
+        rol: data.rol
       })
-      console.log(user)
+      console.log(data)
       return data;
     } catch (err) {
       console.error("Error en el login: ", err)
@@ -39,6 +39,27 @@ export function AuthProvider({ children }) {
 
   const logout = () => {
     setUser(null)
+  }
+
+  const Register = async (name,surname,lastname,email,password,rol) => {
+    try {
+      const response = await fetch("http://192.168.0.12:8080/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password })
+      });
+      if (!response.ok) {
+        throw new Error("Error al registrar")
+      }
+      const data = await response.json();
+      console.log(data)
+      return data;
+    } catch (err) {
+      console.error("Error en el login: ", err)
+    }
+    return false
   }
 
   return (

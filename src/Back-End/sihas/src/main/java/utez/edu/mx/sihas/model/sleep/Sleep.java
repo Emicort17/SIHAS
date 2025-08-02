@@ -1,4 +1,5 @@
 package utez.edu.mx.sihas.model.sleep;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import utez.edu.mx.sihas.model.alert.Alert;
 import utez.edu.mx.sihas.model.user.User;
@@ -29,6 +30,7 @@ public class Sleep {
 
     @OneToOne
     @JoinColumn(name = "id_usuario")
+    @JsonIgnore
     private User user;
 
     public LocalDate getDate() {
@@ -93,11 +95,11 @@ public class Sleep {
     public Sleep() {
     }
 
-    public Sleep(LocalDate date, LocalTime endTime, LocalTime startTime, Long idSleep, Double totalHours) {
+    public Sleep(LocalDate date, LocalTime startTime, LocalTime endTime, Double totalHours, User user) {
         this.date = date;
-        this.endTime = endTime;
         this.startTime = startTime;
-        this.idSleep = idSleep;
+        this.endTime = endTime;
         this.totalHours = totalHours;
+        this.user = user;
     }
 }
