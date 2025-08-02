@@ -27,7 +27,9 @@ export function AuthProvider({ children }) {
         token: data.jwt,
         userId: data.userId,
         username: data.username,
+        rol:data.rol
       })
+      console.log(user)
       return data;
     } catch (err) {
       console.error("Error en el login: ", err)

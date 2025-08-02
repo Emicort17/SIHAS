@@ -49,9 +49,9 @@ export default function LoginScreen({ navigation }) {
                 const loggedInUser = await login(email, password);
                 if (!loggedInUser) {
                     Alert.alert("Error", "Credenciales incorrectas")
-                } else if (loggedInUser?.username === "alex@example.com") {
+                } else if (loggedInUser?.rol === "USUARIO") {
                     navigation.replace("UserStack");
-                } else if (loggedInUser?.userId === userId) {
+                } else if (loggedInUser?.rol === "PROFESIONAL") {
                     navigation.replace("MedicStack");
                 }
                 setErrorMessage(false)
