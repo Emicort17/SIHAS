@@ -12,6 +12,7 @@ import java.util.List;
 @Repository
 public interface FoodFoodScheduleRepository extends JpaRepository<FoodFoodSchedule, Long> {
     void deleteAllByIdFoodFoodSchedule(Long idFoodSchedule);
+
     @Query("SELECT new utez.edu.mx.sihas.controller.summary.NutritionSummaryDto(" +
             "SUM(f.calories), SUM(f.proteins), SUM(f.carbohydrates), SUM(f.fats)) " +
             "FROM FoodFoodSchedule ffs " +

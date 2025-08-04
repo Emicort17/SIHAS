@@ -6,11 +6,21 @@ import HealthMetricsCard from "./components/HealthMetricsCard";
 import ChangePasswordCard from "./components/ChangePasswordCard";
 import WelcomeModal from "./components/WelcomeModal";
 import BiologicalDataCard from "./components/BiologicalDataCard";
+import { useAuth } from "../auth/context/AuthContext";
 
 export default function Profile() {
   const [isLogoutCardPressed, setIsLogoutCardPressed] = useState(false);
   const [showModal, setShowModal] = useState(true);
   const [biologicalData, setBiologicalData] = useState(null);
+  const { logout } = useAuth();
+  
+  const handleLogout = () => {
+    try {
+      logout()
+    } catch (err){
+      console.error(err);
+    }
+  }
 
   return (
     <SafeAreaView edges={["top"]}>
@@ -67,7 +77,7 @@ export default function Profile() {
                     color="#D32F2F"
                     size={24}
                   />
-                  <Text style={[styles.title, { marginLeft: 10 }]}>
+                  <Text onPress={() => {handleLogout()}} style={[styles.title, { marginLeft: 10 }]}>
                     Cerrar Sesión
                   </Text>
                 </View>

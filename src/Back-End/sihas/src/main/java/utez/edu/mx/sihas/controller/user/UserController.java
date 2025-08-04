@@ -47,5 +47,4 @@ public class UserController {
     public PatientSummaryDto getSummary(@PathVariable Long userId) {
         return patientSummaryService.getSummaryForUser(userId);
     }
-
 }
