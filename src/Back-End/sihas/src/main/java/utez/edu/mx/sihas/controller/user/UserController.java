@@ -43,8 +43,9 @@ public class UserController {
     }
 
     @GetMapping("/summary/{userId}")
-    public ResponseEntity<PatientSummaryDto> getSummary(@PathVariable Long userId) {
-        return ResponseEntity.ok(patientSummaryService.getSummaryForUser(userId));
+    @ResponseBody
+    public PatientSummaryDto getSummary(@PathVariable Long userId) {
+        return patientSummaryService.getSummaryForUser(userId);
     }
 
 }

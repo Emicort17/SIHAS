@@ -1,6 +1,5 @@
 package utez.edu.mx.sihas.service.summary;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import utez.edu.mx.sihas.controller.summary.NutritionSummaryDto;
@@ -29,11 +28,9 @@ public class PatientSummaryService {
         LocalDate today = LocalDate.now();
         LocalDate weekAgo = today.minusDays(6);
 
-        // Obtener resumen nutricional (fibras actualmente no se calcula -> se pone 0.0)
         NutritionSummaryDto nutrition = foodFoodScheduleRepository.getNutritionSummaryForUser(userId, weekAgo);
         if (nutrition == null) nutrition = new NutritionSummaryDto(0.0, 0.0, 0.0, 0.0);
 
-        // Obtener horas de sueño por día (lista de 7)
         List<Double> sleepHours = new ArrayList<>();
         for (int i = 0; i < 7; i++) {
             LocalDate day = weekAgo.plusDays(i);
@@ -41,7 +38,6 @@ public class PatientSummaryService {
             sleepHours.add(hours != null ? hours : 0.0);
         }
 
-        // Obtener ejercicios realizados en la semana
         Integer currentExerciseCount = exerciseRepository.countExercisesForUserSince(userId, weekAgo);
 
         int exerciseGoal = 5;
