@@ -20,7 +20,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_usuario")
-    private Long id_user;
+    private Long id;
 
     @Column(name = "nombre", columnDefinition = "VARCHAR(30)")
     private String name;
@@ -113,11 +113,11 @@ public class User {
     }
 
     public Long getId_user() {
-        return id_user;
+        return id;
     }
 
     public void setId_user(Long id_user) {
-        this.id_user = id_user;
+        this.id = id_user;
     }
 
     public Exercise getExercise() {

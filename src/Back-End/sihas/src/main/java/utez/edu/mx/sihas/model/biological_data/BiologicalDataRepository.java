@@ -4,4 +4,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BiologicalDataRepository extends JpaRepository <BiologicalData,Long>{
+    BiologicalData findTopByUserIdOrderByDateDesc(Long userId);
 }

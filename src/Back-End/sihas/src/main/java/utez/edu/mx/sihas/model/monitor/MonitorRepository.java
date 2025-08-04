@@ -14,7 +14,7 @@ public interface MonitorRepository extends JpaRepository<Monitor,Long>{
     @Query("""
         SELECT m FROM MonitorUser mu
         JOIN mu.monitor m
-        WHERE mu.user.id_user = :idUsuario
+        WHERE mu.user.id= :idUsuario
     """)
     List<Monitor> findMonitoreosPorUsuario(@Param("idUsuario") Long idUsuario);
 }
