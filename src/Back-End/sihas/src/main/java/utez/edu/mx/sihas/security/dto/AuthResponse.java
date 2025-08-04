@@ -4,13 +4,15 @@ public class AuthResponse {
     private String jwt;
     private Long userId;
     private String username;
+    private String rol;
     private long expiration;
 
-    public AuthResponse(String jwt, Long userId, String username, long expiration) {
+    public AuthResponse(String jwt, Long userId, String username ,String rol, long expiration) {
         this.jwt = jwt;
         this.userId = userId;
         this.username = username;
         this.expiration = expiration;
+        this.rol = rol;
     }
 
     public String getJwt() {
@@ -43,5 +45,13 @@ public class AuthResponse {
 
     public void setExpiration(long expiration) {
         this.expiration = expiration;
+    }
+
+    public String getRol() {
+        return rol;
+    }
+
+    public void setRol(String rol) {
+        this.rol = rol;
     }
 }

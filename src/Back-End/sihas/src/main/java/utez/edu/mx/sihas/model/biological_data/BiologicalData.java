@@ -1,5 +1,6 @@
 package utez.edu.mx.sihas.model.biological_data;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import utez.edu.mx.sihas.model.user.User;
 
@@ -33,6 +34,7 @@ public class BiologicalData {
 
     @OneToOne
     @JoinColumn(name = "id_usuario")
+    @JsonIgnore
     private User user;
 
     public Double getHeight() {
@@ -102,14 +104,14 @@ public class BiologicalData {
     public BiologicalData() {
     }
 
-    public BiologicalData(Double height, Integer age, Date date, Long idData, Double bmi, Double weight, Double fatPercentage) {
+    public BiologicalData(Date date, Double weight, Double height, Integer age, Double bmi, Double fatPercentage, User user) {
+        this.date = date;
+        this.weight = weight;
         this.height = height;
         this.age = age;
-        this.date = date;
-        this.idData = idData;
         this.bmi = bmi;
-        this.weight = weight;
         this.fatPercentage = fatPercentage;
+        this.user = user;
     }
 
     @Override
