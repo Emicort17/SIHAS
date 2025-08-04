@@ -1,5 +1,6 @@
 package utez.edu.mx.sihas.model.biological_data;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import utez.edu.mx.sihas.model.user.User;
 
@@ -10,118 +11,119 @@ import java.util.Date;
 public class BiologicalData {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_datos;
-    @Column(name = "fecha",columnDefinition = "DATE")
-    private Date fecha;
+    @Column(name = "id_datos_biologicos")
+    private Long idData;
 
-    @Column(name = "peso",columnDefinition = "DOUBLE")
-    private double peso;
+    @Column(name = "fecha", columnDefinition = "DATE")
+    private Date date;
 
-    @Column(name = "altura",columnDefinition = "DOUBLE")
-    private double altura;
+    @Column(name = "peso", columnDefinition = "DOUBLE")
+    private Double weight;
 
-    @Column(name = "edad",columnDefinition = "INTEGER")
-    private int edad;
+    @Column(name = "altura", columnDefinition = "DOUBLE")
+    private Double height;
 
-    @Column(name = "imc",columnDefinition = "DOUBLE")
-    private double imc;
+    @Column(name = "edad", columnDefinition = "INTEGER")
+    private Integer age;
 
-    @Column(name = "porcentaje_Grasa",columnDefinition = "DOUBLE")
-    private double porcentajeGrasa;
+    @Column(name = "imc", columnDefinition = "DOUBLE")
+    private Double bmi;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User usuario;
+    @Column(name = "porcentaje_Grasa", columnDefinition = "DOUBLE")
+    private Double fatPercentage;
+
+    @OneToOne
+    @JoinColumn(name = "id_usuario")
+    @JsonIgnore
+    private User user;
+
+    public Double getHeight() {
+        return height;
+    }
+
+    public void setHeight(Double height) {
+        this.height = height;
+    }
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public Long getIdData() {
+        return idData;
+    }
+
+    public void setIdData(Long idData) {
+        this.idData = idData;
+    }
+
+    public Double getBmi() {
+        return bmi;
+    }
+
+    public void setBmi(Double bmi) {
+        this.bmi = bmi;
+    }
+
+    public Double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(Double weight) {
+        this.weight = weight;
+    }
+
+    public Double getFatPercentage() {
+        return fatPercentage;
+    }
+
+    public void setFatPercentage(Double fatPercentage) {
+        this.fatPercentage = fatPercentage;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public BiologicalData() {
     }
 
-    public BiologicalData(Long id_datos, Date fecha, double peso, double altura, int edad, double imc, double porcentajeGrasa, User usuario) {
-        this.id_datos = id_datos;
-        this.fecha = fecha;
-        this.peso = peso;
-        this.altura = altura;
-        this.edad = edad;
-        this.imc = imc;
-        this.porcentajeGrasa = porcentajeGrasa;
-        this.usuario = usuario;
-    }
-
-    public Long getId_datos() {
-        return id_datos;
-    }
-
-    public void setId_datos(Long id_datos) {
-        this.id_datos = id_datos;
-    }
-
-    public Date getFecha() {
-        return fecha;
-    }
-
-    public void setFecha(Date fecha) {
-        this.fecha = fecha;
-    }
-
-    public double getPeso() {
-        return peso;
-    }
-
-    public void setPeso(double peso) {
-        this.peso = peso;
-    }
-
-    public double getAltura() {
-        return altura;
-    }
-
-    public void setAltura(double altura) {
-        this.altura = altura;
-    }
-
-    public int getEdad() {
-        return edad;
-    }
-
-    public void setEdad(int edad) {
-        this.edad = edad;
-    }
-
-    public double getImc() {
-        return imc;
-    }
-
-    public void setImc(double imc) {
-        this.imc = imc;
-    }
-
-    public double getPorcentajeGrasa() {
-        return porcentajeGrasa;
-    }
-
-    public void setPorcentajeGrasa(double porcentajeGrasa) {
-        this.porcentajeGrasa = porcentajeGrasa;
-    }
-
-    public User getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(User usuario) {
-        this.usuario = usuario;
+    public BiologicalData(Date date, Double weight, Double height, Integer age, Double bmi, Double fatPercentage, User user) {
+        this.date = date;
+        this.weight = weight;
+        this.height = height;
+        this.age = age;
+        this.bmi = bmi;
+        this.fatPercentage = fatPercentage;
+        this.user = user;
     }
 
     @Override
     public String toString() {
         return "BiologicalData{" +
-                "id_datos=" + id_datos +
-                ", fecha=" + fecha +
-                ", peso=" + peso +
-                ", altura=" + altura +
-                ", edad=" + edad +
-                ", imc=" + imc +
-                ", porcentajeGrasa=" + porcentajeGrasa +
-                ", usuario=" + usuario +
+                "idData=" + idData +
+                ", date=" + date +
+                ", weight=" + weight +
+                ", height=" + height +
+                ", age=" + age +
+                ", bmi=" + bmi +
+                ", fatPercentage=" + fatPercentage +
                 '}';
     }
 }

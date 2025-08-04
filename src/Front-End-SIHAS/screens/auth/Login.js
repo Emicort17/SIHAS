@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState , useEffect} from "react";
 import { Text, StyleSheet, View, TextInput, SafeAreaView, TouchableOpacity, Image } from "react-native";
 import Icon from 'react-native-vector-icons/Feather';
 import { useAuth } from "./context/AuthContext";
@@ -7,48 +7,52 @@ export default function LoginScreen({ navigation }) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [erroMessage, setErrorMessage] = useState(false);
+    const [emailError, setEmailError] = useState(false);
+    const [passwordError, setPasswordError] = useState(false);
     const [passwordVisible, setPasswordVisible] = useState(false);
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const passwordRegex = /^(?=(?:[^A-Z]*[A-Z]){1}[^A-Z]*$)[A-Za-z\d]{8}$/;
+
     const { login } = useAuth();
 
     const handleInputChange = (email) => {
-        if (!email) {
-            setErrorMessage(true)
-        } else {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (emailRegex.test(email) === true) {
-                setEmail(email)
-            } else {
-                setErrorMessage(true)
-            }
-        }
+        setEmail(email)
     };
 
     const handlePasswordChange = (password) => {
-        if (!password) {
-            setErrorMessage(true)
-        } else {
-            const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
-            if (passwordRegex.test(password) === true) {
-                setPassword(password)
-            } else {
-                setErrorMessage(true)
-            }
-        }
+        setPassword(password)
     };
+
+    useEffect(() => {
+        if (email === "") {
+            setEmailError(false);
+        } else {
+            setEmailError(!emailRegex.test(email));
+        }
+    }, [email]);
+
+    useEffect(() => {
+        if (password === "") {
+            setPasswordError(false);
+        } else {
+            setPasswordError(!passwordRegex.test(password));
+        }
+    }, [password]);
+
 
     const handleLogin = async () => {
         try {
-            if (password === '' && email === '') {
+            if (!email || !password || emailError || passwordError) {
                 setErrorMessage(true)
             } else {
                 setErrorMessage(false)
                 const loggedInUser = await login(email, password);
                 if (!loggedInUser) {
                     Alert.alert("Error", "Credenciales incorrectas")
-                } else if (loggedInUser?.role === "user") {
-                    navigation.replace("UserStack");
-                } else if (loggedInUser?.role === "admin") {
-                    navigation.replace("MedicStack");
+                } else if (loggedInUser?.rol === "USUARIO") {
+                    
+                } else if (loggedInUser?.rol === "PROFESIONAL") {
+                    
                 }
                 setErrorMessage(false)
             }

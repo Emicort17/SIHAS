@@ -1,77 +1,93 @@
 package utez.edu.mx.sihas.model.exercise;
 
-public class Exercise {
-  import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import utez.edu.mx.sihas.model.user.User;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalTime;
+
+
 
 @Entity
 @Table(name = "Ejercicio")
 public class Exercise {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_ejecicio;
+    @Column(name = "id_ejercicio")
+    private Long idExercise;
 
     @Column(name = "fecha", columnDefinition = "DATE")
-    private Date fecha;
+    private LocalDate date;
+
+    @Column(name = "hora", columnDefinition = "TIME")
+    private LocalTime time;
 
     @Column(name = "estado", columnDefinition = "BOOLEAN")
-    private boolean estado;
+    private Boolean status;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User usuario;
+    @OneToOne
+    @JoinColumn(name = "id_usuario")
+    @JsonIgnore
+    private User user;
+
+    public Boolean getStatus() {
+        return status;
+    }
+
+    public void setStatus(Boolean status) {
+        this.status = status;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public LocalTime getTime() {
+        return time;
+    }
+
+    public void setTime(LocalTime time) {
+        this.time = time;
+    }
+
+    public Long getIdExercise() {
+        return idExercise;
+    }
+
+    public void setIdExercise(Long idExercise) {
+        this.idExercise = idExercise;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public Exercise() {
     }
 
-    public Exercise(Long id_ejecicio, Date fecha, boolean estado, User usuario) {
-        this.id_ejecicio = id_ejecicio;
-        this.fecha = fecha;
-        this.estado = estado;
-        this.usuario = usuario;
-    }
-
-    public Long getId_ejecicio() {
-        return id_ejecicio;
-    }
-
-    public void setId_ejecicio(Long id_ejecicio) {
-        this.id_ejecicio = id_ejecicio;
-    }
-
-    public boolean isEstado() {
-        return estado;
-    }
-
-    public void setEstado(boolean estado) {
-        this.estado = estado;
-    }
-
-    public Date getFecha() {
-        return fecha;
-    }
-
-    public void setFecha(Date fecha) {
-        this.fecha = fecha;
-    }
-
-    public User getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(User usuario) {
-        this.usuario = usuario;
+    public Exercise( LocalDate date, LocalTime time, Boolean status, User user) {
+        this.date = date;
+        this.time = time;
+        this.status = status;
+        this.user = user;
     }
 
     @Override
     public String toString() {
         return "Exercise{" +
-                "id_ejecicio=" + id_ejecicio +
-                ", fecha=" + fecha +
-                ", estado=" + estado +
-                ", usuario=" + usuario +
+                "idExercise=" + idExercise +
+                ", date=" + date +
+                ", status=" + status +
+                ", user=" + user +
                 '}';
     }
 }

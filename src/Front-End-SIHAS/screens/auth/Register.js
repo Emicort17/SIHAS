@@ -1,92 +1,79 @@
-import React, { useState } from "react";
-import { Text, StyleSheet, View, TextInput, SafeAreaView, TouchableOpacity, Image, ScrollView } from "react-native";
+import React, { useState, useEffect } from "react";
+import { Text, StyleSheet, View, TextInput, SafeAreaView, TouchableOpacity, Image, ScrollView, Switch, Alert, } from "react-native";
 import Icon from 'react-native-vector-icons/Feather';
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useAuth } from "../auth/context/AuthContext";
 
-export default function RegisterScreen() {
+export default function RegisterScreen({ navigation }) {
+    const [doctor, setDoctor] = useState(false);
     const [email, setEmail] = useState("");
     const [name, setName] = useState("");
     const [Lastname, setLastname] = useState("");
     const [SecondLastname, setSecondLastname] = useState("");
     const [password, setPassword] = useState("");
+    const [trypassword, setTryPassword] = useState("");
     const [erroMessage, setErrorMessage] = useState(false);
     const [erroPasswordMessage, setErroPasswordMessage] = useState(false);
     const [passwordVisible, setPasswordVisible] = useState(false); 
 
+    const { Register } = useAuth();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const textRegex = /^[a-zA-Z]+$/;
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+    const handleInputEmailChange = (email) => setEmail(email);
+    const handleInputNameChange = (name) => setName(name);
+    const handleInputLastNameChange = (lastname) => setLastname(lastname);
+    const handleInputSecondLastNameChange = (secondLastname) => setSecondLastname(secondLastname);
+    const handlePasswordChange = (password) => setPassword(password);
+    const verifyPassword = (value) => { setTryPassword(value); }
 
-    const handleInputEmailChange = (email) => {
-        if (!email) {
-            setErrorMessage(true)
+    useEffect(() => {
+        if (trypassword === "") {
+            setErroPasswordMessage(false);
         } else {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (emailRegex.test(email) === true) {
-                setEmail(email)
-            } else {
-                setErrorMessage(true)
-            }
+            setErroPasswordMessage(trypassword !== password);
         }
-    };
+    }, [trypassword, password]);
 
-
-    const handleInputNameChange = (name) => {
-        if (!name) {
-            setErrorMessage(true)
+    useEffect(() => {
+        if (email === "") {
+            setErrorMessage(false);
         } else {
-            const textRegex = /^[a-zA-Z]+$/;
-            if (textRegex.test(name) === true) {
-                setName(name)
-            } else {
-                setErrorMessage(true)
-            }
+            setErrorMessage(!emailRegex.test(email));
         }
-    };
+    }, [email]);
 
-    const handleInputLastNameChange = (Lastname) => {
-        if (!Lastname) {
-            setErrorMessage(true)
+    useEffect(() => {
+        if (name === "") {
+            setErrorMessage(false);
         } else {
-            const textRegex = /^[a-zA-Z]+$/;
-            if (textRegex.test(Lastname) === true) {
-                setLastname(Lastname)
-            } else {
-                setErrorMessage(true)
-            }
+            setErrorMessage(!textRegex.test(name));
         }
-    };
+    }, [name]);
 
-    const handleInputSecondLastNameChange = (Lastname) => {
-        if (!Lastname) {
-            setErrorMessage(true)
+    useEffect(() => {
+        if (Lastname === "") {
+            setErrorMessage(false);
         } else {
-            const textRegex = /^[a-zA-Z]+$/;
-            if (textRegex.test(Lastname) === true) {
-                setSecondLastname(Lastname)
-            } else {
-                setErrorMessage(true)
-            }
+            setErrorMessage(!textRegex.test(Lastname));
         }
-    };
+    }, [Lastname]);
 
-
-    const handlePasswordChange = (password) => {
-        if (!password) {
-            setErrorMessage(true)
+    useEffect(() => {
+        if (SecondLastname === "") {
+            setErrorMessage(false);
         } else {
-            const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
-            if (passwordRegex.test(password) === true) {
-                setPassword(password)
-            } else {
-                setErrorMessage(true)
-            }
+            setErrorMessage(!textRegex.test(SecondLastname));
         }
-    };
+    }, [SecondLastname]);
 
-
-    const verifyPassword = (trypassword) => {
-        if (trypassword != password) {
-            setErroPasswordMessage(true)
+    useEffect(() => {
+        if (password === "") {
+            setErrorMessage(false);
+        } else {
+            setErrorMessage(!passwordRegex.test(password));
         }
-    }
+    }, [password]);
+
 
     const toggleVisibility = () => {
         setPasswordVisible(!passwordVisible)
@@ -98,11 +85,13 @@ export default function RegisterScreen() {
                 setErrorMessage(true)
                 setErroPasswordMessage(true)
             } else {
-                // Llamada a mi api
-        await AsyncStorage.setItem("formCompleted", "false");
-        const value = await AsyncStorage.getItem("formCompleted");
-        console.log("Valor guardado en AsyncStorage:", value); // Debería imprimir 'false'
-
+                const RegisterUser = await Register(name, Lastname, SecondLastname, email, password, 'True', doctor)
+                if (!RegisterUser) {
+                    Alert.alert("Error", "No se pudo registrar al usuario")
+                } else if (RegisterUser.result) {
+                    navigation.replace("Login")
+                }
+                setErrorMessage(false)
             }
         } catch {
             setErrorMessage('');
@@ -172,6 +161,17 @@ export default function RegisterScreen() {
                     </View>
                 </View>
                 {erroPasswordMessage && (<Text style={styles.linkError}>Por Favor coloca una contraseña valida</Text>)}
+
+
+                <View style={styles.div_select}>
+                    <Text style={styles.label_select}>Eres Doctor o Entrenador</Text>
+                    <Switch
+                        value={doctor}
+                        onValueChange={setDoctor}
+                        trackColor={{ false: "#ccc", true: "#b4f0c2" }}
+                        thumbColor={doctor ? "#4caf50" : "#f4f3f4"}
+                    />
+                </View>
 
                 <View style={styles.divbutton}>
                     <TouchableOpacity style={styles.button} onPress={handleRegister}>
@@ -286,4 +286,17 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    label_select: {
+        fontSize: 16,
+        marginRight: 2,
+        color: '#333'
+    },
+    div_select: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: '8r0%',
+        alignSelf: 'center',
+        marginBottom: 10
+    }
 })

@@ -31,8 +31,8 @@ export default function App() {
               <Stack.Screen name="Login" component={LoginScreen} />
               <Stack.Screen name="Register" component={RegisterScreen} />
             </>
-          ) : user.role === "user" ? (
-            <Stack.Screen name="UserTabs" component={UserTabs} />
+          ) : user.rol === "USUARIO" ? (
+            <Stack.Screen name="UserStack" component={UserNavigator} />
           ) : (
             <Stack.Screen name="MedicStack" component={MedicNavigator} />
           )}
