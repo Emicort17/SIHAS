@@ -82,13 +82,14 @@ export default function HealthMetricsCard({ data }) {
     
     if (!isNaN(altura) && !isNaN(peso) && altura > 0) {
       const imc = peso / (altura * altura);
-
+      
       if (imc < 10 || imc > 60) {
         setImcError(
           "Valores inválidos: el IMC calculado está fuera de un rango realista."
         );
         return;
       }
+       setEditing(false);
       setMetrics({ ...metrics, imc: imc.toFixed(1) });
     }
   };
@@ -236,8 +237,8 @@ const styles = StyleSheet.create({
   buttonCancel: {
     width: "45%",
     height: 45,
-    backgroundColor: "#FFFFFF",
-    borderColor: "#C8E6C9",
+    backgroundColor: "#EBECF0",
+    borderColor: "#DDDDDD",
     borderWidth: 1,
     borderRadius: 12,
     justifyContent: "center",
@@ -249,7 +250,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   buttonTextCancel: {
-    color: "#C8E6C9",
+    color: "#8C8C8C",
     fontSize: 16,
     fontWeight: "600",
   },

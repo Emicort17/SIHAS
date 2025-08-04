@@ -13,7 +13,7 @@ export default function RegisterScreen({ navigation }) {
     const [trypassword, setTryPassword] = useState("");
     const [erroMessage, setErrorMessage] = useState(false);
     const [erroPasswordMessage, setErroPasswordMessage] = useState(false);
-    const [passwordVisible, setPasswordVisible] = useState(false);
+    const [passwordVisible, setPasswordVisible] = useState(false); 
 
     const { Register } = useAuth();
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

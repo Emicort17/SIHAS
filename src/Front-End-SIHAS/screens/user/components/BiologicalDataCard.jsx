@@ -7,6 +7,7 @@ import {
   StyleSheet,
 } from "react-native";
 import { Icon } from "@rneui/base";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function BiologicalDataCard({ onSave }) {
   const [data, setData] = useState({
@@ -71,13 +72,15 @@ export default function BiologicalDataCard({ onSave }) {
     );
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!isFormValid()) {
       validateField("edad", data.edad);
       validateField("peso", data.peso);
       validateField("altura", data.altura);
       return;
     }
+    
+    await AsyncStorage.setItem('formCompleted', 'true');
     onSave(data);
   };
 
@@ -89,7 +92,7 @@ export default function BiologicalDataCard({ onSave }) {
           type="material-community"
           color="#3B82F6"
           size={30}
-        />{" "}
+        />
         <Text style={styles.title}>Datos biológicos</Text>
       </View>
 

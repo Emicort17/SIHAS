@@ -102,6 +102,7 @@ export default function LoginScreen({ navigation }) {
             </View>
 
             <Text style={styles.linkRegister}>¿Aún no tienes una cuenta?
+
                 <Text style={styles.register} onPress={() => navigation.navigate('Register')}> Registrate aqui</Text>
             </Text>
 

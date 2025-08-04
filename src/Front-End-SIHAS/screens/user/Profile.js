@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { View, Text, Alert, StyleSheet, TouchableOpacity, ScrollView, SafeAreaView } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  SafeAreaView,
+} from "react-native";
 import { Icon } from "@rneui/base";
 import PersonalInformationCard from "./components/PersonalInformationCard";
 import HealthMetricsCard from "./components/HealthMetricsCard";
@@ -22,6 +29,10 @@ export default function Profile() {
     }
   }
 
+  const handleBiologicalDataSave = (data) => {
+    setBiologicalData(data);
+  };
+
   return (
     <SafeAreaView edges={["top"]}>
       <ScrollView
@@ -34,27 +45,23 @@ export default function Profile() {
               nombre: "Victor Alejandro",
               apellidoPaterno: "Oliva",
               apellidoMaterno: "Quiroz",
-              edad: null,
+              edad: biologicalData ? biologicalData.edad : null, // ← Edad dinámica
               email: "alejandro2312@gmail.com",
             }}
           />
 
           {!biologicalData ? (
-            <BiologicalDataCard onSave={(data) => setBiologicalData(data)} />
+            <BiologicalDataCard onSave={handleBiologicalDataSave} />
           ) : (
             <HealthMetricsCard
               data={{
-                altura: "1.73",
-                peso: "73",
-                imc: "24.4",
+                altura: biologicalData.altura, // ← Usar datos reales
+                peso: biologicalData.peso,     // ← Usar datos reales
+                imc: calculateIMC(biologicalData.peso, biologicalData.altura), // ← Calcular IMC real
               }}
             />
           )}
 
-          <WelcomeModal
-            visible={showModal}
-            onClose={() => setShowModal(false)}
-          />
           <ChangePasswordCard />
 
           <TouchableOpacity
@@ -90,6 +97,19 @@ export default function Profile() {
   );
 }
 
+// Función helper para calcular el IMC real
+const calculateIMC = (peso, altura) => {
+  const pesoNum = parseFloat(peso);
+  const alturaNum = parseFloat(altura);
+  
+  if (isNaN(pesoNum) || isNaN(alturaNum) || alturaNum === 0) {
+    return "0.0";
+  }
+  
+  const imc = pesoNum / (alturaNum * alturaNum);
+  return imc.toFixed(1);
+};
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -100,7 +120,7 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   containerCard: {
-    backgroundColor: "#FFEBEE", 
+    backgroundColor: "#FFEBEE",
     borderRadius: 12,
     padding: 16,
     width: "100%",
@@ -109,9 +129,9 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    levation: 3,
+    elevation: 3,
     borderWidth: 1,
-    borderColor: "#FFCDD2", 
+    borderColor: "#FFCDD2",
   },
   touchableCard: {
     width: "100%",
@@ -120,7 +140,7 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   containerCardPressed: {
-    backgroundColor: "#FFCDD2", 
+    backgroundColor: "#FFCDD2",
     opacity: 0.95,
   },
   ContainerHead: {

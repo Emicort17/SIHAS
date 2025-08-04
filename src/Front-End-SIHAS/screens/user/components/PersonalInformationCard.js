@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import {
   View,
   Text,
@@ -20,6 +20,10 @@ export default function PersonalInformationCard({ title, data }) {
     email: "",
   });
 
+  useEffect(() => {
+    setForm(data);
+  }, [data]);
+
   const handleChange = (dato, value) => {
     setForm((prevForm) => ({ ...prevForm, [dato]: value }));
 
@@ -29,7 +33,11 @@ export default function PersonalInformationCard({ title, data }) {
       case "nombre":
         if (!value.trim()) {
           errorMessage = "Campo Obligatorio";
-        } else if (!/^([A-ZÑÁÉÍÓÚ]{1}[a-zñáéíóú]+)(\s[A-ZÑÁÉÍÓÚ]{1}[a-zñáéíóú]+)?$/.test(value)) {
+        } else if (
+          !/^([A-ZÑÁÉÍÓÚ]{1}[a-zñáéíóú]+)(\s[A-ZÑÁÉÍÓÚ]{1}[a-zñáéíóú]+)?$/.test(
+            value
+          )
+        ) {
           errorMessage = "Cada nombre debe iniciar con mayúscula.";
         }
         break;
@@ -140,14 +148,13 @@ export default function PersonalInformationCard({ title, data }) {
 
       {editing ? (
         <>
-          <Text style={styles.label}>Email:</Text>
           <TextInput
-            style={styles.input}
+            style={[styles.input, { backgroundColor: "#E0E0E0" }]}
             value={form.email}
-            onChangeText={(text) => handleChange("email", text)}
+            editable={false}
+            selectTextOnFocus={false}
             keyboardType="email-address"
           />
-          {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
 
           <Text style={styles.label}>Nombre:</Text>
           <TextInput
@@ -179,14 +186,20 @@ export default function PersonalInformationCard({ title, data }) {
             <Text style={styles.errorText}>{errors.apellidoMaterno}</Text>
           )}
 
-          <Text style={styles.label}>Edad:</Text>
-          <TextInput
-            style={styles.input}
-            value={form.edad}
-            onChangeText={(text) => handleChange("edad", text)}
-            keyboardType="numeric"
-          />
-          {errors.edad && <Text style={styles.errorText}>{errors.edad}</Text>}
+          {editing && (form.edad || form.edad === "") ? (
+            <>
+              <Text style={styles.label}>Edad:</Text>
+              <TextInput
+                style={styles.input}
+                value={form.edad}
+                onChangeText={(text) => handleChange("edad", text)}
+                keyboardType="numeric"
+              />
+              {errors.edad && (
+                <Text style={styles.errorText}>{errors.edad}</Text>
+              )}
+            </>
+          ) : null}
 
           <View style={styles.buttonGroup}>
             <TouchableOpacity
@@ -203,13 +216,15 @@ export default function PersonalInformationCard({ title, data }) {
       ) : (
         <>
           <Text style={styles.text}>
-            <Text style={styles.label}>Nombre:</Text> {form.nombre} {form.apellidoPaterno} {form.apellidoMaterno}
+            <Text style={styles.label}>Nombre:</Text> {form.nombre}{" "}
+            {form.apellidoPaterno} {form.apellidoMaterno}
           </Text>
           <Text style={styles.text}>
             <Text style={styles.label}>Email:</Text> {form.email}
           </Text>
           <Text style={styles.text}>
-            <Text style={styles.label}>Edad:</Text> {form.edad ? form.edad : "Su edad aun no la ha registrado"}
+            <Text style={styles.label}>Edad:</Text>{" "}
+            {form.edad ? form.edad : "Su edad aun no la ha registrado"}
           </Text>
         </>
       )}
@@ -284,8 +299,8 @@ const styles = StyleSheet.create({
   buttonCancel: {
     width: "45%",
     height: 45,
-    backgroundColor: "#FFFFFF",
-    borderColor: "#C8E6C9",
+    backgroundColor: "#EBECF0",
+    borderColor: "#DDDDDD",
     borderWidth: 1,
     borderRadius: 12,
     justifyContent: "center",
@@ -297,7 +312,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   buttonTextCancel: {
-    color: "#C8E6C9",
+    color: "#8C8C8C",
     fontSize: 16,
     fontWeight: "600",
   },
