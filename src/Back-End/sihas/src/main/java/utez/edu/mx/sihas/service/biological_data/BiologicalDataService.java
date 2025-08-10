@@ -32,47 +32,69 @@ public class BiologicalDataService {
     }
 
     @Transactional(rollbackFor = {SQLException.class})
-    public ResponseEntity<Message> save(BiologicalDataDto biologicalData) {
-        if (biologicalData.getDate() == null) {
+    public ResponseEntity<Message> save(BiologicalDataDto biologicalDataDto) {
+        if (biologicalDataDto.getDate() == null) {
             return new ResponseEntity<>(new Message("La fecha es necesaria", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
         }
-        if (biologicalData.getWeight() == null || biologicalData.getWeight() == 0) {
+        if (biologicalDataDto.getWeight() == null || biologicalDataDto.getWeight() == 0) {
             return new ResponseEntity<>(new Message("El peso el necesario", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
         }
-        if (biologicalData.getHeight() == null || biologicalData.getHeight() ==0) {
+        if (biologicalDataDto.getHeight() == null || biologicalDataDto.getHeight() ==0) {
             return new ResponseEntity<>(new Message("La altura es necesaria ", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
         }
-        if (biologicalData.getAge()== null ||  biologicalData.getAge() ==0) {
+        if (biologicalDataDto.getAge()== null ||  biologicalDataDto.getAge() ==0) {
             return new ResponseEntity<>(new Message("La edad es necesaria", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
         }
-        if (biologicalData.getBmi() == null ||  biologicalData.getBmi() ==0) {
+        if (biologicalDataDto.getBmi() == null ||  biologicalDataDto.getBmi() ==0) {
             return new ResponseEntity<>(new Message("El bmi es necesario", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
         }
-        if (biologicalData.getFatPercentage() == null ||  biologicalData.getFatPercentage() ==0) {
+        if (biologicalDataDto.getFatPercentage() == null ||  biologicalDataDto.getFatPercentage() ==0) {
             return new ResponseEntity<>(new Message("El porcentaje de grasa es necesario", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
         }
 
-        User user = userRepository.findById(biologicalData.getUser())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        Optional<User> userOptional = userRepository.findById(biologicalDataDto.getUser());
 
-        BiologicalData biolicaDataSave = new BiologicalData(biologicalData.getDate(),biologicalData.getWeight(),biologicalData.getHeight()
-                ,biologicalData.getAge(),biologicalData.getBmi(),biologicalData.getFatPercentage(), user);
+        if (userOptional.isEmpty()) {
+            return new ResponseEntity<>(new Message("El usuario no existe", TypesResponse.ERROR), HttpStatus.NOT_FOUND);
+        }
 
-        biolicaDataSave = biologicalDataRepository.saveAndFlush(biolicaDataSave);
-        if (biolicaDataSave == null) {
-            return new ResponseEntity<>(new Message("La biogical Data no se pudo ingresar", TypesResponse.ERROR), HttpStatus.BAD_REQUEST);
+        Optional<BiologicalData> existingBioData = biologicalDataRepository.findByUser(userOptional.get());
+
+        if (existingBioData.isPresent()) {
+            return new ResponseEntity<>(new Message("Este usuario ya tiene datos biológicos asignados", TypesResponse.ERROR), HttpStatus.BAD_REQUEST);
+        }
+
+        User user = userOptional.get();
+
+        BiologicalData biologicalData = new BiologicalData(
+                biologicalDataDto.getDate(),
+                biologicalDataDto.getWeight(),
+                biologicalDataDto.getHeight(),
+                biologicalDataDto.getAge(),
+                biologicalDataDto.getBmi(),
+                biologicalDataDto.getFatPercentage(),
+                user
+        );
+
+        biologicalData = biologicalDataRepository.saveAndFlush(biologicalData);
+
+        if (biologicalData == null) {
+            return new ResponseEntity<>(new Message("los datos biologicos no se pudieron ingresar", TypesResponse.ERROR), HttpStatus.BAD_REQUEST);
 
         }
 
-        return new ResponseEntity<>(new Message(biolicaDataSave, "La biogical Data se registro correctamente", TypesResponse.SUCCESS), HttpStatus.OK);
+        return new ResponseEntity<>(new Message(biologicalData, "Los datos biologicos se registraron correctamente", TypesResponse.SUCCESS), HttpStatus.OK);
     }
-
 
     @Transactional(rollbackFor = {SQLException.class})
     public ResponseEntity<Message> update(BiologicalDataDto biologicalData) {
+        Optional<User> userOptional = userRepository.findById(biologicalData.getUser());
+        if(userOptional.isEmpty()){
+            return new ResponseEntity<>(new Message("El usuario no existe",TypesResponse.ERROR),HttpStatus.NOT_FOUND);
+        }
         Optional<BiologicalData> biologicaDataOptional = biologicalDataRepository.findById(biologicalData.getIdData());
-        if(!biologicaDataOptional.isPresent()){
-            return new ResponseEntity<>(new Message("El user no existe",TypesResponse.ERROR),HttpStatus.NOT_FOUND);
+        if (biologicaDataOptional.isEmpty()) {
+            return new ResponseEntity<>(new Message("no existen estos datos biologicos", TypesResponse.ERROR), HttpStatus.NOT_FOUND);
         }
 
         if (biologicalData.getDate() == null) {
@@ -102,18 +124,25 @@ public class BiologicalDataService {
         bioUpdate.setBmi(biologicalData.getBmi());
         bioUpdate.setFatPercentage(biologicalData.getFatPercentage());
 
-
         bioUpdate = biologicalDataRepository.saveAndFlush(bioUpdate);
 
         if(bioUpdate == null){
-            return new ResponseEntity<>(new Message("La bioligica data no se actualizó",TypesResponse.ERROR),HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Message("Los datos biologicos no se actualizaron",TypesResponse.ERROR),HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(new Message(bioUpdate,"La bioligica data se actualizó correctamente",TypesResponse.SUCCESS),HttpStatus.OK);
+        return new ResponseEntity<>(new Message(bioUpdate,"Los datos biologicos se actualizo correctamente",TypesResponse.SUCCESS),HttpStatus.OK);
     }
 
     @Transactional(readOnly = true)
     public ResponseEntity<Message> findByID(Long  id) {
-        Optional<BiologicalData> bioList = biologicalDataRepository.findById(id);
-        return new ResponseEntity<>(new Message(bioList,"Listado de biologica data", TypesResponse.SUCCESS), HttpStatus.OK);
+        Optional<User> userOptional = userRepository.findById(id);
+        if (userOptional.isEmpty()) {
+            return new ResponseEntity<>(new Message("El usuario no existe", TypesResponse.ERROR), HttpStatus.NOT_FOUND);
+        }
+        Optional<BiologicalData> biologicalData = biologicalDataRepository.findByUser(userOptional.get());
+        if (biologicalData.isEmpty()) {
+            return new ResponseEntity<>(new Message("No se encontraron datos biológicos para este usuario", TypesResponse.WARNING), HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(new Message(biologicalData.get(), "Datos biológicos del usuario", TypesResponse.SUCCESS), HttpStatus.OK);
     }
 }
