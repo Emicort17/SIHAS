@@ -57,6 +57,6 @@ public class AuthController {
                 .map(Rol::getName)
                 .orElse("Sin rol");
 
-        return new AuthResponse(jwt, user.getId_user(), user.getEmail(), rolString,expirationTime);
+        return new AuthResponse(jwt, user.getId_user(), user.getEmail(), rolString,expirationTime, user.isStatus());
     }
 }
