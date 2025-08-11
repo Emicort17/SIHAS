@@ -47,13 +47,18 @@ public class FoodService {
         if (foodDto.getFats()==0) {
             return new ResponseEntity<>(new Message("Las grasas deben ser necesarias", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
         }
+        {
+            if (foodDto.getFiber()==0) {
+                return new ResponseEntity<>(new Message("Las fibras deben ser necesarias", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+            }
+        }
         if (foodDto.getCarbohydrates()==0) {
             return new ResponseEntity<>(new Message("Los carbohidratos deben ser necesarios ", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
         }
 
         Food fodSave = new  Food(foodDto.getName()
-               ,foodDto.getQuantity(),foodDto.getCalories(),foodDto.getProteins()
-               ,foodDto.getFats(),foodDto.getCarbohydrates(), foodDto.getFiber());
+                ,foodDto.getQuantity(),foodDto.getCalories(),foodDto.getProteins()
+                ,foodDto.getFats(),foodDto.getFiber(),foodDto.getCarbohydrates());
 
         fodSave = foodRepository.saveAndFlush(fodSave);
         if (fodSave == null) {
@@ -87,14 +92,12 @@ public class FoodService {
         if (foodDto.getFats()==0) {
             return new ResponseEntity<>(new Message("Las grasas deben ser necesarias", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
         }
+        if (foodDto.getFiber()==0) {
+            return new ResponseEntity<>(new Message("Las fibras deben ser necesarias", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+        }
         if (foodDto.getCarbohydrates()==0) {
             return new ResponseEntity<>(new Message("Los carbohidratos deben ser necesarios ", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
         }
-
-        if(foodDto.getFiber() == 0){
-            return new ResponseEntity<>(new Message("La fibra debe ser necesaria", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
-        }
-
 
         Food foodUpdate = fooOptional.get();
         foodUpdate.setName(foodDto.getName());
@@ -102,8 +105,8 @@ public class FoodService {
         foodUpdate.setCalories(foodDto.getCalories());
         foodUpdate.setProteins(foodDto.getProteins());
         foodUpdate.setFats(foodDto.getFats());
-        foodUpdate.setCarbohydrates(foodDto.getCarbohydrates());
         foodUpdate.setFiber(foodDto.getFiber());
+        foodUpdate.setCarbohydrates(foodDto.getCarbohydrates());
         foodUpdate = foodRepository.saveAndFlush(foodUpdate);
         if (foodUpdate == null) {
             return new ResponseEntity<>(new Message("El alimento no se pudo actualizar", TypesResponse.ERROR), HttpStatus.BAD_REQUEST);

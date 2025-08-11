@@ -14,7 +14,7 @@ public class Food {
     @Column(name = "id_alimento")
     private Long id_food;
 
-    @Column(name = "nombre", columnDefinition = "VARCHAR(30)")
+    @Column(name = "nombre", columnDefinition = "VARCHAR(150)")
     private String name;
 
     @Column(name = "cantidad", columnDefinition = "INTEGER")
