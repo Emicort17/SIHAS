@@ -100,7 +100,6 @@ export default function RegisterScreen({ navigation }) {
     }
 
 
-
     return (
         <SafeAreaView edges={['top']}>
             <ScrollView style={{ backgroundColor: 'white', height: '100%', paddingBottom: 10 }}>
