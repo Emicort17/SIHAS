@@ -2,6 +2,8 @@ package utez.edu.mx.sihas.model.user;
 
 public class ChangePasswordDto {
     private Long userid;
+    private String token;
+    private String tokenUser;
     private String currentPassword;
     private String newPassword;
 
@@ -12,6 +14,23 @@ public class ChangePasswordDto {
         this.currentPassword = currentPassword;
         this.newPassword = newPassword;
     }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public String getTokenUser() {
+        return tokenUser;
+    }
+
+    public void setTokenUser(String tokenUser) {
+        this.tokenUser = tokenUser;
+    }
+
     public Long getUserid() {
         return userid;
     }

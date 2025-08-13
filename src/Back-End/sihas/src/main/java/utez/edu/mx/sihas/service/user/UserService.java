@@ -126,6 +126,26 @@ public class UserService {
             return new ResponseEntity<>(new Message("Usuario no encontrado", TypesResponse.ERROR), HttpStatus.BAD_REQUEST);
         }
 
+        if (dto.getCurrentPassword() == null) {
+            return new ResponseEntity<>(new Message("Las contraseña la tienes que enviar", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+        }
+
+        if(dto.getNewPassword() == null){
+            return new ResponseEntity<>(new Message("La nueva contraseña no puede ser nula", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+        }
+
+        if (dto.getNewPassword().equals(dto.getCurrentPassword())) {
+            return new ResponseEntity<>(new Message("La nueva contraseña no puede ser igual a la actual", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+        }
+
+        if(dto.getToken() == null || dto.getTokenUser() == null){
+            return new ResponseEntity<>(new Message("El token no puede ser nulo", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+        }
+
+        if(!dto.getToken().equals(dto.getTokenUser())){
+            return new ResponseEntity<>(new Message("Los tokens no no coinciden", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+        }
+
         User userUpdate = userOptional.get();
 
         if (!passwordEncoder.matches(dto.getCurrentPassword(), userUpdate.getPassword())) {
