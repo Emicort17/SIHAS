@@ -3,6 +3,7 @@ package utez.edu.mx.sihas.controller.monitoring;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import utez.edu.mx.sihas.model.monitor.MonitorDto;
 import utez.edu.mx.sihas.service.monitor.MonitorService;
@@ -20,12 +21,12 @@ public class MonitorController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<Message> saveMonitorSleep(@RequestBody MonitorDto sleepMonitorDto) {
+    public ResponseEntity<Message> saveMonitorSleep(@Validated(MonitorDto.Register.class) @RequestBody MonitorDto sleepMonitorDto) {
         return monitorService.save(sleepMonitorDto);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Message> updateMonitorSleep(@RequestBody MonitorDto sleepMonitorDto) {
+    public ResponseEntity<Message> updateMonitorSleep(@Validated(MonitorDto.Modify.class)@RequestBody MonitorDto sleepMonitorDto) {
         return monitorService.update(sleepMonitorDto);
     }
 

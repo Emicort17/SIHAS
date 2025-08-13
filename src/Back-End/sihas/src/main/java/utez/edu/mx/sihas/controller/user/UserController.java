@@ -3,6 +3,7 @@ package utez.edu.mx.sihas.controller.user;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import utez.edu.mx.sihas.controller.summary.dto.PatientSummaryDto;
 import utez.edu.mx.sihas.model.user.ChangePasswordDto;
@@ -24,7 +25,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public  ResponseEntity<Message> saveUser(@RequestBody UserDto  userDto) {
+    public  ResponseEntity<Message> saveUser(@Validated(UserDto.Register.class) @RequestBody UserDto  userDto) {
         return userService.save(userDto);
     }
 
@@ -34,12 +35,12 @@ public class UserController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Message> updateUser(@RequestBody UserDto  userDto) {
+    public ResponseEntity<Message> updateUser(@Validated(UserDto.Modify.class) @RequestBody UserDto  userDto) {
         return userService.update(userDto);
     }
 
     @PutMapping("/status/{id}")
-    public ResponseEntity<Message> updateStatus(@PathVariable Long id) {
+    public ResponseEntity<Message> updateStatus(@Validated(UserDto.ChangeStatus.class) @PathVariable Long id) {
         return userService.updateStatus(id);
     }
 

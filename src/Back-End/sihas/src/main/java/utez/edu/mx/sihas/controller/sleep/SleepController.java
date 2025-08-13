@@ -3,6 +3,7 @@ package utez.edu.mx.sihas.controller.sleep;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import utez.edu.mx.sihas.model.sleep.SleepDto;
 import utez.edu.mx.sihas.service.sleep.SleepService;
@@ -25,7 +26,7 @@ public class SleepController {
     }
 
     @PostMapping("/save")
-    public  ResponseEntity<Message> saveSleep(@RequestBody SleepDto sleepDto) {
+    public  ResponseEntity<Message> saveSleep(@Validated(SleepDto.Register.class) @RequestBody SleepDto sleepDto) {
         return sleepService.save(sleepDto);
     }
 }

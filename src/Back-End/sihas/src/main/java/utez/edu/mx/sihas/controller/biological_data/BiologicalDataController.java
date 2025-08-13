@@ -3,6 +3,7 @@ package utez.edu.mx.sihas.controller.biological_data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import utez.edu.mx.sihas.model.biological_data.BiologicalDataDto;
 import utez.edu.mx.sihas.service.biological_data.BiologicalDataService;
@@ -19,12 +20,12 @@ public class BiologicalDataController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<Message> saveBiologicalData(@RequestBody BiologicalDataDto biologicalDataDto) {
+    public ResponseEntity<Message> saveBiologicalData(@Validated(BiologicalDataDto.Register.class) @RequestBody BiologicalDataDto biologicalDataDto) {
         return biologicalDataService.save(biologicalDataDto);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Message> updateBiologicalData(@RequestBody BiologicalDataDto biologicalDataDto) {
+    public ResponseEntity<Message> updateBiologicalData(@Validated(BiologicalDataDto.Modify.class)@RequestBody BiologicalDataDto biologicalDataDto) {
         return biologicalDataService.update(biologicalDataDto);
     }
 

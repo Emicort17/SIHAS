@@ -3,6 +3,7 @@ package utez.edu.mx.sihas.controller.exercise;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import utez.edu.mx.sihas.model.exercise.ExerciseDto;
 import utez.edu.mx.sihas.service.exercise.ExerciseService;
@@ -23,7 +24,7 @@ public class ExerciseController {
     }
 
     @PostMapping("/save")
-    public  ResponseEntity<Message> saveExercise(@RequestBody ExerciseDto exerciseDto) {
+    public  ResponseEntity<Message> saveExercise(@Validated(ExerciseDto.Register.class) @RequestBody ExerciseDto exerciseDto) {
         return exerciseService.save(exerciseDto);
     }
 }

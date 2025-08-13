@@ -1,13 +1,13 @@
 package utez.edu.mx.sihas.email.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import utez.edu.mx.sihas.email.IEmailService;
 import utez.edu.mx.sihas.email.dto.EmailDto;
+import utez.edu.mx.sihas.model.user.ChangePasswordEmailDto;
+import utez.edu.mx.sihas.service.user.UserService;
 import utez.edu.mx.sihas.utils.Message;
 import utez.edu.mx.sihas.utils.TypesResponse;
 
@@ -15,9 +15,12 @@ import utez.edu.mx.sihas.utils.TypesResponse;
 @RequestMapping("/api/email")
 public class EmailController {
     private final IEmailService emailService;
+    private final UserService userService;
 
-    public EmailController(IEmailService emailService) {
+    @Autowired
+    public EmailController(IEmailService emailService, UserService userService) {
         this.emailService = emailService;
+        this.userService = userService;
     }
 
     @PostMapping("/send-email")
@@ -28,6 +31,11 @@ public class EmailController {
         } catch (Exception e) {
             return new ResponseEntity<>(new Message(e.getMessage(), "El correo no se envio", TypesResponse.ERROR), HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @PatchMapping("/change-password")
+    public ResponseEntity<Message> changePassword(@RequestBody ChangePasswordEmailDto dto) {
+        return userService.resetPassword(dto);
     }
 
 }

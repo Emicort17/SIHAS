@@ -3,6 +3,7 @@ package utez.edu.mx.sihas.controller.alert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import utez.edu.mx.sihas.model.alert.AlertDto;
 import utez.edu.mx.sihas.model.biological_data.BiologicalDataDto;
@@ -21,12 +22,12 @@ public class AlertController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<Message> saveAlert(@RequestBody AlertDto alertDto ) {
+    public ResponseEntity<Message> saveAlert(@Validated(AlertDto.Register.class) @RequestBody AlertDto alertDto ) {
         return alertService.save(alertDto);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Message> updateAlert(@RequestBody AlertDto alertDto ) {
+    public ResponseEntity<Message> updateAlert(@Validated(AlertDto.Modify.class) @RequestBody AlertDto alertDto) {
         return alertService.update(alertDto);
     }
 
