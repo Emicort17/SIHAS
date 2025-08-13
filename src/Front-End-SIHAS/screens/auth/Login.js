@@ -4,6 +4,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import { useAuth } from "./context/AuthContext";
 
 export default function LoginScreen({ navigation }) {
+    
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [erroMessage, setErrorMessage] = useState(false);
@@ -102,7 +103,6 @@ export default function LoginScreen({ navigation }) {
             </View>
 
             <Text style={styles.linkRegister}>¿Aún no tienes una cuenta?
-
                 <Text style={styles.register} onPress={() => navigation.navigate('Register')}> Registrate aqui</Text>
             </Text>
 
