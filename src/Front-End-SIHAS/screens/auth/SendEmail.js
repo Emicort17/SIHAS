@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { SafeAreaView, ScrollView, StyleSheet } from "react-native";
 
 export default function SendEmail() {
+    
     const [email, setEmail] = useState("");
     const [erroMessage, setErrorMessage] = useState(false);
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
