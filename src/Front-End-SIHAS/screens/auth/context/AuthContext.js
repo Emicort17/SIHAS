@@ -1,7 +1,5 @@
-"use client"
-
 import React, { createContext, useContext, useState } from "react"
-
+import { AxiosClient } from "./http_client"
 const AuthContext = createContext(undefined)
 
 export function AuthProvider({ children }) {
@@ -9,33 +7,24 @@ export function AuthProvider({ children }) {
   const isLoading = false
 
   const login = async (email, password) => {
-    try {
-      const response = await fetch("http://192.168.0.12:8080/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password })
-      });
+  try {
+    const data = await AxiosClient.post("/api/login", { email, password });
 
-      if (!response.ok) {
-        throw new Error("Credeciales incorrectas")
-      }
+    setUser({
+      token: data.jwt, 
+      userId: data.userId,
+      username: data.username,
+      rol: data.rol
+    });
 
-      const data = await response.json();
-      setUser({
-        token: data.jwt,
-        userId: data.userId,
-        username: data.username,
-        rol: data.rol
-      })
-      console.log(data)
-      return data;
-    } catch (err) {
-      console.error("Error en el login: ", err)
-    }
-    return false
+    console.log("Login exitoso:", data);
+    return data;
+
+  } catch (err) {
+    console.error("Error en el login: ", err);
+    return false;
   }
+};
 
   const logout = () => {
     setUser(null)
@@ -45,13 +34,15 @@ export function AuthProvider({ children }) {
     try {
       const rol = isProfessional ? "PROFESIONAL" : "USUARIO";
 
-      const response = await fetch("http://192.168.0.12:8080/api/usuario/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name, surname, lastname, email, password, status, rol })
-      });
+      const response = await AxiosClient.post("/api/usuario/register", {
+      name,
+      surname,
+      lastname,
+      email,
+      password,
+      status,
+      rol
+    });
 
       if (!response.ok) {
         throw new Error("Error al registrar");
