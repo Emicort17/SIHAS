@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Recuperación de Cuenta - SIHAS</title>
+</head>
+<body>
+<h1 style="font-weight: bold; text-align: center; font-family: Quicksand;">Recuperación de Contraseña</h1>
+<a style=" font-weight: bold; text-align: justify; font-family: Quicksand;">
+    Estimado/a Usuario.
+    <br><br>
+    Hemos recibido una solicitud para recuperar su contraseña.
+    <br><br>
+    Ingrese este PIN de 6 digítos para confirmar tu identidad y actualizar su contranseña.
+    <br><br>
+</a>
+
+<a style="color: red; font-weight: bold">
+    PIN:
+</a>
+<a th:text="${token}" style= "font-weight: bold"></a>
+<br><br>
+<a style="font-weight: bold; text-align: justify; font-family: Quicksand;">
+    Si no lo has solicitado o no deseas continuar con este proceso, por favor ignora este mensaje.
+
+    Si tienes alguna pregunta o necesitas ayuda adicional, no dudes en contactar a nuestro equipo de soporte en este mismo correo.
+
+    <br><br>
+    Atentamente,<br>
+    SIHAS
+</a>
+</body>
+</html>

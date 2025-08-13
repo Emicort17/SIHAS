@@ -30,6 +30,9 @@ public class FoodDto  {
     @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
     private Double carbohydrates;
 
+    @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
+    private Double fiber;
+
 
     public Long getId_food() {
         return id_food;
@@ -86,6 +89,10 @@ public class FoodDto  {
     public void setCarbohydrates(Double carbohydrates) {
         this.carbohydrates = carbohydrates;
     }
+
+    public Double getFiber() {return fiber;}
+
+    public void setFiber(Double fiber) {this.fiber = fiber;}
 
     public interface Register{}
     public interface Modify{}

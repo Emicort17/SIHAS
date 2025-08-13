@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import utez.edu.mx.sihas.controller.summary.dto.PatientSummaryDto;
+import utez.edu.mx.sihas.model.user.ChangePasswordDto;
 import utez.edu.mx.sihas.model.user.UserDto;
 import utez.edu.mx.sihas.model.user.UserRepository;
 import utez.edu.mx.sihas.service.summary.PatientSummaryService;
@@ -40,6 +41,11 @@ public class UserController {
     @PutMapping("/status/{id}")
     public ResponseEntity<Message> updateStatus(@PathVariable Long id) {
         return userService.updateStatus(id);
+    }
+
+    @PatchMapping("/update-password")
+    public ResponseEntity<Message> updatePassword(@RequestBody ChangePasswordDto dto) {
+        return userService.updatePassword(dto);
     }
 
     @GetMapping("/summary/{userId}")

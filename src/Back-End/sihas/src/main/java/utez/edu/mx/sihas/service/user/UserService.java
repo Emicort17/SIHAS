@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import utez.edu.mx.sihas.model.rol.Rol;
 import utez.edu.mx.sihas.model.rol.RolRepository;
+import utez.edu.mx.sihas.model.user.ChangePasswordDto;
 import utez.edu.mx.sihas.model.user.User;
 import utez.edu.mx.sihas.model.user.UserDto;
 import utez.edu.mx.sihas.model.user.UserRepository;
@@ -65,7 +66,7 @@ public class UserService {
         }
 
         User saveUser = new User(user.getName(), user.getSurname(), user.getLastname(), user.getEmail()
-                , passwordEncoder.encode(user.getPassword()), user.isStatus());
+                , passwordEncoder.encode(user.getPassword()), false);
 
         saveUser.setRoles(Set.of(rol));
         saveUser = userRepository.saveAndFlush(saveUser);
@@ -118,7 +119,50 @@ public class UserService {
         return new ResponseEntity<>(new Message(userUpdate,"El usuario se actualizó correctamente",TypesResponse.SUCCESS),HttpStatus.OK);
     }
 
+    @Transactional(rollbackFor = {SQLException.class})
+    public ResponseEntity<Message> updatePassword(ChangePasswordDto dto) {
+        Optional<User> userOptional = userRepository.findById(dto.getUserid());
+        if (!userOptional.isPresent()) {
+            return new ResponseEntity<>(new Message("Usuario no encontrado", TypesResponse.ERROR), HttpStatus.BAD_REQUEST);
+        }
 
+        if (dto.getCurrentPassword() == null) {
+            return new ResponseEntity<>(new Message("Las contraseña la tienes que enviar", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+        }
+
+        if(dto.getNewPassword() == null){
+            return new ResponseEntity<>(new Message("La nueva contraseña no puede ser nula", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+        }
+
+        if (dto.getNewPassword().equals(dto.getCurrentPassword())) {
+            return new ResponseEntity<>(new Message("La nueva contraseña no puede ser igual a la actual", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+        }
+
+        if(dto.getToken() == null || dto.getTokenUser() == null){
+            return new ResponseEntity<>(new Message("El token no puede ser nulo", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+        }
+
+        if(!dto.getToken().equals(dto.getTokenUser())){
+            return new ResponseEntity<>(new Message("Los tokens no no coinciden", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+        }
+
+        User userUpdate = userOptional.get();
+
+        if (!passwordEncoder.matches(dto.getCurrentPassword(), userUpdate.getPassword())) {
+            return new ResponseEntity<>(new Message("La contraseña actual no coincide", TypesResponse.ERROR), HttpStatus.BAD_REQUEST);
+        }
+
+        if (dto.getNewPassword().length() > 8) {
+            return new ResponseEntity<>(new Message("La contraseña debe tener un máximo de 8 caracteres", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+        }
+
+        userUpdate.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+        userRepository.saveAndFlush(userUpdate);
+
+        return new ResponseEntity<>(new Message("Contraseña actualizada correctamente", TypesResponse.SUCCESS), HttpStatus.OK);
+    }
+
+    @Transactional(rollbackFor = {SQLException.class})
     public ResponseEntity<Message> updateStatus(Long id) {
         Optional<User> userOptional = userRepository.findById(id);
 

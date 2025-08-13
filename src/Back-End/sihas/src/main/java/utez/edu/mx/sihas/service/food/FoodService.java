@@ -47,13 +47,18 @@ public class FoodService {
         if (foodDto.getFats()==0) {
             return new ResponseEntity<>(new Message("Las grasas deben ser necesarias", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
         }
+        {
+            if (foodDto.getFiber()==0) {
+                return new ResponseEntity<>(new Message("Las fibras deben ser necesarias", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+            }
+        }
         if (foodDto.getCarbohydrates()==0) {
             return new ResponseEntity<>(new Message("Los carbohidratos deben ser necesarios ", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
         }
 
         Food fodSave = new  Food(foodDto.getName()
-               ,foodDto.getQuantity(),foodDto.getCalories(),foodDto.getProteins()
-               ,foodDto.getFats(),foodDto.getCarbohydrates());
+                ,foodDto.getQuantity(),foodDto.getCalories(),foodDto.getProteins()
+                ,foodDto.getFats(),foodDto.getFiber(),foodDto.getCarbohydrates());
 
         fodSave = foodRepository.saveAndFlush(fodSave);
         if (fodSave == null) {
@@ -87,6 +92,9 @@ public class FoodService {
         if (foodDto.getFats()==0) {
             return new ResponseEntity<>(new Message("Las grasas deben ser necesarias", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
         }
+        if (foodDto.getFiber()==0) {
+            return new ResponseEntity<>(new Message("Las fibras deben ser necesarias", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+        }
         if (foodDto.getCarbohydrates()==0) {
             return new ResponseEntity<>(new Message("Los carbohidratos deben ser necesarios ", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
         }
@@ -97,6 +105,7 @@ public class FoodService {
         foodUpdate.setCalories(foodDto.getCalories());
         foodUpdate.setProteins(foodDto.getProteins());
         foodUpdate.setFats(foodDto.getFats());
+        foodUpdate.setFiber(foodDto.getFiber());
         foodUpdate.setCarbohydrates(foodDto.getCarbohydrates());
         foodUpdate = foodRepository.saveAndFlush(foodUpdate);
         if (foodUpdate == null) {

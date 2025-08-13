@@ -14,7 +14,7 @@ public class Food {
     @Column(name = "id_alimento")
     private Long id_food;
 
-    @Column(name = "nombre", columnDefinition = "VARCHAR(30)")
+    @Column(name = "nombre", columnDefinition = "VARCHAR(150)")
     private String name;
 
     @Column(name = "cantidad", columnDefinition = "INTEGER")
@@ -31,6 +31,9 @@ public class Food {
 
     @Column(name = "carbohidratos", columnDefinition = "DOUBLE")
     private Double carbohydrates;
+
+    @Column(name = "fibra", columnDefinition = "DOUBLE")
+    private Double fiber;
 
     @OneToMany(mappedBy = "food")
     @JsonIgnore
@@ -100,16 +103,27 @@ public class Food {
         this.foodFoodSchedules = foodFoodSchedules;
     }
 
+    public Double getFiber() {
+        return fiber;
+    }
+
+    public void setFiber(Double fiber) {
+        this.fiber = fiber;
+    }
+
     public Food() {
     }
 
-    public Food(String name, Integer quantity, Double calories, Double proteins, Double fats, Double carbohydrates) {
+    public Food(String name, Integer quantity, Double calories,
+                Double proteins, Double fats, Double carbohydrates,
+                Double fiber) {
         this.name = name;
         this.quantity = quantity;
         this.calories = calories;
         this.proteins = proteins;
         this.fats = fats;
         this.carbohydrates = carbohydrates;
+        this.fiber = fiber;
     }
 
     @Override
