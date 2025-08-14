@@ -17,7 +17,7 @@ public class BiologicalDataDto {
     private Long idData;
 
 
-    @NotBlank(groups = {BiologicalDataDto.Register.class, BiologicalDataDto.Modify.class})
+    @NotNull(groups = {BiologicalDataDto.Register.class, BiologicalDataDto.Modify.class})
     private Date date;
     @NotNull(groups = {BiologicalDataDto.Register.class, BiologicalDataDto.Modify.class})
     private Double weight;
