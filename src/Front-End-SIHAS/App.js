@@ -32,7 +32,7 @@ export default function App() {
               <Stack.Screen name="Register" component={RegisterScreen} />
             </>
           ) : user.rol === "USUARIO" ? (
-            <Stack.Screen name="UserStack" component={UserNavigator} />
+            <Stack.Screen name="UserStack" component={UserTabs} />
           ) : (
             <Stack.Screen name="MedicStack" component={MedicNavigator} />
           )}

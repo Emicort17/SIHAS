@@ -7,11 +7,12 @@ import {
   StyleSheet
 } from "react-native";
 import { Icon } from "@rneui/base";
+import { Alert } from "react-native";
+import { AxiosClient } from "../auth/context/http_client";
 
-export default function ChangePasswordCard() {
+export default function ChangePasswordCard({ token, userId }) {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [expanded, setExpanded] = useState(false);
-  const [isPressed, setIsPressed] = useState(false);
   const [form, setForm] = useState({
     nueva: "",
     confirmar: "",
@@ -22,6 +23,7 @@ export default function ChangePasswordCard() {
     confirmar: "",
     antigua: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   const toggleVisibility = () => setPasswordVisible(!passwordVisible);
 
@@ -31,7 +33,7 @@ export default function ChangePasswordCard() {
 
   const handleChange = (key, value) => {
     setForm({ ...form, [key]: value });
-    
+
     let errorMessage = "";
     switch (key) {
       case "nueva":
@@ -106,15 +108,35 @@ export default function ChangePasswordCard() {
     setErrors(newErrors);
     return valid;
   };
-
-  const handleSave = () => {
+  const handleSave = async () => {
     if (validateFields()) {
-      console.log("Contraseña válida, guardando...");
-      setForm({ nueva: "", confirmar: "", antigua: "" });
-      setErrors({ nueva: "", confirmar: "", antigua: "" });
-      setExpanded(false);
+      setIsLoading(true);
+      try {
+        const userData = {
+          userid: userId,
+          currentPassword: form.antigua,
+          newPassword: form.nueva
+        }
+        const response = await AxiosClient.patch("/api/usuario/update-password", userData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        Alert.alert("Éxito", response.message || "Contraseña actualizada correctamente");
+        setForm({ nueva: "", confirmar: "", antigua: "" });
+        setErrors({ nueva: "", confirmar: "", antigua: "" });
+        setExpanded(false);
+
+      } catch (error) {
+        Alert.alert("Error", "Error de conexión con el servidor");
+        console.log(error);
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
+
 
   const handleCancel = () => {
     setForm({ nueva: "", confirmar: "", antigua: "" });
@@ -148,7 +170,7 @@ export default function ChangePasswordCard() {
 
       {expanded && (
         <>
-          <Text style={[styles.label,{marginTop: 20}]}>Nueva Contraseña</Text>
+          <Text style={[styles.label, { marginTop: 20 }]}>Nueva Contraseña</Text>
           <View style={[styles.inputWrapper]}>
             <TextInput
               style={styles.input}
@@ -156,6 +178,7 @@ export default function ChangePasswordCard() {
               secureTextEntry={!passwordVisible}
               value={form.nueva}
               onChangeText={(text) => handleChange("nueva", text)}
+              editable={!isLoading}
             />
             <TouchableOpacity onPress={toggleVisibility} style={styles.icon}>
               <Icon name={passwordVisible ? 'eye-outline' : 'eye-off-outline'} type="material-community" size={24} color="#666" />
@@ -171,6 +194,7 @@ export default function ChangePasswordCard() {
               secureTextEntry={!passwordVisible}
               value={form.confirmar}
               onChangeText={(text) => handleChange("confirmar", text)}
+              editable={!isLoading}
             />
             <TouchableOpacity onPress={toggleVisibility} style={styles.icon}>
               <Icon name={passwordVisible ? 'eye-outline' : 'eye-off-outline'} type="material-community" size={24} color="#666" />
@@ -186,6 +210,7 @@ export default function ChangePasswordCard() {
               secureTextEntry={!passwordVisible}
               value={form.antigua}
               onChangeText={(text) => handleChange("antigua", text)}
+              editable={!isLoading}
             />
             <TouchableOpacity onPress={toggleVisibility} style={styles.icon}>
               <Icon name={passwordVisible ? 'eye-outline' : 'eye-off-outline'} type="material-community" size={24} color="#666" />
@@ -194,11 +219,27 @@ export default function ChangePasswordCard() {
           {errors.antigua && <Text style={styles.errorText}>{errors.antigua}</Text>}
 
           <View style={styles.buttonGroup}>
-            <TouchableOpacity style={styles.buttonCancel} onPress={handleCancel}>
+            <TouchableOpacity 
+              style={[
+                styles.buttonCancel, 
+                { opacity: isLoading ? 0.6 : 1, backgroundColor: isLoading ? "#ccc" : "#EBECF0" }
+              ]} 
+              onPress={handleCancel}
+              disabled={isLoading}
+            >
               <Text style={styles.buttonTextCancel}>Cancelar</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={handleSave}>
-              <Text style={styles.buttonText}>Guardar</Text>
+            <TouchableOpacity 
+              style={[
+                styles.button, 
+                { opacity: isLoading ? 0.6 : 1, backgroundColor: isLoading ? "#ccc" : "#C8E6C9" }
+              ]} 
+              onPress={handleSave}
+              disabled={isLoading}
+            >
+              <Text style={styles.buttonText}>
+                {isLoading ? "Guardando..." : "Guardar"}
+              </Text>
             </TouchableOpacity>
           </View>
         </>

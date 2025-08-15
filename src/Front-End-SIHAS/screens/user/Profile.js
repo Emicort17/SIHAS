@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigation } from "@react-navigation/native";
 import {
   View,
   Text,
@@ -8,30 +9,105 @@ import {
   SafeAreaView,
 } from "react-native";
 import { Icon } from "@rneui/base";
-import PersonalInformationCard from "./components/PersonalInformationCard";
-import HealthMetricsCard from "./components/HealthMetricsCard";
-import ChangePasswordCard from "./components/ChangePasswordCard";
-import WelcomeModal from "./components/WelcomeModal";
-import BiologicalDataCard from "./components/BiologicalDataCard";
+import PersonalInformationCard from "../components/PersonalInformationCard";
+import HealthMetricsCard from "../components/HealthMetricsCard";
+import ChangePasswordCard from "../components/ChangePasswordCard";
+import BiologicalDataCard from "../components/BiologicalDataCard";
 import { useAuth } from "../auth/context/AuthContext";
+import { AxiosClient } from "../auth/context/http_client";
 
 export default function Profile() {
   const [isLogoutCardPressed, setIsLogoutCardPressed] = useState(false);
-  const [showModal, setShowModal] = useState(true);
   const [biologicalData, setBiologicalData] = useState(null);
-  const { logout } = useAuth();
-  
-  const handleLogout = () => {
-    try {
-      logout()
-    } catch (err){
-      console.error(err);
-    }
-  }
+  const { logout, getUserById, user, userData } = useAuth();
+  const [profileData, setProfileData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const navigation = useNavigation();
+  const [isInactive, setIsInactive] = useState(!user?.status);
 
-  const handleBiologicalDataSave = (data) => {
-    setBiologicalData(data);
+  useEffect(() => {
+    if (userData) {
+      setProfileData(userData);
+    }
+  }, [userData]);
+
+  const handleLogout = () => {
+    logout();
   };
+
+  const fetchProfileData = async () => {
+    if (!user?.token || !user?.userId) return;
+
+    setLoading(true);
+    try {
+      await getUserById();
+      const response = await AxiosClient.get(
+        `/api/usuario/datosbiologicos/${user.userId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        }
+      );
+
+      const { result } = response;
+
+      const biologicalData = result
+        ? {
+          peso: result.weight?.toString() || "",
+          altura: result.height?.toString() || "",
+          imc: result.bmi?.toString() || "",
+          weight: result.weight || 0,
+          height: result.height || 0,
+          bmi: result.bmi || 0,
+          age: result.age || 0,
+          idData: result.idData,
+          fatPercentage: result.fatPercentage || 0,
+          date: result.date,
+        }
+        : null;
+      setBiologicalData(biologicalData);
+    } catch (error) {
+      console.log("Error fetching profile data:", error);
+      setBiologicalData(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (user?.status != false) {
+      fetchProfileData();
+    }
+  }, []);
+
+  const handleDataUpdate = async (newData, type) => {
+    if (type === "user") {
+      setProfileData((prev) => ({
+        ...prev,
+        ...newData,
+      }));
+      await getUserById();
+    } else if (type === "biological") {
+      setBiologicalData((prev) => ({
+        ...prev,
+        ...newData,
+      }));
+      if (newData.shouldRefetch) {
+        await fetchProfileData();
+      }
+    }
+  };
+
+  if (!profileData) {
+    return (
+      <SafeAreaView edges={["top"]}>
+        <View style={styles.container}>
+          <Text>Cargando perfil...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView edges={["top"]}>
@@ -41,33 +117,52 @@ export default function Profile() {
         <View style={styles.container}>
           <PersonalInformationCard
             title="Datos personales"
+            token={user?.token}
             data={{
-              nombre: "Victor Alejandro",
-              apellidoPaterno: "Oliva",
-              apellidoMaterno: "Quiroz",
-              edad: biologicalData ? biologicalData.edad : null, // ← Edad dinámica
-              email: "alejandro2312@gmail.com",
+              id_user: user?.userId,
+              nombre: profileData?.name || "",
+              apellidoPaterno: profileData?.surname || "",
+              apellidoMaterno: profileData?.lastname || "",
+              edad: biologicalData?.age?.toString() || "",
+              email: profileData?.email || "",
+              password: profileData?.password || "",
+              role: profileData?.roles
             }}
+            status={user?.status}
+            onUpdate={(newData) => handleDataUpdate(newData, "user")}
+            onEdadUpdate={(newData) => handleDataUpdate(newData, "biological")}
+            biologicalData={biologicalData}
           />
 
-          {!biologicalData ? (
-            <BiologicalDataCard onSave={handleBiologicalDataSave} />
+          {isInactive ? (
+            <BiologicalDataCard
+              onSave={(newData) => {
+                handleDataUpdate({ ...newData, shouldRefetch: true }, "biological");
+              }}
+              token={user?.token}
+              userId={user?.userId}
+              setIsInactive={setIsInactive}
+              fetchProfileData={fetchProfileData}
+            />
           ) : (
             <HealthMetricsCard
-              data={{
-                altura: biologicalData.altura, // ← Usar datos reales
-                peso: biologicalData.peso,     // ← Usar datos reales
-                imc: calculateIMC(biologicalData.peso, biologicalData.altura), // ← Calcular IMC real
+              token={user?.token}
+              userId={user?.userId}
+              biologicalData={biologicalData}
+              data={biologicalData}
+              onUpdate={(newData) => {
+                handleDataUpdate({ ...newData, shouldRefetch: true }, "biological");
               }}
             />
           )}
 
-          <ChangePasswordCard />
+          <ChangePasswordCard token={user?.token} userId={user?.userId} />
 
           <TouchableOpacity
             style={styles.touchableCard}
             onPressIn={() => setIsLogoutCardPressed(true)}
             onPressOut={() => setIsLogoutCardPressed(false)}
+            onPress={handleLogout}
             activeOpacity={0.8}
           >
             <View
@@ -84,7 +179,7 @@ export default function Profile() {
                     color="#D32F2F"
                     size={24}
                   />
-                  <Text onPress={() => {handleLogout()}} style={[styles.title, { marginLeft: 10 }]}>
+                  <Text style={[styles.title, { marginLeft: 10 }]}>
                     Cerrar Sesión
                   </Text>
                 </View>
@@ -96,19 +191,6 @@ export default function Profile() {
     </SafeAreaView>
   );
 }
-
-// Función helper para calcular el IMC real
-const calculateIMC = (peso, altura) => {
-  const pesoNum = parseFloat(peso);
-  const alturaNum = parseFloat(altura);
-  
-  if (isNaN(pesoNum) || isNaN(alturaNum) || alturaNum === 0) {
-    return "0.0";
-  }
-  
-  const imc = pesoNum / (alturaNum * alturaNum);
-  return imc.toFixed(1);
-};
 
 const styles = StyleSheet.create({
   container: {
