@@ -9,7 +9,7 @@ export default function WelcomeModal({ visible, onClose }) {
     <Modal transparent visible={visible} animationType="fade">
       <View style={styles.modalBackground}>
         <View style={styles.modalContainer}>
-          <Text style={styles.title}>¡Bienvenido!</Text>
+          <Text style={styles.title}>¡Bienvenido a SIHAS!</Text>
           <Text style={styles.message}>
             Estamos emocionados de tenerte aquí {"\n"}
             Completa tu perfil para una experiencia personalizada.
