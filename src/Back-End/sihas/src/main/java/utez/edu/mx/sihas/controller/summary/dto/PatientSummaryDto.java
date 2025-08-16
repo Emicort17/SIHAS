@@ -8,6 +8,7 @@ public class PatientSummaryDto {
     private Double protein;
     private Double carbs;
     private Double fat;
+    private Double fiber;
     private List<Double> sleepHoursPerDay;
     private Integer currentExerciseCount;
     private Integer exerciseGoal;
@@ -15,9 +16,8 @@ public class PatientSummaryDto {
     public PatientSummaryDto() {
     }
 
-    public PatientSummaryDto(Double kcal, Double protein, Double carbs, Double fat,
-                             List<Double> sleepHoursPerDay, Integer currentExerciseCount,
-                             Integer exerciseGoal) {
+    public PatientSummaryDto(Double kcal, Double protein, Double carbs, Double fat,Double fiber, List<Double> sleepHoursPerDay, Integer currentExerciseCount, Integer exerciseGoal
+                           ) {
         this.kcal = kcal;
         this.protein = protein;
         this.carbs = carbs;
@@ -81,5 +81,13 @@ public class PatientSummaryDto {
 
     public void setExerciseGoal(Integer exerciseGoal) {
         this.exerciseGoal = exerciseGoal;
+    }
+
+    public Double getFiber() {
+        return fiber;
+    }
+
+    public void setFiber(Double fiber) {
+        this.fiber = fiber;
     }
 }

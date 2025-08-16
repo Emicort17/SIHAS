@@ -29,7 +29,7 @@ public class PatientSummaryService {
         LocalDate weekAgo = today.minusDays(6);
 
         NutritionSummaryDto nutrition = foodFoodScheduleRepository.getNutritionSummaryForUser(userId, weekAgo);
-        if (nutrition == null) nutrition = new NutritionSummaryDto(0.0, 0.0, 0.0, 0.0);
+        if (nutrition == null) nutrition = new NutritionSummaryDto(0.0, 0.0, 0.0, 0.0, 0.0);
 
         List<Double> sleepHours = new ArrayList<>();
         for (int i = 0; i < 7; i++) {
@@ -47,9 +47,11 @@ public class PatientSummaryService {
                 nutrition.getProtein(),
                 nutrition.getCarbs(),
                 nutrition.getFat(),
+                nutrition.getFiber(),
                 sleepHours,
                 currentExerciseCount,
                 exerciseGoal
         );
     }
+
 }

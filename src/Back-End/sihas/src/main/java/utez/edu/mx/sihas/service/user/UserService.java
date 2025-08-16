@@ -13,6 +13,7 @@ import utez.edu.mx.sihas.utils.Message;
 import utez.edu.mx.sihas.utils.TypesResponse;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -95,6 +96,13 @@ public class UserService {
     @Transactional(readOnly = true)
     public ResponseEntity<Message> findByID(Long  id) {
         Optional<User> userList = userRepository.findById(id);
+        return new ResponseEntity<>(new Message(userList,"Listado de usuario", TypesResponse.SUCCESS), HttpStatus.OK);
+    }
+
+
+    @Transactional(readOnly = true)
+    public ResponseEntity<Message> findpatients() {
+        List<User> userList = userRepository.findByRoleName("USUARIO");
         return new ResponseEntity<>(new Message(userList,"Listado de usuario", TypesResponse.SUCCESS), HttpStatus.OK);
     }
 

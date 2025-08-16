@@ -1,6 +1,7 @@
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const SERVER_URL = "http://192.168.1.72:8000";
+const SERVER_URL = "http://192.168.0.10:8000";
 
 const AxiosClient = axios.create({
     baseURL: SERVER_URL,
@@ -12,7 +13,14 @@ const AxiosFormClient = axios.create({
     withCredentials: false,
 });
 
-AxiosClient.interceptors.request.use((request) => {
+AxiosClient.interceptors.request.use(async (request) => {
+    const userData = await AsyncStorage.getItem('userData');
+    const token = userData ? JSON.parse(userData).token : null;
+
+    if (token) {
+        request.headers["Authorization"] = `Bearer ${token}`;
+    }
+
     request.headers["Accept"] = "application/json";
     request.headers["Content-Type"] = "application/json";
     return request;
@@ -23,15 +31,33 @@ AxiosFormClient.interceptors.request.use((request) => {
     return request;
 });
 
+const AxiosFileClient = axios.create({
+    baseURL: SERVER_URL,
+    withCredentials: false,
+});
+
+AxiosFileClient.interceptors.request.use(async (request) => {
+    const userData = await AsyncStorage.getItem('userData');
+    const token = userData ? JSON.parse(userData).token : null;
+    if (token) request.headers["Authorization"] = `Bearer ${token}`;
+    request.headers["Accept"] = "application/pdf"; // importante
+    return request;
+});
+
+
+
 const responseHandler = (res) => Promise.resolve(res.data);
 const errorHandler = (err) => {
     if (err.response?.status === 401) {
-        window.location.href = "/sign-in";
+        console.error("Redirigiendo a login...");
     }
     return Promise.reject(err);
 };
 
+
+
+
 AxiosClient.interceptors.response.use(responseHandler, errorHandler);
 AxiosFormClient.interceptors.response.use(responseHandler, errorHandler);
 
-export { AxiosClient, AxiosFormClient };
+export { AxiosClient, AxiosFormClient, AxiosFileClient };

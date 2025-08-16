@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, useRef } from "react"
 import { AxiosClient } from "./http_client"
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AuthContext = createContext(undefined)
 
@@ -13,23 +14,28 @@ export function AuthProvider({ children }) {
 
   const login = async (email, password) => {
     try {
-      
-      const data = await AxiosClient.post("/api/login", { email, password })
-      setUser({
+      const data = await AxiosClient.post("/api/login", { email, password });
+
+      const userInfo = {
         token: data.jwt,
         userId: data.userId,
         username: data.username,
         rol: data.rol,
-        status: data.status
-      })
+        status: data.status,
+      };
 
-      console.log("Login exitoso:", data)
-      return data
+      setUser(userInfo);
+
+      await AsyncStorage.setItem("userData", JSON.stringify(userInfo));
+
+      console.log("Login exitoso:", data);
+      return data;
     } catch (err) {
-      console.error("Error en el login:", err)
-      return false
+      console.error("Error en el login:", err);
+      return false;
     }
-  }
+  };
+
 
   const logout = () => {
     setUser(null)
