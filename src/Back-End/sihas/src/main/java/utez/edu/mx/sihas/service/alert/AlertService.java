@@ -41,18 +41,30 @@ public class AlertService {
         if (alertDto.getDescription().length() > 50) {
             return new ResponseEntity<>(new Message("La descripcion excedio el limite de caracteres", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
         }
-        if (alertDto.getScheduled_date() == null) {
+
+        if(alertDto.getScheduled_date() == null) {
             return new ResponseEntity<>(new Message("La fecha programada es necesaria ", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
         }
+
+        if (alertDto.getScheduled_time() == null) {
+            return new ResponseEntity<>(new Message("La hora es necesaria ", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+        }
+
+        if (alertDto.getOneDay() == null) {
+            return new ResponseEntity<>(new Message("El estatus de hoy es necesario ", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+        }
+
         if (alertDto.getIdRelacionado() == 0||alertDto.getIdRelacionado() == null ) {
             return new ResponseEntity<>(new Message("El id relacionado es necesario", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
         }
         User user = userRepository.findById(alertDto.getUser())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        Alert alert= new Alert(alertDto.getType_alert()
-                ,alertDto.getDescription(),true,alertDto.getScheduled_date(),alertDto.getIdRelacionado()
-                , user);
+        Alert alert= new Alert(alertDto.getDescription()
+                ,alertDto.getId_alert(), alertDto.getIdRelacionado()
+                ,alertDto.getOneDay(), alertDto.getScheduled_date()
+                ,alertDto.getScheduled_time(), alertDto.getStatus()
+                ,alertDto.getType_alert(), user);
 
 
         alert = alertRepository.saveAndFlush(alert);
@@ -82,6 +94,12 @@ public class AlertService {
         if (alertDto.getScheduled_date() == null) {
             return new ResponseEntity<>(new Message("La fecha programada es necesaria ", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
         }
+        if (alertDto.getScheduled_time() == null) {
+            return new ResponseEntity<>(new Message("La hora es necesaria ", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+        }
+        if (alertDto.getOneDay() == null) {
+            return new ResponseEntity<>(new Message("El estatus de hoy es necesario ", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+        }
         if (alertDto.getIdRelacionado() == 0||alertDto.getIdRelacionado() == null ) {
             return new ResponseEntity<>(new Message("El id relacionado es necesario", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
         }
@@ -89,6 +107,9 @@ public class AlertService {
         Alert alerUpdate = alertaOptional.get();
         alerUpdate.setType_alert(alertDto.getType_alert());
         alerUpdate.setDescription(alertDto.getDescription());
+        alerUpdate.setStatus(alertDto.getStatus());
+        alerUpdate.setOneDay(alertDto.getOneDay());
+        alerUpdate.setScheduled_time(alertDto.getScheduled_time());
         alerUpdate.setScheduled_date(alertDto.getScheduled_date());
         alerUpdate.setIdRelacionado(alertDto.getIdRelacionado());
 
@@ -111,7 +132,6 @@ public class AlertService {
         alertRepository.saveAndFlush(alerUpdate);
 
         return new ResponseEntity<>(new Message(alerUpdate.getStatus(), "Se ha atualizado el status", TypesResponse.SUCCESS), HttpStatus.OK);
-
     }
 
     @Transactional(readOnly = true)

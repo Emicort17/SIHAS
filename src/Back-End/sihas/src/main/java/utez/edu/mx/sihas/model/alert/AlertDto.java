@@ -7,7 +7,9 @@ import org.springframework.data.jpa.repository.Modifying;
 import utez.edu.mx.sihas.model.exercise.ExerciseDto;
 import utez.edu.mx.sihas.model.user.User;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 public class AlertDto {
 
@@ -24,7 +26,13 @@ public class AlertDto {
     private Boolean status;
 
     @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
-    private LocalDateTime scheduled_date;
+    private LocalDate scheduled_date;
+
+    @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
+    private LocalTime scheduled_time;
+
+    @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
+    private Boolean oneDay;
 
     @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
     private Long idRelacionado;
@@ -64,12 +72,28 @@ public class AlertDto {
         this.status = status;
     }
 
-    public LocalDateTime getScheduled_date() {
+    public LocalDate getScheduled_date() {
         return scheduled_date;
     }
 
-    public void setScheduled_date(LocalDateTime scheduled_date) {
+    public void setScheduled_date(LocalDate scheduled_date) {
         this.scheduled_date = scheduled_date;
+    }
+
+    public LocalTime getScheduled_time() {
+        return scheduled_time;
+    }
+
+    public void setScheduled_time(LocalTime scheduled_time) {
+        this.scheduled_time = scheduled_time;
+    }
+
+    public Boolean getOneDay() {
+        return oneDay;
+    }
+
+    public void setOneDay(Boolean oneDay) {
+        this.oneDay = oneDay;
     }
 
     public Long getIdRelacionado() {
