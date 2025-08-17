@@ -10,7 +10,7 @@ import utez.edu.mx.sihas.service.sleep.SleepService;
 import utez.edu.mx.sihas.utils.Message;
 
 @RestController
-@RequestMapping("/api/usuario/horariosueño")
+@RequestMapping("/api/usuario/horario/dormir")
 public class SleepController {
 
     public final SleepService sleepService;
@@ -23,6 +23,11 @@ public class SleepController {
     @GetMapping("/all")
     public ResponseEntity<Message> getAllSleep() {
         return sleepService.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Message> getSleepByID(@PathVariable Long id) {
+        return sleepService.findByUser(id);
     }
 
     @PostMapping("/save")

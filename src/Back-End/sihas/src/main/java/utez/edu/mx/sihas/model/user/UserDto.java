@@ -18,10 +18,10 @@ public class UserDto {
     private String email;
     @NotBlank(groups = {Register.class,Modify.class})
     private String password;
-    @NotBlank(groups = {Register.class,Modify.class})
+    @NotNull(groups = {Register.class,Modify.class})
     private boolean status;
 
-    @NotBlank(groups = {Register.class,Modify.class})
+    @NotNull(groups = {Register.class,Modify.class})
     private String rol;
 
     public Long getId_user() {

@@ -63,7 +63,7 @@ export default function Profile() {
         : null;
       setBiologicalData(biologicalData);
     } catch (error) {
-      console.log("Error al obtener los datos:", error);
+      console.log("Error al ver la parte de parte de perfil:", error);
       setBiologicalData(null);
     } finally {
       setLoading(false);
