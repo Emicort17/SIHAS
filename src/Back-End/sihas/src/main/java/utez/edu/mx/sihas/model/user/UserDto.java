@@ -1,14 +1,8 @@
 package utez.edu.mx.sihas.model.user;
 
-
-
-
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.Modifying;
-import utez.edu.mx.sihas.model.rol.Rol;
-
-import java.util.List;
 
 public class UserDto {
     @NotNull(groups = {Modifying.class,ChangeStatus.class})

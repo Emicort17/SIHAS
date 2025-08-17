@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import utez.edu.mx.sihas.model.user.User;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "Alerta")
@@ -23,7 +25,13 @@ public class Alert {
     private Boolean status;
 
     @Column(name = "fecha_programada")
-    private LocalDateTime scheduled_date;
+    private LocalDate scheduled_date;
+
+    @Column(name = "hora")
+    private LocalTime scheduled_time;
+
+    @Column(name = "un_dia")
+    private Boolean oneDay;
 
     @Column(name = "id_relacionado")
     private Long idRelacionado;
@@ -47,14 +55,6 @@ public class Alert {
 
     public void setId_alerta(Long id_alerta) {
         this.id_alerta = id_alerta;
-    }
-
-    public LocalDateTime getScheduled_date() {
-        return scheduled_date;
-    }
-
-    public void setScheduled_date(LocalDateTime scheduled_date) {
-        this.scheduled_date = scheduled_date;
     }
 
     public Boolean getStatus() {
@@ -89,26 +89,46 @@ public class Alert {
         this.user = user;
     }
 
+    public Boolean getOneDay() {
+        return oneDay;
+    }
+
+    public void setOneDay(Boolean oneDay) {
+        this.oneDay = oneDay;
+    }
+
+    public LocalDate getScheduled_date() {
+        return scheduled_date;
+    }
+
+    public void setScheduled_date(LocalDate scheduled_date) {
+        this.scheduled_date = scheduled_date;
+    }
+
+    public LocalTime getScheduled_time() {
+        return scheduled_time;
+    }
+
+    public void setScheduled_time(LocalTime scheduled_time) {
+        this.scheduled_time = scheduled_time;
+    }
+
     public Alert() {
     }
 
-    public Alert(String type_alert, String description, Boolean status, LocalDateTime scheduled_date, Long idRelacionado, User user) {
-        this.type_alert = type_alert;
+    public Alert(String description, Long id_alerta, Long idRelacionado,
+                 Boolean oneDay, LocalDate scheduled_date,
+                 LocalTime scheduled_time, Boolean status,
+                 String type_alert, User user) {
         this.description = description;
-        this.status = status;
-        this.scheduled_date = scheduled_date;
+        this.id_alerta = id_alerta;
         this.idRelacionado = idRelacionado;
+        this.oneDay = oneDay;
+        this.scheduled_date = scheduled_date;
+        this.scheduled_time = scheduled_time;
+        this.status = status;
+        this.type_alert = type_alert;
         this.user = user;
     }
 
-    @Override
-    public String toString() {
-        return "Alert{" +
-                "description='" + description + '\'' +
-                ", id_alerta=" + id_alerta +
-                ", type_alert='" + type_alert + '\'' +
-                ", status=" + status +
-                ", scheduled_date=" + scheduled_date +
-                '}';
-    }
 }

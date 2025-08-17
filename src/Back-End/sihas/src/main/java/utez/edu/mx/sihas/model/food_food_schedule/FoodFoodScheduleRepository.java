@@ -14,7 +14,7 @@ public interface FoodFoodScheduleRepository extends JpaRepository<FoodFoodSchedu
     void deleteAllByIdFoodFoodSchedule(Long idFoodSchedule);
 
     @Query("SELECT new utez.edu.mx.sihas.controller.summary.NutritionSummaryDto(" +
-            "SUM(f.calories), SUM(f.proteins), SUM(f.carbohydrates), SUM(f.fats)) " +
+            "SUM(f.calories), SUM(f.proteins), SUM(f.carbohydrates), SUM(f.fats), SUM(f.fiber)) " +
             "FROM FoodFoodSchedule ffs " +
             "JOIN ffs.food f " +
             "JOIN ffs.foodSchedule fs " +

@@ -1,18 +1,12 @@
-    import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
 export default function DownloadPDFButton({ onPress }) {
     return (
         <TouchableOpacity
             style={styles.button}
-            onPress={() => {
-                if (onPress) {
-                    onPress();
-                } else {
-                    Alert.alert('Descarga', 'PDF descargado correctamente');
-                }
-            }}
+            onPress={onPress}
         >
             <Feather name="file-text" size={20} color="white" />
             <Text style={styles.text}>Descargar PDF</Text>

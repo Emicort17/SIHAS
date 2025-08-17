@@ -5,15 +5,17 @@ public class NutritionSummaryDto {
     private Double protein;
     private Double carbs;
     private Double fat;
+    private Double fiber;
 
     public NutritionSummaryDto() {
     }
 
-    public NutritionSummaryDto(Double kcal, Double protein, Double carbs, Double fat) {
+    public NutritionSummaryDto(Double kcal, Double protein, Double carbs, Double fat, Double fiber) {
         this.kcal = kcal;
         this.protein = protein;
         this.carbs = carbs;
         this.fat = fat;
+        this.fiber = fiber;
     }
 
     public Double getKcal() {
@@ -47,4 +49,8 @@ public class NutritionSummaryDto {
     public void setFat(Double fat) {
         this.fat = fat;
     }
+
+    public Double getFiber() {return fiber;}
+
+    public void setFiber(Double fiber) {this.fiber = fiber;}
 }

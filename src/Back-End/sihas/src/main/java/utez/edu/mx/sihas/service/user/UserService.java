@@ -13,6 +13,7 @@ import utez.edu.mx.sihas.utils.Message;
 import utez.edu.mx.sihas.utils.TypesResponse;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -52,8 +53,25 @@ public class UserService {
             return new ResponseEntity<>(new Message("El rol debe ser necesario", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
         }
 
-        if(user.getPassword().length() > 8){
-            return new ResponseEntity<>(new Message("La contraseña debe tener un máximo de 8 caracteres", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+        if (user.getPassword().length() <= 7) {
+            return new ResponseEntity<>(
+                    new Message("La contraseña debe tener más de 8 caracteres", TypesResponse.WARNING),
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+
+        if (!user.getPassword().matches(".*[A-Z].*")) {
+            return new ResponseEntity<>(
+                    new Message("La contraseña debe tener al menos una mayúscula", TypesResponse.WARNING),
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+
+        if (!user.getPassword().matches(".*\\d.*")) {
+            return new ResponseEntity<>(
+                    new Message("La contraseña debe contener al menos un número", TypesResponse.WARNING),
+                    HttpStatus.BAD_REQUEST
+            );
         }
 
         Optional<User> userFindByEmail = userRepository.findByEmail(user.getEmail());
@@ -78,6 +96,13 @@ public class UserService {
     @Transactional(readOnly = true)
     public ResponseEntity<Message> findByID(Long  id) {
         Optional<User> userList = userRepository.findById(id);
+        return new ResponseEntity<>(new Message(userList,"Listado de usuario", TypesResponse.SUCCESS), HttpStatus.OK);
+    }
+
+
+    @Transactional(readOnly = true)
+    public ResponseEntity<Message> findpatients() {
+        List<User> userList = userRepository.findByRoleName("USUARIO");
         return new ResponseEntity<>(new Message(userList,"Listado de usuario", TypesResponse.SUCCESS), HttpStatus.OK);
     }
 
@@ -129,8 +154,46 @@ public class UserService {
             return new ResponseEntity<>(new Message("La contraseña actual no coincide", TypesResponse.ERROR), HttpStatus.BAD_REQUEST);
         }
 
-        if (dto.getNewPassword().length() > 8) {
-            return new ResponseEntity<>(new Message("La contraseña debe tener un máximo de 8 caracteres", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+        if (dto.getCurrentPassword().length() <= 7) {
+            return new ResponseEntity<>(
+                    new Message("La contraseña debe tener más de 8 caracteres", TypesResponse.WARNING),
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+
+        if (!dto.getCurrentPassword().matches(".*[A-Z].*")) {
+            return new ResponseEntity<>(
+                    new Message("La contraseña debe tener al menos una mayúscula", TypesResponse.WARNING),
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+
+        if (!dto.getCurrentPassword().matches(".*\\d.*")) {
+            return new ResponseEntity<>(
+                    new Message("La contraseña debe contener al menos un número", TypesResponse.WARNING),
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+
+        if (dto.getNewPassword().length() <= 7) {
+            return new ResponseEntity<>(
+                    new Message("La contraseña debe tener más de 8 caracteres", TypesResponse.WARNING),
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+
+        if (!dto.getNewPassword().matches(".*[A-Z].*")) {
+            return new ResponseEntity<>(
+                    new Message("La contraseña debe tener al menos una mayúscula", TypesResponse.WARNING),
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+
+        if (!dto.getNewPassword().matches(".*\\d.*")) {
+            return new ResponseEntity<>(
+                    new Message("La contraseña debe contener al menos un número", TypesResponse.WARNING),
+                    HttpStatus.BAD_REQUEST
+            );
         }
 
         userUpdate.setPassword(passwordEncoder.encode(dto.getNewPassword()));
@@ -148,8 +211,25 @@ public class UserService {
 
         User userUpdate = userOptional.get();
 
-        if (dto.getNewPassword().length() > 8) {
-            return new ResponseEntity<>(new Message("La contraseña debe tener un máximo de 8 caracteres", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+        if (dto.getNewPassword().length() <= 7  ) {
+            return new ResponseEntity<>(
+                    new Message("La contraseña debe tener más de 8 caracteres", TypesResponse.WARNING),
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+
+        if (!dto.getNewPassword().matches(".*[A-Z].*")) {
+            return new ResponseEntity<>(
+                    new Message("La contraseña debe tener al menos una mayúscula", TypesResponse.WARNING),
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+
+        if (!dto.getNewPassword().matches(".*\\d.*")) {
+            return new ResponseEntity<>(
+                    new Message("La contraseña debe contener al menos un número", TypesResponse.WARNING),
+                    HttpStatus.BAD_REQUEST
+            );
         }
 
         userUpdate.setPassword(passwordEncoder.encode(dto.getNewPassword()));
