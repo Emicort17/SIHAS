@@ -43,7 +43,7 @@ public class FoodScheduleService {
     public ResponseEntity<Message> findAll() {
         List<FoodSchedule> foodSchedules = foodScheduleRepository.findAll();
         if (foodSchedules.isEmpty()) {
-            return new ResponseEntity<>(new Message("No hay horarios de alimentos registrados", TypesResponse.WARNING), HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(new Message("No hay horarios de alimentos registrados", TypesResponse.SUCCESS), HttpStatus.OK);
         }
         return new ResponseEntity<>(new Message(foodSchedules, "Horarios de alimentos encontrados", TypesResponse.SUCCESS), HttpStatus.OK);
     }
@@ -62,7 +62,7 @@ public class FoodScheduleService {
 
         List<Food> listOfFoods = foodRepository.findAllById(foodScheduleDto.getFoods());
         if (listOfFoods.isEmpty()) {
-            return new ResponseEntity<>(new Message("No se encontraron alimentos con los IDs proporcionados", TypesResponse.ERROR), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Message("No se encontraron alimentos con los IDs proporcionados", TypesResponse.WARNING), HttpStatus.NOT_FOUND);
         }
 
         FoodSchedule foodScheduleSave =

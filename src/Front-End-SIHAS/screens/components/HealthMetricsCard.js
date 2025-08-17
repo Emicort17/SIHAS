@@ -90,6 +90,7 @@ export default function HealthMetricsCard({ token, userId, biologicalData, onUpd
         fatPercentage: biologicalData?.fatPercentage || 1,
         user: userId,
       };
+      console.log("Datos a enviar: ", updateData, token);
 
       const response = await AxiosClient.put(`/api/usuario/datosbiologicos/update`, updateData, {
         headers: {

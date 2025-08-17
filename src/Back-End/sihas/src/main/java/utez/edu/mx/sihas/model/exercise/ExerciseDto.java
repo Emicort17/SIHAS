@@ -15,16 +15,16 @@ public class ExerciseDto {
     @NotNull(groups = {Modifying.class, ExerciseDto.ChangeStatus.class})
     private Long idExercise;
 
-    @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
+    @NotNull(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
     private LocalDate date;
 
-    @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
+    @NotNull(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
     private LocalTime time;
 
-    @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
+    @NotNull(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
     private Boolean status;
 
-    @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
+    @NotNull(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
     private Long user;
 
     public Long getIdExercise() {

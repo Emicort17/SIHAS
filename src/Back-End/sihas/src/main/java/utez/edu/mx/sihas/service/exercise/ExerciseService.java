@@ -36,7 +36,7 @@ public class ExerciseService {
         if(!exerciseList.isEmpty()){
             return new ResponseEntity<>(new Message(exerciseList,"Listado de ejercisios", TypesResponse.SUCCESS), HttpStatus.OK);
         }else{
-            return new ResponseEntity<>(new Message(exerciseList,"No existe listado", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Message(exerciseList,"No existe listado", TypesResponse.SUCCESS), HttpStatus.OK);
         }
     }
 

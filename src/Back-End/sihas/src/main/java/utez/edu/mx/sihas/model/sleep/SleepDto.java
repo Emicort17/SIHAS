@@ -13,19 +13,19 @@ public class SleepDto {
     @NotNull(groups = {Modifying.class, ExerciseDto.ChangeStatus.class})
     private Long idSleep;
 
-    @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
+    @NotNull(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
     private LocalDate date;
 
-    @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
+    @NotNull(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
     private LocalTime startTime;
 
-    @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
+    @NotNull(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
     private LocalTime endTime;
 
-    @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
+    @NotNull(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
     private Double totalHours;
 
-    @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
+    @NotNull(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
     private Long user;
 
     public Long getIdSleep() {
