@@ -32,7 +32,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/login", "/api/usuario/register", "/api/email/send-email", "/api/email/change-password", "/api/import/").permitAll()
                         .requestMatchers("/api/profesional/**").hasAuthority("PROFESIONAL")
-                        .requestMatchers("/api/usuario/**").hasAuthority("USUARIO")
+                        .requestMatchers("/api/usuario/**").hasAnyAuthority("PROFESIONAL", "USUARIO")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

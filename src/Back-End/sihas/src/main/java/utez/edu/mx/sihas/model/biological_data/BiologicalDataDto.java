@@ -17,19 +17,19 @@ public class BiologicalDataDto {
     private Long idData;
 
 
-    @NotBlank(groups = {BiologicalDataDto.Register.class, BiologicalDataDto.Modify.class})
+    @NotNull(groups = {BiologicalDataDto.Register.class, BiologicalDataDto.Modify.class})
     private Date date;
-    @NotBlank(groups = {BiologicalDataDto.Register.class, BiologicalDataDto.Modify.class})
+    @NotNull(groups = {BiologicalDataDto.Register.class, BiologicalDataDto.Modify.class})
     private Double weight;
-    @NotBlank(groups = {BiologicalDataDto.Register.class, BiologicalDataDto.Modify.class})
+    @NotNull(groups = {BiologicalDataDto.Register.class, BiologicalDataDto.Modify.class})
     private Double height;
-    @NotBlank(groups = {BiologicalDataDto.Register.class, BiologicalDataDto.Modify.class})
+    @NotNull(groups = {BiologicalDataDto.Register.class, BiologicalDataDto.Modify.class})
     private Integer age;
-    @NotBlank(groups = {BiologicalDataDto.Register.class, BiologicalDataDto.Modify.class})
+    @NotNull(groups = {BiologicalDataDto.Register.class, BiologicalDataDto.Modify.class})
     private Double bmi;
-    @NotBlank(groups = {BiologicalDataDto.Register.class, BiologicalDataDto.Modify.class})
+    @NotNull(groups = {BiologicalDataDto.Register.class, BiologicalDataDto.Modify.class})
     private Double fatPercentage;
-    @NotBlank(groups = {BiologicalDataDto.Register.class, BiologicalDataDto.Modify.class})
+    @NotNull(groups = {BiologicalDataDto.Register.class, BiologicalDataDto.Modify.class})
     private Long user;
 
     public Long getIdData() {

@@ -18,7 +18,7 @@ import utez.edu.mx.sihas.utils.Message;
 public class UserController {
     private final UserService userService;
     private final PatientSummaryService patientSummaryService;
-    @Autowired
+        @Autowired
     public UserController(UserService userService, PatientSummaryService patientSummaryService) {
         this.userService = userService;
         this.patientSummaryService = patientSummaryService;
@@ -34,10 +34,10 @@ public class UserController {
         return userService.findByID(id);
     }
 
-    @PutMapping("/update")
-    public ResponseEntity<Message> updateUser(@Validated(UserDto.Modify.class) @RequestBody UserDto  userDto) {
-        return userService.update(userDto);
-    }
+        @PutMapping("/update")
+        public ResponseEntity<Message> updateUser(@Validated(UserDto.Modify.class) @RequestBody UserDto  userDto) {
+            return userService.update(userDto);
+        }
 
     @PutMapping("/status/{id}")
     public ResponseEntity<Message> updateStatus(@Validated(UserDto.ChangeStatus.class) @PathVariable Long id) {
