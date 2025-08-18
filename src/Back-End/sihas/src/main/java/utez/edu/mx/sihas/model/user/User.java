@@ -10,6 +10,7 @@ import utez.edu.mx.sihas.model.monitoreo_user.MonitorUser;
 import utez.edu.mx.sihas.model.rol.Rol;
 import utez.edu.mx.sihas.model.sleep.Sleep;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -67,6 +68,7 @@ public class User {
     @OneToMany(mappedBy = "user")
     @JsonIgnore
     private List<Sleep> sleep;
+
 
     @OneToOne(mappedBy = "user")
     @JsonIgnore
@@ -156,9 +158,7 @@ public class User {
         return monitoreosUsuario;
     }
 
-    public void setMonitoreosUsuario(List<MonitorUser> monitoreosUsuario) {
-        this.monitoreosUsuario = monitoreosUsuario;
-    }
+    public void setMonitoreosUsuario(List<MonitorUser> monitoreosUsuario) {this.monitoreosUsuario = monitoreosUsuario;}
 
     public List<Alert> getAlerts() {
         return alerts;
