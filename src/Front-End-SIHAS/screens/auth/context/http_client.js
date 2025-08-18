@@ -40,7 +40,7 @@ AxiosFileClient.interceptors.request.use(async (request) => {
     const userData = await AsyncStorage.getItem('userData');
     const token = userData ? JSON.parse(userData).token : null;
     if (token) request.headers["Authorization"] = `Bearer ${token}`;
-    request.headers["Accept"] = "application/pdf"; // importante
+    request.headers["Accept"] = "application/pdf"; 
     return request;
 });
 

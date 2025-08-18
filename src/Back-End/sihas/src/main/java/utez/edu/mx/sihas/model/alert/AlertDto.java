@@ -16,28 +16,28 @@ public class AlertDto {
     @NotNull(groups = {Modifying.class, ExerciseDto.ChangeStatus.class})
     private Long id_alert;
 
-    @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
+    @NotNull(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
     private String type_alert;
 
-    @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
+    @NotNull(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
     private String description;
 
-    @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
+    @NotNull(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
     private Boolean status;
 
-    @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
+    @NotNull(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
     private LocalDate scheduled_date;
 
-    @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
+    @NotNull(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
     private LocalTime scheduled_time;
 
-    @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
+    @NotNull(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
     private Boolean oneDay;
 
-    @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
+    @NotNull(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
     private Long idRelacionado;
 
-    @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
+    @NotNull(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
     private Long user;
 
     public Long getId_alert() {

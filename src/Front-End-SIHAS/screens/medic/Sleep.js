@@ -264,8 +264,8 @@ export default function SleepAdminScreen() {
     
   const fetchSleeps = async () => {
     try {
-        console.log("Datos de alumno: ", user.token)
-      const response = await AxiosClient.get('/api/usuario/horario/dormir/all', {
+        console.log("Datos de alumno: ", user.userId)
+      const response = await AxiosClient.get(`/api/usuario/horario/dormir/${user.userId}`, {
         headers: {
           Authorization: `Bearer ${user.token}`,
         },

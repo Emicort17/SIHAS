@@ -264,7 +264,7 @@ export default function SleepUserScreen() {
     
   const fetchSleeps = async () => {
     try {
-      const response = await AxiosClient.get('/api/usuario/horario/dormir/all', {
+      const response = await AxiosClient.get(`/api/usuario/horario/dormir/${user.userId}`, {
         headers: {
           Authorization: `Bearer ${user.token}`,
         },

@@ -21,6 +21,7 @@ export default function Profile() {
   const [isInactive, setIsInactive] = useState(!user?.status);
 
   useEffect(() => {
+    console.log("User data updated:", userData);
     if (userData) {
       setProfileData(userData);
     }

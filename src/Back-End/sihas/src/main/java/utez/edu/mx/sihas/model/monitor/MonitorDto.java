@@ -16,7 +16,7 @@ public class MonitorDto {
     @NotNull(groups = {Modifying.class, MonitorDto.ChangeStatus.class})
     private Long idMonitor;
 
-    @NotBlank(groups = {MonitorDto.Register.class, MonitorDto.Modify.class})
+    @NotNull(groups = {MonitorDto.Register.class, MonitorDto.Modify.class})
     private String requestStatus;
 
     @NotBlank(groups = {MonitorDto.Register.class, MonitorDto.Modify.class})
