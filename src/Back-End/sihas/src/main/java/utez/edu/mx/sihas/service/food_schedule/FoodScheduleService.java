@@ -19,6 +19,7 @@ import utez.edu.mx.sihas.utils.Message;
 import utez.edu.mx.sihas.utils.TypesResponse;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -46,6 +47,14 @@ public class FoodScheduleService {
             return new ResponseEntity<>(new Message("No hay horarios de alimentos registrados", TypesResponse.SUCCESS), HttpStatus.OK);
         }
         return new ResponseEntity<>(new Message(foodSchedules, "Horarios de alimentos encontrados", TypesResponse.SUCCESS), HttpStatus.OK);
+    }
+
+    public ResponseEntity<Message> findByUserAndDay(Long userId, LocalDate date) {
+        List<FoodSchedule> schedules = foodScheduleRepository.findByUserIdAndDate(userId, date);
+        if (schedules.isEmpty()) {
+            return new ResponseEntity<>(new Message("No hay horarios para este usuario y día", TypesResponse.SUCCESS), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new Message(schedules, "Horarios encontrados", TypesResponse.SUCCESS), HttpStatus.OK);
     }
 
     @Transactional(rollbackFor = {SQLException.class})

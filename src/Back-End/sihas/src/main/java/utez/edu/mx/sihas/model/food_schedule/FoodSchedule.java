@@ -27,7 +27,6 @@ public class FoodSchedule {
 
     @ManyToOne
     @JoinColumn(name = "id_usuario")
-    @JsonIgnore
     private User user;
 
     @OneToMany(mappedBy = "foodSchedule")

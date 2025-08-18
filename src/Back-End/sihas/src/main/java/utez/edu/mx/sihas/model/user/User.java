@@ -63,11 +63,12 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     @JsonIgnore
-    private List<Sleep> sleeps = new ArrayList<>();
+    private List<Exercise> exercise;
 
     @OneToMany(mappedBy = "user")
     @JsonIgnore
-    private List<Exercise> exercises = new ArrayList<>();
+    private List<Sleep> sleep;
+
 
     @OneToOne(mappedBy = "user")
     @JsonIgnore
@@ -121,12 +122,28 @@ public class User {
         this.id = id_user;
     }
 
+    public List<Exercise> getExercise() {
+        return exercise;
+    }
+
+    public void setExercise(List<Exercise> exercise) {
+        this.exercise = exercise;
+    }
+
     public BiologicalData getBiologicalData() {
         return biologicalData;
     }
 
     public void setBiologicalData(BiologicalData biologicalData) {
         this.biologicalData = biologicalData;
+    }
+
+    public List<Sleep> getSleep() {
+        return sleep;
+    }
+
+    public void setSleep(List<Sleep> sleep) {
+        this.sleep = sleep;
     }
 
     public List<FoodSchedule> getFoodSchedules() {
@@ -165,30 +182,6 @@ public class User {
 
     public void setStatus(boolean status) {
         this.status = status;
-    }
-
-    public List<Exercise> getExercises() {
-        return exercises;
-    }
-
-    public void setExercises(List<Exercise> exercises) {
-        this.exercises = exercises;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public List<Sleep> getSleeps() {
-        return sleeps;
-    }
-
-    public void setSleeps(List<Sleep> sleeps) {
-        this.sleeps = sleeps;
     }
 
     public User() {

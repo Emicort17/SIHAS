@@ -10,5 +10,6 @@ public class UserSimpleDto {
     private Long id_user;
 
     public UserSimpleDto(Long idUser) {
+        this.id_user = idUser;
     }
 }
