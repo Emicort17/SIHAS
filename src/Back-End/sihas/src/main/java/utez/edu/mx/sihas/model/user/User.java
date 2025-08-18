@@ -10,6 +10,7 @@ import utez.edu.mx.sihas.model.monitoreo_user.MonitorUser;
 import utez.edu.mx.sihas.model.rol.Rol;
 import utez.edu.mx.sihas.model.sleep.Sleep;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -60,13 +61,13 @@ public class User {
     @JsonIgnore
     private List<Alert> alerts;
 
-    @OneToOne(mappedBy = "user")
+    @OneToMany(mappedBy = "user")
     @JsonIgnore
-    private Exercise exercise;
+    private List<Sleep> sleeps = new ArrayList<>();
 
-    @OneToOne(mappedBy = "user")
+    @OneToMany(mappedBy = "user")
     @JsonIgnore
-    private Sleep sleep;
+    private List<Exercise> exercises = new ArrayList<>();
 
     @OneToOne(mappedBy = "user")
     @JsonIgnore
@@ -120,28 +121,12 @@ public class User {
         this.id = id_user;
     }
 
-    public Exercise getExercise() {
-        return exercise;
-    }
-
-    public void setExercise(Exercise exercise) {
-        this.exercise = exercise;
-    }
-
     public BiologicalData getBiologicalData() {
         return biologicalData;
     }
 
     public void setBiologicalData(BiologicalData biologicalData) {
         this.biologicalData = biologicalData;
-    }
-
-    public Sleep getSleep() {
-        return sleep;
-    }
-
-    public void setSleep(Sleep sleep) {
-        this.sleep = sleep;
     }
 
     public List<FoodSchedule> getFoodSchedules() {
@@ -156,9 +141,7 @@ public class User {
         return monitoreosUsuario;
     }
 
-    public void setMonitoreosUsuario(List<MonitorUser> monitoreosUsuario) {
-        this.monitoreosUsuario = monitoreosUsuario;
-    }
+    public void setMonitoreosUsuario(List<MonitorUser> monitoreosUsuario) {this.monitoreosUsuario = monitoreosUsuario;}
 
     public List<Alert> getAlerts() {
         return alerts;
@@ -182,6 +165,30 @@ public class User {
 
     public void setStatus(boolean status) {
         this.status = status;
+    }
+
+    public List<Exercise> getExercises() {
+        return exercises;
+    }
+
+    public void setExercises(List<Exercise> exercises) {
+        this.exercises = exercises;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public List<Sleep> getSleeps() {
+        return sleeps;
+    }
+
+    public void setSleeps(List<Sleep> sleeps) {
+        this.sleeps = sleeps;
     }
 
     public User() {

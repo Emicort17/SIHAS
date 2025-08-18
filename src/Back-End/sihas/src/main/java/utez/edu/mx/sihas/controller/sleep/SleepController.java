@@ -25,11 +25,6 @@ public class SleepController {
         return sleepService.findAll();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Message> getSleepByID(@PathVariable Long id) {
-        return sleepService.findByUser(id);
-    }
-
     @PostMapping("/save")
     public  ResponseEntity<Message> saveSleep(@Validated(SleepDto.Register.class) @RequestBody SleepDto sleepDto) {
         return sleepService.save(sleepDto);

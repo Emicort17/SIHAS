@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import NutritionSummary from "../../components/NutritionSummary";
 import {
   Text,
   StyleSheet,
@@ -20,18 +21,25 @@ export default function NutricionUserScreen() {
   const renderContent = () => {
     switch (activeTab) {
       case "Resumen":
-        return (
-          <View style={styles.content}>r
-            <Text style={styles.subtitle}>Resumen Nutricional Diario</Text>
-            <View style={styles.summary}>
-              <Text>Total: 440 kcal</Text>
-              <Text>Carbohidratos: 69g</Text>
-              <Text>Proteínas: 19.3g</Text>
-              <Text>Grasas: 11.8g</Text>
-            </View>
-            <Text style={styles.timestamp}>Desayuno</Text>
-          </View>
-        );
+  return (
+    <View style={styles.content}>
+      <Text style={styles.subtitle}>Resumen Nutricional Diario</Text>
+
+      {/* Aquí llamamos al nuevo componente */}
+      <NutritionSummary
+        data={{
+          kcal: 440,
+          protein: 19.3,
+          carbs: 69,
+          fat: 11.8,
+          fiber: 5.2, // puedes cambiar el valor según lo que tengas
+        }}
+      />
+
+      <Text style={styles.timestamp}>Desayuno</Text>
+    </View>
+  );
+
       case "Horarios":
         return (
           <View style={styles.content}>
