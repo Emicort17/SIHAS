@@ -1,72 +1,74 @@
 package utez.edu.mx.sihas.model.food_schedule;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.data.jpa.repository.Modifying;
-import utez.edu.mx.sihas.model.exercise.ExerciseDto;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
 public class FoodScheduleDto {
-
-    @NotNull(groups = {Modifying.class, ExerciseDto.ChangeStatus.class})
     private Long idFoodSchedule;
 
-    @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
+    @NotNull(groups = Register.class, message = "La fecha es obligatoria")
     private LocalDate date;
 
-    @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
+    @NotNull(groups = Register.class, message = "La hora es obligatoria")
     private LocalTime time;
 
-    @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
+    @NotNull(groups = Register.class, message = "El ID de usuario es obligatorio")
     private Long user;
 
-    @NotNull(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
+    private String mealType;
+
     private List<Long> foods;
 
-    public @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class}) LocalDate getDate() {
-        return date;
-    }
-
-    public void setDate(@NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class}) LocalDate date) {
-        this.date = date;
-    }
-
-    public @NotNull(groups = {Modifying.class, ExerciseDto.ChangeStatus.class}) Long getIdFoodSchedule() {
+    public Long getIdFoodSchedule() {
         return idFoodSchedule;
     }
 
-    public void setIdFoodSchedule(@NotNull(groups = {Modifying.class, ExerciseDto.ChangeStatus.class}) Long idFoodSchedule) {
+    public void setIdFoodSchedule(Long idFoodSchedule) {
         this.idFoodSchedule = idFoodSchedule;
     }
 
-    public @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class}) LocalTime getTime() {
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public LocalTime getTime() {
         return time;
     }
 
-    public void setTime(@NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class}) LocalTime time) {
+    public void setTime(LocalTime time) {
         this.time = time;
     }
 
-    public @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class}) Long getUser() {
+    public Long getUser() {
         return user;
     }
 
-    public void setUser(@NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class}) Long user) {
+    public void setUser(Long user) {
         this.user = user;
     }
 
-    public @NotNull(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class}) List<Long> getFoods() {
+    public String getMealType() {
+        return mealType;
+    }
+
+    public void setMealType(String mealType) {
+        this.mealType = mealType;
+    }
+
+    public List<Long> getFoods() {
         return foods;
     }
 
-    public void setFoods(@NotNull(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class}) List<Long> foods) {
+    public void setFoods(List<Long> foods) {
         this.foods = foods;
     }
 
-    public interface Register{}
-    public interface Modify{}
-    public interface ChangeStatus{}
+    public interface Register {}
+    public interface Modify {}
 }

@@ -12,7 +12,7 @@ public class Food {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_alimento")
-    private Long id_food;
+    private Long id_alimento; // Changed from id_food
 
     @Column(name = "nombre", columnDefinition = "VARCHAR(150)")
     private String name;
@@ -39,20 +39,27 @@ public class Food {
     @JsonIgnore
     private List<FoodFoodSchedule> foodFoodSchedules;
 
-    public Integer getQuantity() {
-        return quantity;
+    public Food() {
     }
 
-    public void setQuantity(Integer quantity) {
+    public Food(String name, Integer quantity, Double calories,
+                Double proteins, Double fats, Double carbohydrates,
+                Double fiber) {
+        this.name = name;
         this.quantity = quantity;
-    }
-
-    public Double getProteins() {
-        return proteins;
-    }
-
-    public void setProteins(Double proteins) {
+        this.calories = calories;
         this.proteins = proteins;
+        this.fats = fats;
+        this.carbohydrates = carbohydrates;
+        this.fiber = fiber;
+    }
+
+    public Long getId_alimento() {
+        return id_alimento;
+    }
+
+    public void setId_alimento(Long id_alimento) {
+        this.id_alimento = id_alimento;
     }
 
     public String getName() {
@@ -63,12 +70,28 @@ public class Food {
         this.name = name;
     }
 
-    public Long getId_food() {
-        return id_food;
+    public Integer getQuantity() {
+        return quantity;
     }
 
-    public void setId_food(Long id_food) {
-        this.id_food = id_food;
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+
+    public Double getCalories() {
+        return calories;
+    }
+
+    public void setCalories(Double calories) {
+        this.calories = calories;
+    }
+
+    public Double getProteins() {
+        return proteins;
+    }
+
+    public void setProteins(Double proteins) {
+        this.proteins = proteins;
     }
 
     public Double getFats() {
@@ -87,12 +110,12 @@ public class Food {
         this.carbohydrates = carbohydrates;
     }
 
-    public Double getCalories() {
-        return calories;
+    public Double getFiber() {
+        return fiber;
     }
 
-    public void setCalories(Double calories) {
-        this.calories = calories;
+    public void setFiber(Double fiber) {
+        this.fiber = fiber;
     }
 
     public List<FoodFoodSchedule> getFoodFoodSchedules() {
@@ -103,40 +126,17 @@ public class Food {
         this.foodFoodSchedules = foodFoodSchedules;
     }
 
-    public Double getFiber() {
-        return fiber;
-    }
-
-    public void setFiber(Double fiber) {
-        this.fiber = fiber;
-    }
-
-    public Food() {
-    }
-
-    public Food(String name, Integer quantity, Double calories,
-                Double proteins, Double fats, Double carbohydrates,
-                Double fiber) {
-        this.name = name;
-        this.quantity = quantity;
-        this.calories = calories;
-        this.proteins = proteins;
-        this.fats = fats;
-        this.carbohydrates = carbohydrates;
-        this.fiber = fiber;
-    }
-
     @Override
     public String toString() {
         return "Food{" +
-                "calories=" + calories +
-                ", id_food=" + id_food +
+                "id_alimento=" + id_alimento +
                 ", name='" + name + '\'' +
                 ", quantity=" + quantity +
+                ", calories=" + calories +
                 ", proteins=" + proteins +
                 ", fats=" + fats +
                 ", carbohydrates=" + carbohydrates +
+                ", fiber=" + fiber +
                 '}';
     }
 }
-

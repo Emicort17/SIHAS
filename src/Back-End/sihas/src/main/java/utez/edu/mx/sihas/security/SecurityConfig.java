@@ -30,7 +30,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/login", "/api/usuario/register", "/api/email/send-email", "/api/email/change-password", "/api/import/").permitAll()
+                        .requestMatchers("/api/login", "/api/usuario/register", "/api/email/send-email", "/api/email/change-password", "/api/import/all").permitAll()
                         .requestMatchers("/api/profesional/**").hasAuthority("PROFESIONAL")
                         .requestMatchers("/api/usuario/**").hasAnyAuthority("USUARIO", "PROFESIONAL")
                         .anyRequest().authenticated()
@@ -40,6 +40,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(request -> {
                     var corsConfig = new org.springframework.web.cors.CorsConfiguration();
                     corsConfig.setAllowedOrigins(List.of("http://localhost"));
+                    corsConfig.setAllowedOrigins(List.of("http://localhost:8081"));
                     corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
                     corsConfig.setAllowedHeaders(List.of("*"));
                     corsConfig.setAllowCredentials(true);

@@ -2,7 +2,6 @@ package utez.edu.mx.sihas.model.food_schedule;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import utez.edu.mx.sihas.model.alert.Alert;
 import utez.edu.mx.sihas.model.food_food_schedule.FoodFoodSchedule;
 import utez.edu.mx.sihas.model.user.User;
 
@@ -25,6 +24,9 @@ public class FoodSchedule {
     @Column(name = "hora", columnDefinition = "TIME")
     private LocalTime time;
 
+    @Column(name = "meal_type")
+    private String mealType;
+
     @ManyToOne
     @JoinColumn(name = "id_usuario")
     @JsonIgnore
@@ -32,6 +34,23 @@ public class FoodSchedule {
 
     @OneToMany(mappedBy = "foodSchedule")
     private List<FoodFoodSchedule> foodFoodSchedules;
+
+    public FoodSchedule() {
+    }
+
+    public FoodSchedule(LocalDate date, LocalTime time, User user) {
+        this.date = date;
+        this.time = time;
+        this.user = user;
+    }
+
+    public Long getIdFoodSchedule() {
+        return idFoodSchedule;
+    }
+
+    public void setIdFoodSchedule(Long idFoodSchedule) {
+        this.idFoodSchedule = idFoodSchedule;
+    }
 
     public LocalDate getDate() {
         return date;
@@ -49,12 +68,12 @@ public class FoodSchedule {
         this.time = time;
     }
 
-    public Long getIdFoodSchedule() {
-        return idFoodSchedule;
+    public String getMealType() {
+        return mealType;
     }
 
-    public void setIdFoodSchedule(Long idFoodSchedule) {
-        this.idFoodSchedule = idFoodSchedule;
+    public void setMealType(String mealType) {
+        this.mealType = mealType;
     }
 
     public User getUser() {
@@ -73,21 +92,13 @@ public class FoodSchedule {
         this.foodFoodSchedules = foodFoodSchedules;
     }
 
-    public FoodSchedule() {
-    }
-
-    public FoodSchedule( LocalDate date, LocalTime time, User user) {
-        this.date = date;
-        this.time = time;
-        this.user = user;
-    }
-
     @Override
     public String toString() {
         return "FoodSchedule{" +
                 "idFoodSchedule=" + idFoodSchedule +
                 ", date=" + date +
                 ", time=" + time +
+                ", mealType=" + mealType +
                 '}';
     }
 }
