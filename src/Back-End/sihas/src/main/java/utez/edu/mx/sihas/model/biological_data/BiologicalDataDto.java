@@ -1,13 +1,7 @@
 package utez.edu.mx.sihas.model.biological_data;
 
-
-
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.Modifying;
-import utez.edu.mx.sihas.model.exercise.ExerciseDto;
-import utez.edu.mx.sihas.model.user.User;
-import utez.edu.mx.sihas.model.user.UserDto;
 
 import java.util.Date;
 

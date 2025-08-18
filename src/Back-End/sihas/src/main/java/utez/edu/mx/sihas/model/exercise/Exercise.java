@@ -24,7 +24,7 @@ public class Exercise {
     @Column(name = "estado", columnDefinition = "BOOLEAN")
     private Boolean status;
 
-    @OneToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_usuario")
     private User user;
 

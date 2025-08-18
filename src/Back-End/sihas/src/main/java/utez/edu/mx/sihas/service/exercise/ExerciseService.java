@@ -52,22 +52,40 @@ public class ExerciseService {
     public ResponseEntity<Message> findById(Long id) {
         Optional<Exercise> exercise = exerciseRepository.findById(id);
         if (exercise.isPresent()) {
-            return new ResponseEntity<>(new Message(exercise.get(), "Ejercicio encontrado", TypesResponse.SUCCESS), HttpStatus.OK);
+            Exercise e = exercise.get();
+            ExerciseSimpleDto dto = new ExerciseSimpleDto(
+                    e.getIdExercise(),
+                    e.getDate(),
+                    e.getTime(),
+                    e.getStatus(),
+                    new UserSimpleDto(e.getUser().getId_user())
+            );
+            return new ResponseEntity<>(new Message(dto, "Ejercicio encontrado", TypesResponse.SUCCESS), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(new Message("No se encontró el ejercicio", TypesResponse.SUCCESS), HttpStatus.OK);
         }
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<Message> findByWeek(Long userId, LocalDate anyDateInWeek) {
-        LocalDate monday = anyDateInWeek.with(DayOfWeek.MONDAY);
-        LocalDate sunday = anyDateInWeek.with(DayOfWeek.SUNDAY);
+    public ResponseEntity<Message> findByCurrentWeek(Long userId) {
+        LocalDate today = LocalDate.now();
+        LocalDate monday = today.with(DayOfWeek.MONDAY);
+        LocalDate sunday = today.with(DayOfWeek.SUNDAY);
 
         List<Exercise> exercises = exerciseRepository.findByUserIdAndDateBetween(userId, monday, sunday);
         if (exercises.isEmpty()) {
             return new ResponseEntity<>(new Message("No hay ejercicios en la semana", TypesResponse.SUCCESS), HttpStatus.OK);
         }
-        return new ResponseEntity<>(new Message(exercises, "Ejercicios de la semana", TypesResponse.SUCCESS), HttpStatus.OK);
+        List<ExerciseSimpleDto> result = exercises.stream()
+                .map(e -> new ExerciseSimpleDto(
+                        e.getIdExercise(),
+                        e.getDate(),
+                        e.getTime(),
+                        e.getStatus(),
+                        new UserSimpleDto(e.getUser().getId_user())
+                ))
+                .toList();
+        return new ResponseEntity<>(new Message(result, "Ejercicios de la semana", TypesResponse.SUCCESS), HttpStatus.OK);
     }
 
     @Transactional(rollbackFor = {SQLException.class})

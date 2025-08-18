@@ -60,13 +60,13 @@ public class User {
     @JsonIgnore
     private List<Alert> alerts;
 
-    @OneToOne(mappedBy = "user")
+    @OneToMany(mappedBy = "user")
     @JsonIgnore
-    private Exercise exercise;
+    private List<Exercise> exercise;
 
-    @OneToOne(mappedBy = "user")
+    @OneToMany(mappedBy = "user")
     @JsonIgnore
-    private Sleep sleep;
+    private List<Sleep> sleep;
 
     @OneToOne(mappedBy = "user")
     @JsonIgnore
@@ -120,11 +120,11 @@ public class User {
         this.id = id_user;
     }
 
-    public Exercise getExercise() {
+    public List<Exercise> getExercise() {
         return exercise;
     }
 
-    public void setExercise(Exercise exercise) {
+    public void setExercise(List<Exercise> exercise) {
         this.exercise = exercise;
     }
 
@@ -136,11 +136,11 @@ public class User {
         this.biologicalData = biologicalData;
     }
 
-    public Sleep getSleep() {
+    public List<Sleep> getSleep() {
         return sleep;
     }
 
-    public void setSleep(Sleep sleep) {
+    public void setSleep(List<Sleep> sleep) {
         this.sleep = sleep;
     }
 

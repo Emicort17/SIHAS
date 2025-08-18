@@ -28,7 +28,7 @@ public class Sleep {
     @Column(name = "total_horas", columnDefinition = "DOUBLE")
     private Double totalHours;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "id_usuario")
     @JsonIgnore
     private User user;

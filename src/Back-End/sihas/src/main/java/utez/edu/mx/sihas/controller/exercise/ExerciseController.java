@@ -31,11 +31,10 @@ public class ExerciseController {
         return exerciseService.findById(id);
     }
 
+    // Este ya agarra de la semana actual
     @GetMapping("/semana/{id}")
-    public ResponseEntity<Message> getExercisesByWeek(
-            @PathVariable Long id,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        return exerciseService.findByWeek(id, date);
+    public ResponseEntity<Message> getExercisesByWeek(@PathVariable Long id) {
+        return exerciseService.findByCurrentWeek(id);
     }
 
     @PostMapping("/save")
