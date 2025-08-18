@@ -33,8 +33,8 @@ export default function NutricionUserScreen() {
         console.log("Fetching foods from /api/usuario/alimento/all");
         const response = await AxiosClient.get("/api/usuario/alimento/all");
         console.log("Food fetch response:", JSON.stringify(response, null, 2));
-        if (response && response.data && Array.isArray(response.data.data)) {
-          const mappedFoods = response.data.data.map((item) => ({
+        if (response && response.result && Array.isArray(response.result)) {
+          const mappedFoods = response.result.map((item) => ({
             id: item.id_alimento,
             nombre: item.name,
             quantity: item.quantity,
@@ -79,10 +79,11 @@ export default function NutricionUserScreen() {
         }
         console.log("Fetching schedules for userId:", userId);
         const response = await AxiosClient.get("/api/usuario/horarioalimento/all");
+        console.log("datos de horarios de aliemntos:", response.result);
         console.log("Food schedules fetch response:", JSON.stringify(response, null, 2));
-        if (response && response.data && Array.isArray(response.data.data)) {
+        if (response && response.result && Array.isArray(response.result)) {
           setFoodSchedules(
-            response.data.data.map((item) => ({
+            response.result.map((item) => ({
               id: item.idFoodSchedule,
               date: item.date,
               time: item.time,
@@ -203,8 +204,8 @@ export default function NutricionUserScreen() {
         };
         console.log("Adding foods payload:", JSON.stringify(payload, null, 2));
         const response = await AxiosClient.post("/api/usuario/horarioalimento/add-foods", payload);
-        console.log("Add foods response:", JSON.stringify(response.data, null, 2));
-        Alert.alert("Éxito", response.data.message || "Alimentos agregados al horario correctamente");
+        console.log("Add foods response:", JSON.stringify(response.result, null, 2));
+        Alert.alert("Éxito", response.text || "Alimentos agregados al horario correctamente");
       } else {
         if (!userId) {
           Alert.alert("Error", "ID de usuario no encontrado en los datos de sesión");
@@ -232,16 +233,16 @@ export default function NutricionUserScreen() {
         };
         console.log("Creating schedule payload:", JSON.stringify(payload, null, 2));
         const response = await AxiosClient.post("/api/usuario/horarioalimento/save", payload);
-        console.log("Save schedule response:", JSON.stringify(response.data, null, 2));
-        Alert.alert("Éxito", response.data.message || "Horario de alimento registrado correctamente");
+        console.log("Save schedule response:", JSON.stringify(response.result, null, 2));
+        Alert.alert("Éxito", response.text || "Horario de alimento registrado correctamente");
       }
 
       // Refresh food schedules
       const schedulesResponse = await AxiosClient.get("/api/usuario/horarioalimento/all");
       console.log("Refresh schedules response:", JSON.stringify(schedulesResponse, null, 2));
-      if (schedulesResponse && schedulesResponse.data && Array.isArray(schedulesResponse.data.data)) {
+      if (schedulesResponse && schedulesResponse.result && Array.isArray(schedulesResponse.result)) {
         setFoodSchedules(
-          schedulesResponse.data.data.map((item) => ({
+          schedulesResponse.result.map((item) => ({
             id: item.idFoodSchedule,
             date: item.date,
             time: item.time,
