@@ -41,4 +41,8 @@ public class AlertController {
         return alertService.findAll();
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Message> getAlertByUser(@PathVariable Long id) {
+        return alertService.findAllByUser(id);
+    }
 }

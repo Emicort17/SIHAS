@@ -139,4 +139,18 @@ public class AlertService {
         List<Alert> alerts = alertRepository.findAll();
         return new ResponseEntity<>(new Message(alerts,"Listado de alertas", TypesResponse.SUCCESS), HttpStatus.OK);
     }
+
+    @Transactional(readOnly = true)
+    public ResponseEntity<Message> findAllByUser(Long id) {
+        Optional<User> userOptional = userRepository.findById(id);
+        if (!userOptional.isPresent()) {
+            return new ResponseEntity<>(new Message("Usuario no encontrado", TypesResponse.ERROR), HttpStatus.NOT_FOUND);
+        }
+        User user = userOptional.get();
+        List<Alert> alerts = alertRepository.findAllByUser(user);
+        if (alerts.isEmpty()) {
+            return new ResponseEntity<>(new Message("No hay alertas para este usuario", TypesResponse.WARNING), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new Message(alerts, "Listado de alertas del usuario", TypesResponse.SUCCESS), HttpStatus.OK);
+    }
 }
