@@ -119,7 +119,6 @@ export default function Home() {
                                     user: profileData?.id_user,
                                 }
                             );
-                            setDidExercise(true);
                             fetchWeekExercise(profileData?.id_user);
                         } catch (error) {
                             console.error("Error al registrar ejercicio:", error);
