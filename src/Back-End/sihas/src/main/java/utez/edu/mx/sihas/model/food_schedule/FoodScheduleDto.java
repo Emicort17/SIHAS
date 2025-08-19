@@ -1,6 +1,5 @@
 package utez.edu.mx.sihas.model.food_schedule;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.Modifying;
 import utez.edu.mx.sihas.model.exercise.ExerciseDto;
@@ -23,7 +22,8 @@ public class FoodScheduleDto {
     @NotNull(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
     private Long user;
 
-    @NotNull(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
+    private String mealType;
+
     private List<Long> foods;
 
     public @NotNull(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class}) LocalDate getDate() {
@@ -58,6 +58,14 @@ public class FoodScheduleDto {
         this.user = user;
     }
 
+    public String getMealType() {
+        return mealType;
+    }
+
+    public void setMealType(String mealType) {
+        this.mealType = mealType;
+    }
+
     public @NotNull(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class}) List<Long> getFoods() {
         return foods;
     }
@@ -68,5 +76,4 @@ public class FoodScheduleDto {
 
     public interface Register{}
     public interface Modify{}
-    public interface ChangeStatus{}
 }

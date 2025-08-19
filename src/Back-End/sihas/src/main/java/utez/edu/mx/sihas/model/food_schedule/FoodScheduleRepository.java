@@ -8,6 +8,7 @@ import java.util.List;
 
 @Repository
 public interface FoodScheduleRepository extends JpaRepository<FoodSchedule, Long> {
+    List<FoodSchedule> findByUserId(Long userId);
 
     List<FoodSchedule> findByUserIdAndDate(Long userId, LocalDate date);
 }

@@ -25,12 +25,23 @@ public class FoodSchedule {
     @Column(name = "hora", columnDefinition = "TIME")
     private LocalTime time;
 
+    @Column(name = "meal_type")
+    private String mealType;
+
     @ManyToOne
     @JoinColumn(name = "id_usuario")
     private User user;
 
     @OneToMany(mappedBy = "foodSchedule")
     private List<FoodFoodSchedule> foodFoodSchedules;
+
+    public String getMealType() {
+        return mealType;
+    }
+
+    public void setMealType(String mealType) {
+        this.mealType = mealType;
+    }
 
     public LocalDate getDate() {
         return date;
@@ -87,6 +98,7 @@ public class FoodSchedule {
                 "idFoodSchedule=" + idFoodSchedule +
                 ", date=" + date +
                 ", time=" + time +
+                ", mealType='" + mealType +
                 '}';
     }
 }

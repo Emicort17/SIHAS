@@ -10,6 +10,7 @@ import utez.edu.mx.sihas.model.food.FoodDto;
 import utez.edu.mx.sihas.model.food.FoodRepository;
 import utez.edu.mx.sihas.model.food_food_schedule.FoodFoodSchedule;
 import utez.edu.mx.sihas.model.food_food_schedule.FoodFoodScheduleRepository;
+import utez.edu.mx.sihas.model.food_food_schedule.FoodScheduleFoodsDto;
 import utez.edu.mx.sihas.model.food_schedule.FoodSchedule;
 import utez.edu.mx.sihas.model.food_schedule.FoodScheduleDto;
 import utez.edu.mx.sihas.model.food_schedule.FoodScheduleRepository;
@@ -27,6 +28,7 @@ import java.util.Optional;
 @Transactional
 @Service
 public class FoodScheduleService {
+
     private final FoodScheduleRepository foodScheduleRepository;
     private final FoodFoodScheduleRepository foodFoodScheduleRepository;
     private final UserRepository userRepository;
@@ -42,11 +44,12 @@ public class FoodScheduleService {
 
     @Transactional(readOnly = true)
     public ResponseEntity<Message> findAll() {
-        List<FoodSchedule> foodSchedules = foodScheduleRepository.findAll();
-        if (foodSchedules.isEmpty()) {
-            return new ResponseEntity<>(new Message("No hay horarios de alimentos registrados", TypesResponse.SUCCESS), HttpStatus.OK);
+        try {
+            List<FoodSchedule> schedules = foodScheduleRepository.findAll();
+            return new ResponseEntity<>(new Message(schedules, "Horarios obtenidos correctamente", TypesResponse.SUCCESS), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new Message("Error al obtener horarios: " + e.getMessage(), TypesResponse.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<>(new Message(foodSchedules, "Horarios de alimentos encontrados", TypesResponse.SUCCESS), HttpStatus.OK);
     }
 
     public ResponseEntity<Message> findByUserAndDay(Long userId, LocalDate date) {
@@ -57,87 +60,161 @@ public class FoodScheduleService {
         return new ResponseEntity<>(new Message(schedules, "Horarios encontrados", TypesResponse.SUCCESS), HttpStatus.OK);
     }
 
-    @Transactional(rollbackFor = {SQLException.class})
-    public ResponseEntity<Message> save(FoodScheduleDto foodScheduleDto,Long fodId) {
-        if (foodScheduleDto.getDate() == null) {
-            return new ResponseEntity<>(new Message("El nombre excedio el limite de caracteres", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+    @Transactional(rollbackFor = {Exception.class})
+    public ResponseEntity<Message> save(FoodScheduleDto foodScheduleDto) {
+        try {
+            // Validate inputs
+            if (foodScheduleDto.getDate() == null) {
+                return new ResponseEntity<>(new Message("La fecha es obligatoria", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+            }
+            if (foodScheduleDto.getTime() == null) {
+                return new ResponseEntity<>(new Message("La hora es obligatoria", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+            }
+            if (foodScheduleDto.getUser() == null) {
+                return new ResponseEntity<>(new Message("El ID de usuario es obligatorio", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+            }
+
+            // Check user existence
+            User user = userRepository.findById(foodScheduleDto.getUser())
+                    .orElseThrow(() -> new IllegalArgumentException("El usuario con ID " + foodScheduleDto.getUser() + " no existe"));
+
+            // Check food IDs
+            List<Food> foods = foodScheduleDto.getFoods() != null
+                    ? foodRepository.findAllById(foodScheduleDto.getFoods())
+                    : new ArrayList<>();
+            if (!foodScheduleDto.getFoods().isEmpty() && foods.size() != foodScheduleDto.getFoods().size()) {
+                return new ResponseEntity<>(new Message("Uno o más IDs de alimentos no son válidos", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+            }
+
+            // Save FoodSchedule
+            FoodSchedule foodSchedule = new FoodSchedule(
+                    foodScheduleDto.getDate(),
+                    foodScheduleDto.getTime(),
+                    user
+            );
+            if (foodScheduleDto.getMealType() != null) {
+                foodSchedule.setMealType(foodScheduleDto.getMealType());
+            }
+            foodSchedule = foodScheduleRepository.saveAndFlush(foodSchedule);
+
+            // Save FoodFoodSchedule entries
+            List<FoodFoodSchedule> foodFoodSchedules = new ArrayList<>();
+            for (Food food : foods) {
+                if (foodFoodScheduleRepository.existsByFoodIdAndFoodScheduleId(food.getId_food(), foodSchedule.getIdFoodSchedule())) {
+                    continue;
+                }
+                FoodFoodSchedule foodFoodSchedule = new FoodFoodSchedule(food, foodSchedule);
+                foodFoodSchedules.add(foodFoodScheduleRepository.saveAndFlush(foodFoodSchedule));
+            }
+            foodSchedule.setFoodFoodSchedules(foodFoodSchedules);
+
+            return new ResponseEntity<>(new Message(foodSchedule, "Horario de alimento registrado correctamente", TypesResponse.SUCCESS), HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(new Message(e.getMessage(), TypesResponse.ERROR), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new Message("Error interno al registrar el horario: " + e.getMessage(), TypesResponse.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        if (foodScheduleDto.getTime() == null) {
-            return new ResponseEntity<>(new Message("La cantidad debe ser necesarias", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
-        }
-
-        User user = userRepository.findById(foodScheduleDto.getUser())
-                .orElseThrow(() -> new IllegalArgumentException("El usuario no existe"));
-
-        List<Food> listOfFoods = foodRepository.findAllById(foodScheduleDto.getFoods());
-        if (listOfFoods.isEmpty()) {
-            return new ResponseEntity<>(new Message("No se encontraron alimentos con los IDs proporcionados", TypesResponse.WARNING), HttpStatus.NOT_FOUND);
-        }
-
-        FoodSchedule foodScheduleSave =
-                new FoodSchedule(
-                        foodScheduleDto.getDate(),
-                        foodScheduleDto.getTime(),
-                        user);
-        foodScheduleSave = foodScheduleRepository.saveAndFlush(foodScheduleSave);
-
-        List<FoodFoodSchedule> foodFoodSchedules = new ArrayList<>();
-        for (Food food : listOfFoods) {
-            FoodFoodSchedule foodFoodSchedule = new FoodFoodSchedule(food, foodScheduleSave);
-            foodFoodScheduleRepository.saveAndFlush(foodFoodSchedule);
-            foodFoodSchedules.add(foodFoodSchedule);
-        }
-
-        foodScheduleSave.setFoodFoodSchedules(foodFoodSchedules);
-
-
-        if (foodScheduleSave == null) {
-            return new ResponseEntity<>(new Message("El horario de alimento no se pudo ingresar", TypesResponse.ERROR), HttpStatus.BAD_REQUEST);
-        }
-        return new ResponseEntity<>(new Message(foodScheduleSave, "El horario de alimento se registro correctamente", TypesResponse.SUCCESS), HttpStatus.OK);
     }
 
-    @Transactional(rollbackFor = {SQLException.class})
+    @Transactional(rollbackFor = {Exception.class})
     public ResponseEntity<Message> update(FoodScheduleDto foodScheduleDto) {
-        Optional<FoodSchedule> foodScheduleOptional = foodScheduleRepository.findById(foodScheduleDto.getIdFoodSchedule());
+        try {
+            // Validate ID
+            if (foodScheduleDto.getIdFoodSchedule() == null) {
+                return new ResponseEntity<>(new Message("El ID del horario es obligatorio", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+            }
 
-        if(!foodScheduleOptional.isPresent()){
-            return new ResponseEntity<>(new Message("El horario de alimento no existe",TypesResponse.ERROR),HttpStatus.NOT_FOUND);
+            // Check if FoodSchedule exists
+            Optional<FoodSchedule> foodScheduleOptional = foodScheduleRepository.findById(foodScheduleDto.getIdFoodSchedule());
+            if (!foodScheduleOptional.isPresent()) {
+                return new ResponseEntity<>(new Message("El horario de alimento no existe", TypesResponse.ERROR), HttpStatus.NOT_FOUND);
+            }
+
+            // Validate inputs
+            if (foodScheduleDto.getDate() == null) {
+                return new ResponseEntity<>(new Message("La fecha es obligatoria", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+            }
+            if (foodScheduleDto.getTime() == null) {
+                return new ResponseEntity<>(new Message("La hora es obligatoria", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+            }
+            if (foodScheduleDto.getUser() == null) {
+                return new ResponseEntity<>(new Message("El ID de usuario es obligatorio", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+            }
+
+            // Check user existence
+            User user = userRepository.findById(foodScheduleDto.getUser())
+                    .orElseThrow(() -> new IllegalArgumentException("El usuario con ID " + foodScheduleDto.getUser() + " no existe"));
+
+            // Check food IDs
+            List<Food> foods = foodScheduleDto.getFoods() != null
+                    ? foodRepository.findAllById(foodScheduleDto.getFoods())
+                    : new ArrayList<>();
+            if (!foodScheduleDto.getFoods().isEmpty() && foods.size() != foodScheduleDto.getFoods().size()) {
+                return new ResponseEntity<>(new Message("Uno o más IDs de alimentos no son válidos", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+            }
+
+            // Update FoodSchedule
+            FoodSchedule foodSchedule = foodScheduleOptional.get();
+            foodSchedule.setDate(foodScheduleDto.getDate());
+            foodSchedule.setTime(foodScheduleDto.getTime());
+            foodSchedule.setUser(user);
+            if (foodScheduleDto.getMealType() != null) {
+                foodSchedule.setMealType(foodScheduleDto.getMealType());
+            }
+            foodSchedule = foodScheduleRepository.saveAndFlush(foodSchedule);
+
+            // Delete existing FoodFoodSchedule entries
+            foodFoodScheduleRepository.deleteByFoodScheduleId(foodSchedule.getIdFoodSchedule());
+
+            // Save new FoodFoodSchedule entries
+            List<FoodFoodSchedule> foodFoodSchedules = new ArrayList<>();
+            for (Food food : foods) {
+                if (foodFoodScheduleRepository.existsByFoodIdAndFoodScheduleId(food.getId_food(), foodSchedule.getIdFoodSchedule())) {
+                    continue;
+                }
+                FoodFoodSchedule foodFoodSchedule = new FoodFoodSchedule(food, foodSchedule);
+                foodFoodSchedules.add(foodFoodScheduleRepository.saveAndFlush(foodFoodSchedule));
+            }
+            foodSchedule.setFoodFoodSchedules(foodFoodSchedules);
+
+            return new ResponseEntity<>(new Message(foodSchedule, "El horario se actualizó correctamente", TypesResponse.SUCCESS), HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(new Message(e.getMessage(), TypesResponse.ERROR), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new Message("Error interno al actualizar el horario: " + e.getMessage(), TypesResponse.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-        if (foodScheduleDto.getDate() == null) {
-            return new ResponseEntity<>(new Message("La fecha es obligatoria", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
-        }
-        if (foodScheduleDto.getTime() == null) {
-            return new ResponseEntity<>(new Message("El tiempo es obligatoria", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
-        }
-
-        User user = userRepository.findById(foodScheduleDto.getUser())
-                .orElseThrow(() -> new IllegalArgumentException("El usuario no existe"));
-
-        FoodSchedule foodScheduleUpdate = foodScheduleOptional.get();
-        foodScheduleUpdate.setIdFoodSchedule(foodScheduleDto.getIdFoodSchedule());
-        foodScheduleUpdate.setUser(user);
-        foodScheduleUpdate.setDate(foodScheduleDto.getDate());
-        foodScheduleUpdate.setTime(foodScheduleDto.getTime());
-        foodScheduleUpdate = foodScheduleRepository.saveAndFlush(foodScheduleUpdate);
-
-        foodFoodScheduleRepository.deleteAllByIdFoodFoodSchedule(foodScheduleUpdate.getIdFoodSchedule());
-
-        List<Food> listOfFoods = foodRepository.findAllById(foodScheduleDto.getFoods());
-
-        List<FoodFoodSchedule> foodFoodSchedules = new ArrayList<>();
-        for (Food food : listOfFoods) {
-            FoodFoodSchedule foodFoodSchedule = new FoodFoodSchedule(food, foodScheduleUpdate);
-            foodFoodSchedules.add(foodFoodSchedule);
-        }
-
-        foodScheduleUpdate.setFoodFoodSchedules(foodFoodSchedules);
-
-        if (foodScheduleUpdate == null) {
-            return new ResponseEntity<>(new Message("El horario no se pudo actualizar", TypesResponse.ERROR), HttpStatus.BAD_REQUEST);
-        }
-
-        return new ResponseEntity<>(new Message(foodScheduleUpdate, "El horario se actualizo correctamente", TypesResponse.SUCCESS), HttpStatus.OK);
     }
+
+    @Transactional(rollbackFor = {Exception.class})
+    public ResponseEntity<Message> addFoodsToSchedule(FoodScheduleFoodsDto foodScheduleFoodsDto) {
+        try {
+            // Validate foodScheduleId
+            FoodSchedule foodSchedule = foodScheduleRepository.findById(foodScheduleFoodsDto.getFoodScheduleId())
+                    .orElseThrow(() -> new IllegalArgumentException("El horario con ID " + foodScheduleFoodsDto.getFoodScheduleId() + " no existe"));
+
+            // Validate food IDs
+            List<Food> foods = foodRepository.findAllById(foodScheduleFoodsDto.getFoods());
+            if (foods.size() != foodScheduleFoodsDto.getFoods().size()) {
+                return new ResponseEntity<>(new Message("Uno o más IDs de alimentos no son válidos", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+            }
+
+            // Save FoodFoodSchedule entries
+            List<FoodFoodSchedule> foodFoodSchedules = new ArrayList<>();
+            for (Food food : foods) {
+                if (foodFoodScheduleRepository.existsByFoodIdAndFoodScheduleId(food.getId_food(), foodSchedule.getIdFoodSchedule())) {
+                    continue;
+                }
+                FoodFoodSchedule foodFoodSchedule = new FoodFoodSchedule(food, foodSchedule);
+                foodFoodSchedules.add(foodFoodScheduleRepository.saveAndFlush(foodFoodSchedule));
+            }
+
+            foodSchedule.setFoodFoodSchedules(foodFoodSchedules);
+            return new ResponseEntity<>(new Message(foodSchedule, "Alimentos agregados al horario correctamente", TypesResponse.SUCCESS), HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(new Message(e.getMessage(), TypesResponse.ERROR), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new Message("Error interno al agregar alimentos: " + e.getMessage(), TypesResponse.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }
