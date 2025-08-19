@@ -10,6 +10,7 @@ import utez.edu.mx.sihas.model.monitoreo_user.MonitorUser;
 import utez.edu.mx.sihas.model.rol.Rol;
 import utez.edu.mx.sihas.model.sleep.Sleep;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -60,13 +61,14 @@ public class User {
     @JsonIgnore
     private List<Alert> alerts;
 
-    @OneToOne(mappedBy = "user")
+    @OneToMany(mappedBy = "user")
     @JsonIgnore
-    private Exercise exercise;
+    private List<Exercise> exercise;
 
-    @OneToOne(mappedBy = "user")
+    @OneToMany(mappedBy = "user")
     @JsonIgnore
-    private Sleep sleep;
+    private List<Sleep> sleep;
+
 
     @OneToOne(mappedBy = "user")
     @JsonIgnore
@@ -120,11 +122,11 @@ public class User {
         this.id = id_user;
     }
 
-    public Exercise getExercise() {
+    public List<Exercise> getExercise() {
         return exercise;
     }
 
-    public void setExercise(Exercise exercise) {
+    public void setExercise(List<Exercise> exercise) {
         this.exercise = exercise;
     }
 
@@ -136,11 +138,11 @@ public class User {
         this.biologicalData = biologicalData;
     }
 
-    public Sleep getSleep() {
+    public List<Sleep> getSleep() {
         return sleep;
     }
 
-    public void setSleep(Sleep sleep) {
+    public void setSleep(List<Sleep> sleep) {
         this.sleep = sleep;
     }
 
@@ -156,9 +158,7 @@ public class User {
         return monitoreosUsuario;
     }
 
-    public void setMonitoreosUsuario(List<MonitorUser> monitoreosUsuario) {
-        this.monitoreosUsuario = monitoreosUsuario;
-    }
+    public void setMonitoreosUsuario(List<MonitorUser> monitoreosUsuario) {this.monitoreosUsuario = monitoreosUsuario;}
 
     public List<Alert> getAlerts() {
         return alerts;

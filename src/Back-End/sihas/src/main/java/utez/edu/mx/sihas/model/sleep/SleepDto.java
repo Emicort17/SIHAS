@@ -1,10 +1,9 @@
 package utez.edu.mx.sihas.model.sleep;
 
-import jakarta.validation.constraints.NotBlank;
+
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.Modifying;
 import utez.edu.mx.sihas.model.exercise.ExerciseDto;
-import utez.edu.mx.sihas.model.user.User;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -13,19 +12,19 @@ public class SleepDto {
     @NotNull(groups = {Modifying.class, ExerciseDto.ChangeStatus.class})
     private Long idSleep;
 
-    @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
+    @NotNull(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
     private LocalDate date;
 
-    @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
+    @NotNull(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
     private LocalTime startTime;
 
-    @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
+    @NotNull(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
     private LocalTime endTime;
 
-    @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
+    @NotNull(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
     private Double totalHours;
 
-    @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
+    @NotNull(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
     private Long user;
 
     public Long getIdSleep() {

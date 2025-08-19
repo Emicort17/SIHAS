@@ -7,7 +7,6 @@ import { Icon } from "@rneui/base";
 import HomeAdminScreen from "../medic/Home";
 import ProfileAdminScreen from "../medic/Profile";
 import NutritionAdminScreen from "../medic/Nutrition";
-import RunAdminScreen from "../medic/Run";
 import SleepAdminScreen from "../medic/Sleep";
 import listAdminScreen from "../medic/patient/PatientListScreen";
 import PatientDetailScreen from "../medic/patient/PatientDetailScreen";
@@ -20,8 +19,6 @@ import NutriSIcon from "../../assets/icons/nutri-s.svg";
 import NutriDIcon from "../../assets/icons/nutri-d.svg";
 import MoonSIcon from "../../assets/icons/moon-s.svg";
 import MoonDIcon from "../../assets/icons/moon-d.svg";
-import RunSIcon from "../../assets/icons/run-s.svg";
-import RunDIcon from "../../assets/icons/run-d.svg";
 import GroupSIcon from "../../assets/icons/group-s.svg";
 import GroupDIcon from "../../assets/icons/group-d.svg";
 
@@ -79,9 +76,6 @@ function MedicTabs() {
             case "SleepUser":
               title = "Sueño";
               break;
-            case "RunUser":
-              title = "Ejercicio";
-              break;
             case "GroupUser":
               title = "Pacientes";
               break;
@@ -118,15 +112,6 @@ function MedicTabs() {
           tabBarLabel: "Sueño",
           tabBarIcon: ({ focused }) =>
             focused ? <MoonSIcon width={24} height={24} /> : <MoonDIcon width={24} height={24} />,
-        }}
-      />
-      <Tab.Screen
-        name="RunUser"
-        component={RunAdminScreen}
-        options={{
-          tabBarLabel: "Ejercicio",
-          tabBarIcon: ({ focused }) =>
-            focused ? <RunSIcon width={24} height={24} /> : <RunDIcon width={24} height={24} />,
         }}
       />
       <Tab.Screen

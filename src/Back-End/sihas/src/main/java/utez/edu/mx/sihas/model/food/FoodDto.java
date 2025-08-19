@@ -12,25 +12,25 @@ public class FoodDto  {
     @NotNull(groups = {Modifying.class, ExerciseDto.ChangeStatus.class})
     private Long id_food;
 
-    @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
+    @NotNull(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
     private String name;
 
-    @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
+    @NotNull(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
     private Integer quantity;
 
-    @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
+    @NotNull(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
     private Double calories;
 
-    @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
+    @NotNull(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
     private Double proteins;
 
-    @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
+    @NotNull(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
     private Double fats;
 
-    @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
+    @NotNull(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
     private Double carbohydrates;
 
-    @NotBlank(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
+    @NotNull(groups = {ExerciseDto.Register.class, ExerciseDto.Modify.class})
     private Double fiber;
 
 

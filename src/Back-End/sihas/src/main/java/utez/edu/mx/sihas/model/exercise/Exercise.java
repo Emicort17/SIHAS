@@ -7,8 +7,6 @@ import utez.edu.mx.sihas.model.user.User;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-
-
 @Entity
 @Table(name = "Ejercicio")
 public class Exercise {
@@ -26,9 +24,9 @@ public class Exercise {
     @Column(name = "estado", columnDefinition = "BOOLEAN")
     private Boolean status;
 
-    @OneToOne
+
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_usuario")
-    @JsonIgnore
     private User user;
 
     public Boolean getStatus() {

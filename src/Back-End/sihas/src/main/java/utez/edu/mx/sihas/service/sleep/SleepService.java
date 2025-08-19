@@ -67,5 +67,14 @@ public class SleepService {
         return new ResponseEntity<>(new Message(sleepList,"Listado de sueño", TypesResponse.SUCCESS), HttpStatus.OK);
     }
 
+    @Transactional(readOnly = true)
+    public ResponseEntity<Message> findByUser(Long userId){
+        List<Sleep> sleepList = sleepRepository.findByUserId(userId);
+        if (sleepList.isEmpty()) {
+            return new ResponseEntity<>(new Message(sleepList,"No hay registros de sueño para este usuario", TypesResponse.SUCCESS), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new Message(sleepList, "Listado de sueño del usuario", TypesResponse.SUCCESS), HttpStatus.OK);
+    }
+
 
 }

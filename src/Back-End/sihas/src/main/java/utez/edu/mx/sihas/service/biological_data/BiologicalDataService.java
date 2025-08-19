@@ -140,7 +140,7 @@ public class BiologicalDataService {
         }
         Optional<BiologicalData> biologicalData = biologicalDataRepository.findByUser(userOptional.get());
         if (biologicalData.isEmpty()) {
-            return new ResponseEntity<>(new Message("No se encontraron datos biológicos para este usuario", TypesResponse.WARNING), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new Message("No se encontraron datos biológicos para este usuario", TypesResponse.SUCCESS), HttpStatus.OK);
         }
 
         return new ResponseEntity<>(new Message(biologicalData.get(), "Datos biológicos del usuario", TypesResponse.SUCCESS), HttpStatus.OK);

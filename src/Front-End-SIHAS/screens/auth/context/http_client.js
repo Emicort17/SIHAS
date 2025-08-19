@@ -1,7 +1,7 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const SERVER_URL = "http://192.168.0.10:8000";
+const SERVER_URL = "http://192.168.0.6:8000";
 
 const AxiosClient = axios.create({
     baseURL: SERVER_URL,
@@ -40,7 +40,7 @@ AxiosFileClient.interceptors.request.use(async (request) => {
     const userData = await AsyncStorage.getItem('userData');
     const token = userData ? JSON.parse(userData).token : null;
     if (token) request.headers["Authorization"] = `Bearer ${token}`;
-    request.headers["Accept"] = "application/pdf"; // importante
+    request.headers["Accept"] = "application/pdf"; 
     return request;
 });
 

@@ -1,5 +1,3 @@
-"use client"
-
 import React, { createContext, useContext, useState, useEffect, useRef } from "react"
 import { AxiosClient } from "./http_client"
 import AsyncStorage from '@react-native-async-storage/async-storage';

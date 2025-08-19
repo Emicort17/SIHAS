@@ -8,13 +8,16 @@ import org.springframework.transaction.annotation.Transactional;
 import utez.edu.mx.sihas.model.exercise.Exercise;
 import utez.edu.mx.sihas.model.exercise.ExerciseDto;
 import utez.edu.mx.sihas.model.exercise.ExerciseRepository;
+import utez.edu.mx.sihas.model.exercise.ExerciseSimpleDto;
 import utez.edu.mx.sihas.model.user.User;
-import utez.edu.mx.sihas.model.user.UserDto;
 import utez.edu.mx.sihas.model.user.UserRepository;
+import utez.edu.mx.sihas.model.user.UserSimpleDto;
 import utez.edu.mx.sihas.utils.Message;
 import utez.edu.mx.sihas.utils.TypesResponse;
 
 import java.sql.SQLException;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,11 +36,56 @@ public class ExerciseService {
     @Transactional(readOnly = true)
     public ResponseEntity<Message> findAll() {
         List<Exercise> exerciseList= exerciseRepository.findAll();
-        if(!exerciseList.isEmpty()){
-            return new ResponseEntity<>(new Message(exerciseList,"Listado de ejercisios", TypesResponse.SUCCESS), HttpStatus.OK);
-        }else{
-            return new ResponseEntity<>(new Message(exerciseList,"No existe listado", TypesResponse.WARNING), HttpStatus.BAD_REQUEST);
+        List<ExerciseSimpleDto> result = exerciseList.stream()
+                .map(e -> new ExerciseSimpleDto(
+                        e.getIdExercise(),
+                        e.getDate(),
+                        e.getTime(),
+                        e.getStatus(),
+                        new UserSimpleDto(e.getUser().getId_user())
+                ))
+                .toList();
+        return new ResponseEntity<>(new Message(result, "Listado de ejercicios", TypesResponse.SUCCESS), HttpStatus.OK);
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseEntity<Message> findById(Long id) {
+        Optional<Exercise> exercise = exerciseRepository.findById(id);
+        if (exercise.isPresent()) {
+            Exercise e = exercise.get();
+            ExerciseSimpleDto dto = new ExerciseSimpleDto(
+                    e.getIdExercise(),
+                    e.getDate(),
+                    e.getTime(),
+                    e.getStatus(),
+                    new UserSimpleDto(e.getUser().getId_user())
+            );
+            return new ResponseEntity<>(new Message(dto, "Ejercicio encontrado", TypesResponse.SUCCESS), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(new Message("No se encontró el ejercicio", TypesResponse.SUCCESS), HttpStatus.OK);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseEntity<Message> findByCurrentWeek(Long userId) {
+        LocalDate today = LocalDate.now();
+        LocalDate monday = today.with(DayOfWeek.MONDAY);
+        LocalDate sunday = today.with(DayOfWeek.SUNDAY);
+
+        List<Exercise> exercises = exerciseRepository.findByUserIdAndDateBetween(userId, monday, sunday);
+        if (exercises.isEmpty()) {
+            return new ResponseEntity<>(new Message("No hay ejercicios en la semana", TypesResponse.SUCCESS), HttpStatus.OK);
+        }
+        List<ExerciseSimpleDto> result = exercises.stream()
+                .map(e -> new ExerciseSimpleDto(
+                        e.getIdExercise(),
+                        e.getDate(),
+                        e.getTime(),
+                        e.getStatus(),
+                        new UserSimpleDto(e.getUser().getId_user())
+                ))
+                .toList();
+        return new ResponseEntity<>(new Message(result, "Ejercicios de la semana", TypesResponse.SUCCESS), HttpStatus.OK);
     }
 
     @Transactional(rollbackFor = {SQLException.class})

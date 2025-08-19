@@ -136,6 +136,7 @@ public class Food {
                 ", proteins=" + proteins +
                 ", fats=" + fats +
                 ", carbohydrates=" + carbohydrates +
+                ", fiber=" + fiber +
                 '}';
     }
 }
