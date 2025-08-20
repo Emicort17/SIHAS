@@ -59,6 +59,8 @@ export default function LoginScreen({ navigation }) {
         } catch {
             setErrorMessage('');
             setTimeout(() => setErrorMessage('Usuario o contraseña incorrectos'), 10);
+            console.error(error);
+            Alert.alert("Error inesperado", "Ocurrió un problema al iniciar sesión.");
         }
     }
 
@@ -92,7 +94,7 @@ export default function LoginScreen({ navigation }) {
                 </View>
             </View>
             {erroMessage && (<Text style={styles.linkError}>Por Favor coloca una contraseña valida</Text>)}
-            <Text style={styles.link}>Olvidaste tu Constraseña</Text>
+            <Text style={styles.link} onPress={() => navigation.navigate('Email')}>Olvidaste tu Constraseña</Text>
 
 
             <View style={styles.divbutton}>

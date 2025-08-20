@@ -9,6 +9,8 @@ import LoginScreen from './screens/auth/Login';
 import RegisterScreen from './screens/auth/Register';
 import UserTabs from './screens/navigation/UserNavigation'; 
 import MedicNavigator from './screens/navigation/MedicNavigation';
+import SendEmail from './screens/auth/SendEmail';
+import Password from './screens/auth/Password';
 
 
 export default function App() {
@@ -30,6 +32,8 @@ export default function App() {
             <>
               <Stack.Screen name="Login" component={LoginScreen} />
               <Stack.Screen name="Register" component={RegisterScreen} />
+              <Stack.Screen name="Email" component={SendEmail}/>
+               <Stack.Screen name="Password" component={Password}/>
             </>
           ) : user.rol === "USUARIO" ? (
             <Stack.Screen name="UserStack" component={UserTabs} />

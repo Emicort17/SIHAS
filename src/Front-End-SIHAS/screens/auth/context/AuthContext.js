@@ -12,7 +12,8 @@ export function AuthProvider({ children }) {
 
   const login = async (email, password) => {
     try {
-      const data = await AxiosClient.post("/api/login", { email, password });
+      const response = await AxiosClient.post("/api/login", { email, password });
+      const data = response.data;
 
       const userInfo = {
         token: data.jwt,
@@ -26,10 +27,10 @@ export function AuthProvider({ children }) {
 
       await AsyncStorage.setItem("userData", JSON.stringify(userInfo));
 
-      console.log("Login exitoso:", data);
-      return data;
+      console.log("Login exitoso:", userInfo);
+      return userInfo;
     } catch (err) {
-      console.error("Error en el login:", err);
+      console.error("Error en el login:", err.response?.data || err.message);
       return false;
     }
   };
@@ -43,7 +44,7 @@ export function AuthProvider({ children }) {
 
   const Register = async (name, surname, lastname, email, password, status, isProfessional) => {
     try {
-      const rol = isProfessional ? "PROFESIONAL" : "USUARIO"
+      const rol = isProfessional ? "PROFESIONAL" : "USUARIO";
 
       const response = await AxiosClient.post("/api/usuario/register", {
         name,
@@ -65,21 +66,51 @@ export function AuthProvider({ children }) {
         return false
       }
     } catch (err) {
-      console.error("Error en el registro:", err)
+      if (err.response) {
+        console.error("Error en el registro:", err.response.data); // 👈 aquí verás el mensaje del backend
+      } else {
+        console.error("Error en el registro:", err.message);
+      }
       return false
     }
   }
 
+  const SendEmail = async (email) => {
+    try {
+      const response = await AxiosClient.post("/api/email/send-email", {
+        destinatario: email,
+        asunto: "Recuperación de contraseña",
+      });
+      return response.data;
+    } catch (err) {
+      console.error("Error en SendEmail:", err);
+      return false;
+    }
+  };
+
+  const ChangePassword = async (email, newPassword) => {
+    try {
+      const response = await AxiosClient.patch("/api/email/change-password", {
+        email,
+        newPassword,
+      });
+      return response.data;
+    } catch (err) {
+      console.error("Error en ChangePassword:", err);
+      return false;
+    }
+  };
+
   const getUserById = async () => {
     if (!user?.userId) return null
-console.log("id:",user?.userId)
+    console.log("id:", user?.userId)
     try {
-      const  data  = await AxiosClient.get(`/api/usuario/${user.userId}`, {
+      const data = await AxiosClient.get(`/api/usuario/${user.userId}`, {
         headers: { Authorization: `Bearer ${user.token}` }
       })
 
       setUserData(data?.result)
-      console.log("Usuario obtenido:",data?.result)
+      console.log("Usuario obtenido:", data?.result)
       return data
     } catch (err) {
       console.error("Error al obtener usuario por ID:", err)
@@ -95,7 +126,7 @@ console.log("id:",user?.userId)
   }, [user])
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, logout, Register, getUserById, userData }}>
+    <AuthContext.Provider value={{ user, isLoading, login, logout, Register, getUserById, SendEmail, ChangePassword,userData }}>
       {children}
     </AuthContext.Provider>
   )

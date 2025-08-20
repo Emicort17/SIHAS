@@ -13,7 +13,7 @@ export default function RegisterScreen({ navigation }) {
     const [trypassword, setTryPassword] = useState("");
     const [erroMessage, setErrorMessage] = useState(false);
     const [erroPasswordMessage, setErroPasswordMessage] = useState(false);
-    const [passwordVisible, setPasswordVisible] = useState(false); 
+    const [passwordVisible, setPasswordVisible] = useState(false);
 
     const { Register } = useAuth();
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -86,12 +86,24 @@ export default function RegisterScreen({ navigation }) {
                 setErroPasswordMessage(true)
             } else {
                 const RegisterUser = await Register(name, Lastname, SecondLastname, email, password, 'True', doctor)
-                if (!RegisterUser) {
-                    Alert.alert("Error", "No se pudo registrar al usuario")
-                } else if (RegisterUser.result) {
-                    navigation.replace("Login")
+                if (!RegisterUser || !RegisterUser.result) {
+                    Alert.alert("Error", "No se pudo registrar al usuario. Inténtalo de nuevo.");
+                } else {
+                    setEmail("");
+                    setName("");
+                    setLastname("");
+                    setSecondLastname("");
+                    setPassword("");
+                    setTryPassword("");
+                    setDoctor(false);
+
+                    Alert.alert("Éxito", "Usuario registrado correctamente.", [
+                        {
+                            text: "Aceptar",
+                            onPress: () => navigation.replace("Login"),
+                        },
+                    ]);
                 }
-                setErrorMessage(false)
             }
         } catch {
             setErrorMessage('');
