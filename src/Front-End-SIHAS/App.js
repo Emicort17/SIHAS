@@ -7,6 +7,8 @@ import SplashScreenComponent from './components/SplashScreeen';
 
 import LoginScreen from './screens/auth/Login';
 import RegisterScreen from './screens/auth/Register';
+import SendEmail from './screens/auth/SendEmail';
+import ChangePassword from './screens/auth/changepassword';
 import HomeMedicScreen from './screens/medic/Home';
 import UserNavigator from './screens/navigation/UserNavigation';
 import MedicNavigator from './screens/navigation/MedicNavigation';
@@ -31,6 +33,8 @@ export default function App() {
             <>
               <Stack.Screen name="Login" options={{ headerShown: false, }} component={LoginScreen} />
               <Stack.Screen name="Register" options={{ headerShown: false, }} component={RegisterScreen} />
+              <Stack.Screen name="SendEmail" options={{ headerShown: false, }} component={SendEmail} />
+              <Stack.Screen name="Changepassword" options={{ headerShown: false, }} component={ChangePassword} />
             </>
           ) : user.rol === "USUARIO" ? (
             <Stack.Screen name="UserStack" component={UserNavigator} />

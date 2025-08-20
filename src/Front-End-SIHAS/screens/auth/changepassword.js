@@ -1,20 +1,17 @@
-import React, { useState , useEffect} from "react";
-import { Text, StyleSheet, View, TextInput, SafeAreaView, TouchableOpacity, Image } from "react-native";
-import Icon from 'react-native-vector-icons/Feather';
+import React, { useEffect, useState } from "react";
+import { SafeAreaView, ScrollView, StyleSheet, View, TextInput, Text, Image, TouchableOpacity, } from "react-native";
 import { useAuth } from "./context/AuthContext";
 
-export default function LoginScreen({ navigation }) {
-    
+export default function ChangePassword() {
+
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [erroMessage, setErrorMessage] = useState(false);
-    const [emailError, setEmailError] = useState(false);
     const [passwordError, setPasswordError] = useState(false);
     const [passwordVisible, setPasswordVisible] = useState(false);
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const passwordRegex = /^(?=(?:[^A-Z]*[A-Z]){1}[^A-Z]*$)[A-Za-z\d]{8}$/;
 
-    const { login } = useAuth();
 
     const handleInputChange = (email) => {
         setEmail(email)
@@ -24,13 +21,17 @@ export default function LoginScreen({ navigation }) {
         setPassword(password)
     };
 
+    const toggleVisibility = () => {
+        setPasswordVisible(!passwordVisible)
+    }
+
     useEffect(() => {
         if (email === "") {
-            setEmailError(false);
+            setErrorMessage(false)
         } else {
-            setEmailError(!emailRegex.test(email));
+            setErrorMessage(!emailRegex.test(email))
         }
-    }, [email]);
+    }, [email])
 
     useEffect(() => {
         if (password === "") {
@@ -40,20 +41,17 @@ export default function LoginScreen({ navigation }) {
         }
     }, [password]);
 
-
-    const handleLogin = async () => {
+    const handleEmail = async () => {
         try {
-            if (!email || !password || emailError || passwordError) {
+            if (!email) {
                 setErrorMessage(true)
             } else {
                 setErrorMessage(false)
-                const loggedInUser = await login(email, password);
-                if (!loggedInUser) {
+                const sendemail = await SendEmail(email);
+                if (!sendemail) {
                     Alert.alert("Error", "Credenciales incorrectas")
-                } else if (loggedInUser?.rol === "USUARIO") {
-                    
-                } else if (loggedInUser?.rol === "PROFESIONAL") {
-                    
+                } else {
+                    navigation.navigate('Register')
                 }
                 setErrorMessage(false)
             }
@@ -63,52 +61,49 @@ export default function LoginScreen({ navigation }) {
         }
     }
 
-    const toggleVisibility = () => {
-        setPasswordVisible(!passwordVisible)
-    }
-
     return (
-        <SafeAreaView style={{ backgroundColor: 'white', height: '100%' }}>
-            <View style={styles.image}>
-                <Image style={styles.logo} source={require('../../assets/logo.jpg')} />
-                <Text style={styles.presentation}>Bienvenido</Text>
-            </View>
+        <SafeAreaView edges={['top']}>
+            <ScrollView style={{ backgroundColor: 'white', height: '100%', paddingBottom: 10 }}>
 
-
-            <View style={styles.container}>
-                <Text style={styles.inputext}>Correo Electronico</Text>
-                <View style={styles.div}>
-                    <TextInput onChangeText={handleInputChange} style={styles.input} placeholder="Correo Electronico" required />
+                <View style={styles.image}>
+                    <Image style={styles.logo} source={require('../../assets/logo.jpg')} />
+                    <Text style={styles.presentation}>Cambia tu contraseña</Text>
+                    <Text>TColoca tu correo y tu nueva contraseña</Text>
                 </View>
-            </View>
-            {erroMessage && (<Text style={styles.linkError}>Por Favor coloca un correo valido</Text>)}
 
-            <View style={styles.container}>
-                <Text style={styles.inputext}>Contraseña</Text>
-                <View style={styles.div}>
-                    <TextInput onChangeText={handlePasswordChange} style={styles.input} secureTextEntry={!passwordVisible} placeholder="Contraseña" required />
-                    <TouchableOpacity onPress={toggleVisibility} style={styles.icon}>
-                        <Icon name={passwordVisible ? 'eye' : 'eye-off'} size={20} color="#666" />
+                <View style={styles.container}>
+                    <Text style={styles.inputext}>Correo Electronico</Text>
+                    <View style={styles.div}>
+                        <TextInput onChangeText={handleInputChange} style={styles.input} placeholder="Correo Electronico" required />
+                    </View>
+                </View>
+                {erroMessage && (<Text style={styles.linkError}>Por Favor coloca un correo valido</Text>)}
+
+                <View style={styles.container}>
+                    <Text style={styles.inputext}>Contraseña</Text>
+                    <View style={styles.div}>
+                        <TextInput onChangeText={handlePasswordChange} style={styles.input} secureTextEntry={!passwordVisible} placeholder="Contraseña" required />
+                        <TouchableOpacity onPress={toggleVisibility} style={styles.icon}>
+                            <Icon name={passwordVisible ? 'eye' : 'eye-off'} size={20} color="#666" />
+                        </TouchableOpacity>
+                    </View>
+                </View>
+                {erroMessage && (<Text style={styles.linkError}>Por Favor coloca una contraseña valida</Text>)}
+
+
+
+
+
+                <View style={styles.divbutton}>
+                    <TouchableOpacity style={styles.button} onPress={handleEmail}>
+                        <Text style={styles.buttonText}>Enviar mensaje</Text>
                     </TouchableOpacity>
                 </View>
-            </View>
-            {erroMessage && (<Text style={styles.linkError}>Por Favor coloca una contraseña valida</Text>)}
-            <Text style={styles.link} onPress={() => navigation.navigate('SendEmail')}>Olvidaste tu Constraseña</Text>
 
-
-            <View style={styles.divbutton}>
-                <TouchableOpacity style={styles.button} onPress={handleLogin}>
-                    <Text style={styles.buttonText}>Iniciar Sesión</Text>
-                </TouchableOpacity>
-            </View>
-
-            <Text style={styles.linkRegister}>¿Aún no tienes una cuenta?
-                <Text style={styles.register} onPress={() => navigation.navigate('Register')}> Registrate aqui</Text>
-            </Text>
-
-
+            </ScrollView>
         </SafeAreaView>
     )
+
 }
 
 const styles = StyleSheet.create({
@@ -130,12 +125,11 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         paddingHorizontal: 10,
         borderRadius: 5,
-        elevation: 6, 
+        elevation: 6,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
         shadowRadius: 6,
-
     },
     inputext: {
         alignSelf: 'left',
@@ -186,7 +180,7 @@ const styles = StyleSheet.create({
     },
     presentation: {
         paddingTop: 10,
-        fontSize: 35,
+        fontSize: 25,
     },
     button: {
         width: '80%',
