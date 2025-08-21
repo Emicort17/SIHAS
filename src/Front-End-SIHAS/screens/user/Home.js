@@ -9,6 +9,8 @@ import Run from "../../assets/icons/run.svg";
 import WelcomeModal from "../components/WelcomeModal";
 import { useAuth } from "../auth/context/AuthContext";
 import { AxiosClient } from "../auth/context/http_client";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback } from "react";
 
 export default function HomeUserScreen() {
     const navigation = useNavigation();
@@ -130,13 +132,15 @@ export default function HomeUserScreen() {
         );
     };
 
-    useEffect(() => {
-        if (profileData?.id_user) {
-            fetchWeekExercise(profileData.id_user);
-            fetchSleepData(profileData.id_user);
-            fetchFoodSchedules(profileData.id_user);
-        }
-    }, [profileData]);
+    useFocusEffect(
+        useCallback(() => {
+            if (profileData?.id_user) {
+                fetchWeekExercise(profileData.id_user);
+                fetchSleepData(profileData.id_user);
+                fetchFoodSchedules(profileData.id_user);
+            }
+        }, [profileData])
+    );
 
     const progress = weekExerciseCount / 7;
     const progressPercent = `${Math.min(progress * 100, 100)}%`;

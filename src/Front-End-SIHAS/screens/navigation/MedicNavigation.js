@@ -1,7 +1,7 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { Icon } from "@rneui/base";
 
 import HomeAdminScreen from "../medic/Home";
@@ -21,6 +21,7 @@ import MoonSIcon from "../../assets/icons/moon-s.svg";
 import MoonDIcon from "../../assets/icons/moon-d.svg";
 import GroupSIcon from "../../assets/icons/group-s.svg";
 import GroupDIcon from "../../assets/icons/group-d.svg";
+import Logo from "../../assets/logo.jpg";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -30,13 +31,13 @@ function CustomHeader({ title, navigation }) {
   return (
     <View style={styles.headerContainer}>
       <View style={styles.avatarContainer}>
-        <Text style={styles.avatarText}>M</Text>
+        <Image source={Logo} style={styles.avatar} />
       </View>
       <Text style={styles.headerTitle}>{title}</Text>
       <TouchableOpacity
         style={styles.notificationButton}
         onPress={() => {
-          navigation.navigate('Notifications'); // Puedes crear una pantalla de notificaciones si quieres
+          navigation.navigate('Notifications');
         }}
       >
         <View style={styles.notificationIcon}>
@@ -170,14 +171,17 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "#4CAF50",
+    backgroundColor: "#ffffffff",
     justifyContent: "center",
     alignItems: "center",
   },
-  avatarText: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "bold",
+  avatar: {
+    width: 38,
+    height: 40,
+    borderRadius: 16,
+    backgroundColor: "#ffffffff",
+    justifyContent: "center",
+    alignItems: "center",
   },
   headerTitle: {
     fontSize: 18,

@@ -45,6 +45,7 @@ export default function Password({ route, navigation }) {
 
         try {
             const response = await ChangePassword(email, NewPassword);
+            console.log("Response from ChangePassword:", response);
 
             if (response) {
                 Alert.alert("Éxito", "Tu contraseña ha sido cambiada.");

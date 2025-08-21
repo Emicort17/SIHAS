@@ -117,11 +117,14 @@ export default function ChangePasswordCard({ token, userId }) {
           currentPassword: form.antigua,
           newPassword: form.nueva
         }
+        console.log("Request Data", userData);
+        console.log("Token", token);
         const response = await AxiosClient.patch("/api/usuario/update-password", userData, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
+        console.log("Resouesta", response)
 
         Alert.alert("Éxito", response.message || "Contraseña actualizada correctamente");
         setForm({ nueva: "", confirmar: "", antigua: "" });

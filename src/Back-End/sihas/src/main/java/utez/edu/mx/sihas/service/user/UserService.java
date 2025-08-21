@@ -197,7 +197,7 @@ public class UserService {
         }
 
         userUpdate.setPassword(passwordEncoder.encode(dto.getNewPassword()));
-        userRepository.saveAndFlush(userUpdate);
+        userRepository.save(userUpdate);
 
         return new ResponseEntity<>(new Message(userUpdate.getPassword(), "Contraseña actualizada correctamente", TypesResponse.SUCCESS), HttpStatus.OK);
     }

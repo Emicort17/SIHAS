@@ -55,7 +55,7 @@ export function AuthProvider({ children }) {
         rol
       })
 
-      const data = response.data
+      const data = response.result
 
       if (data.type === "SUCCESS") {
         console.log("Registro exitoso:", data.result)
@@ -87,13 +87,13 @@ export function AuthProvider({ children }) {
     }
   };
 
-  const ChangePassword = async (email, NewPassword) => {
+  const ChangePassword = async (email, newPassword) => {
     try {
       const response = await AxiosClient.patch("/api/email/change-password", {
         email,
-        NewPassword,
+        newPassword,
       });
-      return response.data;
+      return response.result;
     } catch (err) {
       console.log("Error en ChangePassword:", err);
       return false;

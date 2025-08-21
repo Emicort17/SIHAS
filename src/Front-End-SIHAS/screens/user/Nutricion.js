@@ -59,62 +59,55 @@ export default function NutricionUserScreen() {
     fetchFoods();
   }, [displayCount]);
 
+  const fetchFoodSchedules = async () => {
+    try {
+      setLoading(true);
+      const userData = await AsyncStorage.getItem("userData");
+      if (!userData) {
+        Alert.alert("Error", "Por favor, inicia sesión nuevamente");
+        return;
+      }
+      const parsedUserData = JSON.parse(userData);
+      const userId = parsedUserData.userId || parsedUserData.id;
+      if (!userId) {
+        Alert.alert("Error", "ID de usuario no encontrado");
+        return;
+      }
+      const response = await AxiosClient.get(`/api/usuario/horarioalimento/day/${userId}`);
+      if (response && response.type === "SUCCESS" && Array.isArray(response.result)) {
+        const formattedSchedules = response.result.map((item) => ({
+          id: item.idFoodSchedule,
+          date: item.date,
+          time: item.time,
+          mealType: item.mealType
+            ? item.mealType.charAt(0).toUpperCase() + item.mealType.slice(1).toLowerCase()
+            : "Horario",
+          foods: item.foodFoodSchedules?.map((ffs) => ({
+            id: ffs.food.id_food,
+            name: ffs.food.name,
+            calories: ffs.food.calories,
+            proteins: ffs.food.proteins,
+            fats: ffs.food.fats,
+            carbohydrates: ffs.food.carbohydrates,
+            fiber: ffs.food.fiber,
+          })) || [],
+        }));
+        setFoodSchedules(formattedSchedules);
+      }
+    } catch (error) {
+      const message = error.response?.data?.message || error.message || "No se pudieron cargar los horarios";
+      console.error("Fetch food schedules error:", JSON.stringify(error.response || error, null, 2));
+      Alert.alert("Error", message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useFocusEffect(
     useCallback(() => {
-      const fetchFoodSchedules = async () => {
-        try {
-          setLoading(true);
-          const userData = await AsyncStorage.getItem("userData");
-          console.log("User data:", userData);
-          if (!userData) {
-            Alert.alert("Error", "Por favor, inicia sesión nuevamente");
-            return;
-          }
-          const parsedUserData = JSON.parse(userData);
-          const userId = parsedUserData.userId || parsedUserData.id;
-          console.log("User ID:", userId);
-          if (!userId) {
-            Alert.alert("Error", "ID de usuario no encontrado");
-            return;
-          }
-          const today = formatDateForBackend(new Date());
-          console.log("Today's date (client):", today);
-          const response = await AxiosClient.get(`/api/usuario/horarioalimento/day/${userId}`);
-          console.log("Food schedules response:", JSON.stringify(response, null, 2));
-          if (response && Array.isArray(response.result)) {
-            const formattedSchedules = response.result.map((item) => ({
-              id: item.idFoodSchedule,
-              date: item.date,
-              time: item.time,
-              mealType: item.mealType
-                ? item.mealType.charAt(0).toUpperCase() + item.mealType.slice(1).toLowerCase()
-                : "Horario",
-              foods: item.foodFoodSchedules?.map((ffs) => ({
-                id: ffs.food.id_food,
-                name: ffs.food.name,
-                calories: ffs.food.calories,
-                proteins: ffs.food.proteins,
-                fats: ffs.food.fats,
-                carbohydrates: ffs.food.carbohydrates,
-                fiber: ffs.food.fiber,
-              })) || [],
-            }));
-            setFoodSchedules(formattedSchedules);
-          } else {
-            Alert.alert("Error del get de dia alimento");
-          }
-        } catch (error) {
-          const message = error.response?.data?.message || error.message || "No se pudieron cargar los horarios";
-          console.error("Fetch food schedules error:", JSON.stringify(error.response || error, null, 2));
-          Alert.alert("Error", message);
-        } finally {
-          setLoading(false);
-        }
-      };
       fetchFoodSchedules();
     }, [])
   );
-
   // Debounced search handler for foods
   const handleSearch = useCallback(
     debounce((query) => {
@@ -220,6 +213,7 @@ export default function NutricionUserScreen() {
         const response = await AxiosClient.post("/api/usuario/horarioalimento/add-foods", payload);
         console.log("Add foods response:", JSON.stringify(response.result, null, 2));
         Alert.alert("Éxito", response.text || "Alimentos agregados al horario correctamente");
+        await fetchFoodSchedules();
       } else {
         if (!userId) {
           Alert.alert("Error", "ID de usuario no encontrado en los datos de sesión");
@@ -249,30 +243,7 @@ export default function NutricionUserScreen() {
         const response = await AxiosClient.post("/api/usuario/horarioalimento/save", payload);
         console.log("Save schedule response:", JSON.stringify(response.result, null, 2));
         Alert.alert("Éxito", response.text || "Horario de alimento registrado correctamente");
-      }
-
-      const schedulesResponse = await AxiosClient.get("/api/usuario/horarioalimento/all");
-      console.log("Refresh schedules response:", JSON.stringify(schedulesResponse, null, 2));
-      if (schedulesResponse && schedulesResponse.result && Array.isArray(schedulesResponse.result)) {
-        setFoodSchedules(
-          schedulesResponse.result.map((item) => ({
-            id: item.idFoodSchedule,
-            date: item.date,
-            time: item.time,
-            mealType: item.mealType
-              ? item.mealType.charAt(0).toUpperCase() + item.mealType.slice(1).toLowerCase()
-              : "Horario",
-            foods: item.foodFoodSchedules?.map((ffs) => ({
-              id: ffs.food.id_food,
-              name: ffs.food.name,
-              calories: ffs.food.calories,
-              proteins: ffs.food.proteins,
-              fats: ffs.food.fats,
-              carbohydrates: ffs.food.carbohydrates,
-              fiber: ffs.food.fiber,
-            })) || [],
-          }))
-        );
+        await fetchFoodSchedules();
       }
 
       // Reset form
