@@ -34,7 +34,6 @@ public class FoodScheduleController {
         }
     }
 
-    // Ya trae del día actual
     @GetMapping("/day/{userId}")
     public ResponseEntity<Message> findByUserAndDay(@PathVariable Long userId) {
         return foodScheduleService.findByUserAndDay(userId, java.time.LocalDate.now());

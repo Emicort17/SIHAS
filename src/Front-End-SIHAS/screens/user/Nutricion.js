@@ -4,9 +4,10 @@ import { Picker } from "@react-native-picker/picker";
 import Icon from "react-native-vector-icons/Feather";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import debounce from "lodash.debounce";
-import { AxiosClient } from "../auth/context/http_client"; // Adjust path as needed
-import NutritionSummary from "../../components/NutritionSummary"; // Adjust path as needed
-import DateTimePicker from "@react-native-community/datetimepicker"; // Only for mobile
+import { AxiosClient } from "../auth/context/http_client";
+import NutritionSummary from "../../components/NutritionSummary";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function NutricionUserScreen() {
   const [activeTab, setActiveTab] = useState("Horarios");
@@ -25,14 +26,12 @@ export default function NutricionUserScreen() {
   const [displayCount, setDisplayCount] = useState(10);
   const [loading, setLoading] = useState(false);
 
-  // Fetch foods from backend
   useEffect(() => {
     const fetchFoods = async () => {
       try {
         setLoading(true);
-        console.log("Fetching foods from /api/usuario/alimento/all");
         const response = await AxiosClient.get("/api/usuario/alimento/all");
-        console.log("Food fetch response:", JSON.stringify(response, null, 2));
+        console.log("Datos que lllegan al cora ", response)
         if (response && response.result && Array.isArray(response.result)) {
           const mappedFoods = response.result.map((item) => ({
             id: item.id_food,
@@ -47,7 +46,7 @@ export default function NutricionUserScreen() {
           setAlimentos(mappedFoods);
           setFilteredAlimentos(mappedFoods.slice(0, displayCount));
         } else {
-          throw new Error("Formato de respuesta inválido: response.data.data no es un array");
+          Alert.alert("Formato de respuesta inválido: alimentos todos");
         }
       } catch (error) {
         console.error("Fetch foods error:", error.message, error.response || error);
@@ -60,30 +59,30 @@ export default function NutricionUserScreen() {
     fetchFoods();
   }, [displayCount]);
 
-  // Fetch food schedules for the logged-in user
-  useEffect(() => {
-    const fetchFoodSchedules = async () => {
-      try {
-        setLoading(true);
-        const userData = await AsyncStorage.getItem("userData");
-        console.log("Stored userData:", userData);
-        if (!userData) {
-          Alert.alert("Error", "Por favor, inicia sesión nuevamente");
-          return;
-        }
-        const parsedUserData = JSON.parse(userData);
-        const userId = parsedUserData.userId || parsedUserData.id;
-        if (!userId) {
-          Alert.alert("Error", "ID de usuario no encontrado");
-          return;
-        }
-        console.log("Fetching schedules for userId:", userId);
-        const response = await AxiosClient.get("/api/usuario/horarioalimento/all");
-        console.log("datos de horarios de aliemntos:", response.result);
-        console.log("Food schedules fetch response:", JSON.stringify(response, null, 2));
-        if (response && response.result && Array.isArray(response.result)) {
-          setFoodSchedules(
-            response.result.map((item) => ({
+  useFocusEffect(
+    useCallback(() => {
+      const fetchFoodSchedules = async () => {
+        try {
+          setLoading(true);
+          const userData = await AsyncStorage.getItem("userData");
+          console.log("User data:", userData);
+          if (!userData) {
+            Alert.alert("Error", "Por favor, inicia sesión nuevamente");
+            return;
+          }
+          const parsedUserData = JSON.parse(userData);
+          const userId = parsedUserData.userId || parsedUserData.id;
+          console.log("User ID:", userId);
+          if (!userId) {
+            Alert.alert("Error", "ID de usuario no encontrado");
+            return;
+          }
+          const today = formatDateForBackend(new Date());
+          console.log("Today's date (client):", today);
+          const response = await AxiosClient.get(`/api/usuario/horarioalimento/day/${userId}`);
+          console.log("Food schedules response:", JSON.stringify(response, null, 2));
+          if (response && Array.isArray(response.result)) {
+            const formattedSchedules = response.result.map((item) => ({
               id: item.idFoodSchedule,
               date: item.date,
               time: item.time,
@@ -93,22 +92,28 @@ export default function NutricionUserScreen() {
               foods: item.foodFoodSchedules?.map((ffs) => ({
                 id: ffs.food.id_food,
                 name: ffs.food.name,
+                calories: ffs.food.calories,
+                proteins: ffs.food.proteins,
+                fats: ffs.food.fats,
+                carbohydrates: ffs.food.carbohydrates,
+                fiber: ffs.food.fiber,
               })) || [],
-            }))
-          );
-        } else {
-          throw new Error("Formato de respuesta inválido: response.data.data no es un array");
+            }));
+            setFoodSchedules(formattedSchedules);
+          } else {
+            Alert.alert("Error del get de dia alimento");
+          }
+        } catch (error) {
+          const message = error.response?.data?.message || error.message || "No se pudieron cargar los horarios";
+          console.error("Fetch food schedules error:", JSON.stringify(error.response || error, null, 2));
+          Alert.alert("Error", message);
+        } finally {
+          setLoading(false);
         }
-      } catch (error) {
-        console.error("Fetch food schedules error:", error.message, error.response || error);
-        const message = error.response?.data?.message || error.message || "No se pudieron cargar los horarios";
-        Alert.alert("Error", message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchFoodSchedules();
-  }, []);
+      };
+      fetchFoodSchedules();
+    }, [])
+  );
 
   // Debounced search handler for foods
   const handleSearch = useCallback(
@@ -143,23 +148,32 @@ export default function NutricionUserScreen() {
     setDisplayCount((prevCount) => prevCount + 10);
   };
 
-  // Format date for backend (YYYY-MM-DD)
   const formatDateForBackend = (date) => {
     if (!date) return "";
-    return date.toISOString().split("T")[0];
+    const d = date instanceof Date ? date : new Date(date);
+    return (d.getFullYear() + "-" +
+      String(d.getMonth() + 1).padStart(2, "0") + "-" +
+      String(d.getDate()).padStart(2, "0")
+    );
   };
 
-  // Format time for backend (HH:MM)
   const formatTimeForBackend = (time) => {
     if (!time) return "";
-    return time.toISOString().split("T")[1].slice(0, 5);
+    const t = time instanceof Date ? time : new Date(time);
+    return (
+      String(t.getHours()).padStart(2, "0") +
+      ":" +
+      String(t.getMinutes()).padStart(2, "0") +
+      ":" +
+      String(t.getSeconds()).padStart(2, "0")
+    );
   };
 
-  // Handle date input for web
   const handleWebDateChange = (event) => {
     const dateValue = event.target.value;
     if (dateValue) {
-      setDate(new Date(dateValue));
+      const [year, month, day] = dateValue.split("-");
+      setDate(new Date(Number(year), Number(month) - 1, Number(day)));
     }
   };
 
@@ -237,7 +251,6 @@ export default function NutricionUserScreen() {
         Alert.alert("Éxito", response.text || "Horario de alimento registrado correctamente");
       }
 
-      // Refresh food schedules
       const schedulesResponse = await AxiosClient.get("/api/usuario/horarioalimento/all");
       console.log("Refresh schedules response:", JSON.stringify(schedulesResponse, null, 2));
       if (schedulesResponse && schedulesResponse.result && Array.isArray(schedulesResponse.result)) {
@@ -252,6 +265,11 @@ export default function NutricionUserScreen() {
             foods: item.foodFoodSchedules?.map((ffs) => ({
               id: ffs.food.id_food,
               name: ffs.food.name,
+              calories: ffs.food.calories,
+              proteins: ffs.food.proteins,
+              fats: ffs.food.fats,
+              carbohydrates: ffs.food.carbohydrates,
+              fiber: ffs.food.fiber,
             })) || [],
           }))
         );
@@ -288,41 +306,311 @@ export default function NutricionUserScreen() {
     return `${mealType}, ${schedule.date} ${schedule.time}`;
   };
 
+  // Calculate total macronutrients and calories for today
+  const calculateDailySummary = () => {
+    const today = formatDateForBackend(new Date());
+    const todaySchedules = foodSchedules.filter((schedule) => schedule.date === today);
+
+    const summary = todaySchedules.reduce(
+      (acc, schedule) => {
+        schedule.foods.forEach((food) => {
+          acc.calories += food.calories || 0;
+          acc.proteins += food.proteins || 0;
+          acc.carbohydrates += food.carbohydrates || 0;
+          acc.fats += food.fats || 0;
+          acc.fiber += food.fiber || 0;
+        });
+        return acc;
+      },
+      { calories: 0, proteins: 0, carbohydrates: 0, fats: 0, fiber: 0 }
+    );
+
+    return {
+      kcal: summary.calories.toFixed(1),
+      protein: summary.proteins.toFixed(1),
+      carbs: summary.carbohydrates.toFixed(1),
+      fat: summary.fats.toFixed(1),
+      fiber: summary.fiber.toFixed(1),
+    };
+  };
+
+  // Calculate macronutrients and calories for a single meal
+  const calculateMealSummary = (foods) => {
+    const summary = foods.reduce(
+      (acc, food) => {
+        acc.calories += food.calories || 0;
+        acc.proteins += food.proteins || 0;
+        acc.carbohydrates += food.carbohydrates || 0;
+        acc.fats += food.fats || 0;
+        return acc;
+      },
+      { calories: 0, proteins: 0, carbohydrates: 0, fats: 0 }
+    );
+
+    return `Cal: ${summary.calories.toFixed(1)} Pro: ${summary.proteins.toFixed(1)}g Car: ${summary.carbohydrates.toFixed(1)}g Gra: ${summary.fats.toFixed(1)}g`;
+  };
+
+
+  const RegistroForm = () => (
+    <>
+      <Text style={styles.subtitle}>Registro</Text>
+      <View style={styles.toggleButtons}>
+        <TouchableOpacity
+          style={[styles.button, registroForm === "horario" && styles.activeButton]}
+          onPress={() => setRegistroForm("horario")}
+          disabled={loading}
+        >
+          <Text style={styles.buttonText}>Registrar Horario</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.button, registroForm === "alimento" && styles.activeButton]}
+          onPress={() => setRegistroForm("alimento")}
+          disabled={loading}
+        >
+          <Text style={styles.buttonText}>Agregar Alimento</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.formContainer}>
+        {registroForm === "horario" ? (
+          <>
+            <Text>Fecha *</Text>
+            {Platform.OS === "web" ? (
+              <TextInput
+                style={styles.input}
+                type="date"
+                value={formatDateForBackend(date)}
+                onChange={handleWebDateChange}
+                disabled={loading}
+              />
+            ) : (
+              <>
+                <TouchableOpacity
+                  style={[styles.input, { pointerEvents: loading ? "none" : "auto" }]}
+                  onPress={() => setShowDatePicker(true)}
+                  disabled={loading}
+                >
+                  <Text>{formatDateForBackend(date) || "Seleccione una fecha"}</Text>
+                </TouchableOpacity>
+                {showDatePicker && (
+                  <DateTimePicker
+                    value={date}
+                    mode="date"
+                    display="default"
+                    onChange={(event, selectedDate) => {
+                      setShowDatePicker(false);
+                      if (selectedDate) setDate(selectedDate);
+                    }}
+                  />
+                )}
+              </>
+            )}
+            <Text>Hora *</Text>
+            {Platform.OS === "web" ? (
+              <TextInput
+                style={styles.input}
+                type="time"
+                value={formatTimeForBackend(time)}
+                onChange={handleWebTimeChange}
+                disabled={loading}
+              />
+            ) : (
+              <>
+                <TouchableOpacity
+                  style={[styles.input, { pointerEvents: loading ? "none" : "auto" }]}
+                  onPress={() => setShowTimePicker(true)}
+                  disabled={loading}
+                >
+                  <Text>{formatTimeForBackend(time) || "Seleccione una hora"}</Text>
+                </TouchableOpacity>
+                {showTimePicker && (
+                  <DateTimePicker
+                    value={time}
+                    mode="time"
+                    display="default"
+                    onChange={(event, selectedTime) => {
+                      setShowTimePicker(false);
+                      if (selectedTime) setTime(selectedTime);
+                    }}
+                  />
+                )}
+              </>
+            )}
+            <Text>Tipo de Comida *</Text>
+            <Picker
+              selectedValue={selectedMealType}
+              onValueChange={(itemValue) => setSelectedMealType(itemValue)}
+              style={styles.picker}
+              enabled={!loading}
+            >
+              <Picker.Item label="Desayuno" value="Desayuno" />
+              <Picker.Item label="Comida" value="Comida" />
+              <Picker.Item label="Cena" value="Cena" />
+            </Picker>
+            <Text>Alimentos (Opcional)</Text>
+            {selectedAlimentos.length > 0 && (
+              <View style={styles.selectedContainer}>
+                <Text>Alimentos seleccionados:</Text>
+                <FlatList
+                  data={selectedAlimentos}
+                  keyExtractor={(item) => item.id.toString()}
+                  renderItem={({ item }) => (
+                    <TouchableOpacity
+                      style={[styles.selectedItem, { pointerEvents: loading ? "none" : "auto" }]}
+                      onPress={() => removeAlimento(item)}
+                      disabled={loading}
+                    >
+                      <Text style={styles.selectedText}>{item.nombre}</Text>
+                      <Icon name="x" size={16} color="#fff" />
+                    </TouchableOpacity>
+                  )}
+                  horizontal={true}
+                  showsHorizontalScrollIndicator={false}
+                />
+              </View>
+            )}
+            <TextInput
+              style={styles.input}
+              placeholder="Buscar alimentos"
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              editable={!loading}
+            />
+            {filteredAlimentos.length === 0 && !loading && (
+              <Text style={styles.noResultsText}>No se encontraron alimentos</Text>
+            )}
+            {/* El FlatList de alimentos va abajo, fuera del formulario */}
+            <TouchableOpacity
+              style={[
+                styles.submitButton,
+                { pointerEvents: loading ? "none" : "auto" },
+                loading && styles.disabledButton,
+              ]}
+              onPress={() => submitFoodSchedule(false)}
+              disabled={loading}
+            >
+              {loading ? (
+                <ActivityIndicator size="small" color="#fff" />
+              ) : (
+                <Text style={styles.buttonText}>Guardar Horario</Text>
+              )}
+            </TouchableOpacity>
+          </>
+        ) : (
+          <>
+            <Text>Seleccionar Horario Existente *</Text>
+            {foodSchedules.length === 0 && !loading && (
+              <Text style={styles.noResultsText}>
+                No hay horarios registrados. Por favor, crea un horario primero.
+              </Text>
+            )}
+            <Picker
+              selectedValue={selectedFoodScheduleId}
+              onValueChange={(itemValue) => setSelectedFoodScheduleId(itemValue)}
+              style={styles.picker}
+              enabled={!loading}
+            >
+              <Picker.Item label="Seleccione un horario" value="" />
+              {foodSchedules.map((schedule) => (
+                <Picker.Item
+                  key={schedule.id}
+                  label={formatFoodScheduleLabel(schedule)}
+                  value={schedule.id}
+                />
+              ))}
+            </Picker>
+            {selectedAlimentos.length > 0 && (
+              <View style={styles.selectedContainer}>
+                <Text>Alimentos seleccionados:</Text>
+                <FlatList
+                  data={selectedAlimentos}
+                  keyExtractor={(item) => item.id.toString()}
+                  renderItem={({ item }) => (
+                    <TouchableOpacity
+                      style={[styles.selectedItem, { pointerEvents: loading ? "none" : "auto" }]}
+                      onPress={() => removeAlimento(item)}
+                      disabled={loading}
+                    >
+                      <Text style={styles.selectedText}>{item.nombre}</Text>
+                      <Icon name="x" size={16} color="#fff" />
+                    </TouchableOpacity>
+                  )}
+                  horizontal={true}
+                  showsHorizontalScrollIndicator={false}
+                />
+              </View>
+            )}
+            <TextInput
+              style={styles.input}
+              placeholder="Buscar alimentos"
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              editable={!loading}
+            />
+            <Text>Seleccionar Alimentos *</Text>
+            {filteredAlimentos.length === 0 && !loading && (
+              <Text style={styles.noResultsText}>No se encontraron alimentos</Text>
+            )}
+            <TouchableOpacity
+              style={[
+                styles.submitButton,
+                { pointerEvents: loading ? "none" : "auto" },
+                loading && styles.disabledButton,
+              ]}
+              onPress={() => submitFoodSchedule(true)}
+              disabled={loading}
+            >
+              {loading ? (
+                <ActivityIndicator size="small" color="#fff" />
+              ) : (
+                <Text style={styles.buttonText}>Agregar Alimentos</Text>
+              )}
+            </TouchableOpacity>
+          </>
+        )}
+      </View>
+    </>
+  );
+
   const renderContent = () => {
+    const today = formatDateForBackend(new Date());
+    const todaySchedules = foodSchedules.filter((schedule) => schedule.date === today);
+
     switch (activeTab) {
       case "Resumen":
         return (
           <View style={styles.content}>
             <Text style={styles.subtitle}>Resumen Nutricional Diario</Text>
-            <NutritionSummary
-              data={{ kcal: 440, protein: 19.3, carbs: 69, fat: 11.8, fiber: 5.2 }}
-            />
-            <Text style={styles.timestamp}>Desayuno</Text>
+            <NutritionSummary data={calculateDailySummary()} />
           </View>
         );
 
       case "Horarios":
         return (
           <View style={styles.content}>
-            <Text style={styles.subtitle}>Horarios Registrados</Text>
-            {foodSchedules.length === 0 && !loading ? (
+            <Text style={styles.subtitle}>Horarios de Hoy</Text>
+            {todaySchedules.length === 0 && !loading ? (
               <View style={styles.summary2}>
                 <Icon name="clock" size={230} color="#a5d6a7bd" />
-                <Text style={styles.TextH}>Sin comidas por ahora. ¿Qué te gustaría agregar hoy?</Text>
+                <Text style={styles.TextH}>Sin comidas para hoy. ¿Qué te gustaría agregar?</Text>
               </View>
             ) : (
               <FlatList
-                data={foodSchedules}
+                data={todaySchedules}
                 keyExtractor={(item) => item.id.toString()}
                 renderItem={({ item }) => (
                   <View style={styles.scheduleItem}>
                     <Text style={styles.scheduleText}>
-                      {`${item.mealType}, ${item.date} ${item.time}`}
+                      {`${item.mealType}, ${item.time}`}
                     </Text>
                     {item.foods.length > 0 ? (
-                      <Text style={styles.foodList}>
-                        Alimentos: {item.foods.map((food) => food.name).join(", ")}
-                      </Text>
+                      <>
+                        <Text style={styles.foodList}>
+                          Alimentos: {item.foods.map((food) => food.name).join(", ")}
+                        </Text>
+                        <Text style={styles.nutritionText}>
+                          {calculateMealSummary(item.foods)}
+                        </Text>
+                      </>
                     ) : (
                       <Text style={styles.noFoodText}>Sin alimentos asignados</Text>
                     )}
@@ -336,266 +624,38 @@ export default function NutricionUserScreen() {
       case "Registro":
         return (
           <View style={styles.content}>
-            <Text style={styles.subtitle}>Registro</Text>
-
-            <View style={styles.toggleButtons}>
-              <TouchableOpacity
-                style={[styles.button, registroForm === "horario" && styles.activeButton]}
-                onPress={() => setRegistroForm("horario")}
-                disabled={loading}
-              >
-                <Text style={styles.buttonText}>Registrar Horario</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.button, registroForm === "alimento" && styles.activeButton]}
-                onPress={() => setRegistroForm("alimento")}
-                disabled={loading}
-              >
-                <Text style={styles.buttonText}>Agregar Alimento</Text>
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.formContainer}>
-              {registroForm === "horario" ? (
-                <>
-                  <Text>Fecha *</Text>
-                  {Platform.OS === "web" ? (
-                    <TextInput
-                      style={styles.input}
-                      type="date"
-                      value={formatDateForBackend(date)}
-                      onChange={handleWebDateChange}
-                      disabled={loading}
-                    />
-                  ) : (
-                    <>
-                      <TouchableOpacity
-                        style={[styles.input, { pointerEvents: loading ? "none" : "auto" }]}
-                        onPress={() => setShowDatePicker(true)}
-                        disabled={loading}
-                      >
-                        <Text>{formatDateForBackend(date) || "Seleccione una fecha"}</Text>
-                      </TouchableOpacity>
-                      {showDatePicker && (
-                        <DateTimePicker
-                          value={date}
-                          mode="date"
-                          display="default"
-                          onChange={(event, selectedDate) => {
-                            setShowDatePicker(false);
-                            if (selectedDate) setDate(selectedDate);
-                          }}
-                        />
-                      )}
-                    </>
-                  )}
-                  <Text>Hora *</Text>
-                  {Platform.OS === "web" ? (
-                    <TextInput
-                      style={styles.input}
-                      type="time"
-                      value={formatTimeForBackend(time)}
-                      onChange={handleWebTimeChange}
-                      disabled={loading}
-                    />
-                  ) : (
-                    <>
-                      <TouchableOpacity
-                        style={[styles.input, { pointerEvents: loading ? "none" : "auto" }]}
-                        onPress={() => setShowTimePicker(true)}
-                        disabled={loading}
-                      >
-                        <Text>{formatTimeForBackend(time) || "Seleccione una hora"}</Text>
-                      </TouchableOpacity>
-                      {showTimePicker && (
-                        <DateTimePicker
-                          value={time}
-                          mode="time"
-                          display="default"
-                          onChange={(event, selectedTime) => {
-                            setShowTimePicker(false);
-                            if (selectedTime) setTime(selectedTime);
-                          }}
-                        />
-                      )}
-                    </>
-                  )}
-                  <Text>Tipo de Comida *</Text>
-                  <Picker
-                    selectedValue={selectedMealType}
-                    onValueChange={(itemValue) => setSelectedMealType(itemValue)}
-                    style={styles.picker}
-                    enabled={!loading}
-                  >
-                    <Picker.Item label="Desayuno" value="Desayuno" />
-                    <Picker.Item label="Comida" value="Comida" />
-                    <Picker.Item label="Cena" value="Cena" />
-                  </Picker>
-                  <Text>Alimentos (Opcional)</Text>
-                  {selectedAlimentos.length > 0 && (
-                    <View style={styles.selectedContainer}>
-                      <Text>Alimentos seleccionados:</Text>
-                      <FlatList
-                        data={selectedAlimentos}
-                        keyExtractor={(item) => item.id.toString()}
-                        renderItem={({ item }) => (
-                          <TouchableOpacity
-                            style={[styles.selectedItem, { pointerEvents: loading ? "none" : "auto" }]}
-                            onPress={() => removeAlimento(item)}
-                            disabled={loading}
-                          >
-                            <Text style={styles.selectedText}>{item.nombre}</Text>
-                            <Icon name="x" size={16} color="#fff" />
-                          </TouchableOpacity>
-                        )}
-                        horizontal={true}
-                        showsHorizontalScrollIndicator={false}
-                      />
-                    </View>
-                  )}
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Buscar alimentos"
-                    value={searchQuery}
-                    onChangeText={setSearchQuery}
-                    editable={!loading}
-                  />
-                  {filteredAlimentos.length === 0 && !loading && (
-                    <Text style={styles.noResultsText}>No se encontraron alimentos</Text>
-                  )}
-                  <FlatList
-                    data={filteredAlimentos}
-                    keyExtractor={(item) => item.id.toString()}
-                    renderItem={({ item }) => (
-                      <TouchableOpacity
-                        style={[styles.alimentoButton, { pointerEvents: loading ? "none" : "auto" }]}
-                        onPress={() => addAlimento(item)}
-                        disabled={loading}
-                      >
-                        <Text style={styles.alimentoText}>{item.nombre}</Text>
-                      </TouchableOpacity>
-                    )}
-                    numColumns={2}
-                    ListFooterComponent={
-                      filteredAlimentos.length < alimentos.length && (
-                        <TouchableOpacity
-                          style={[styles.loadMoreButton, { pointerEvents: loading ? "none" : "auto" }]}
-                          onPress={loadMoreItems}
-                          disabled={loading}
-                        >
-                          <Text style={styles.buttonText}>Cargar Más</Text>
-                        </TouchableOpacity>
-                      )
-                    }
-                  />
-                  <TouchableOpacity
-                    style={[styles.submitButton, { pointerEvents: loading ? "none" : "auto" }, loading && styles.disabledButton]}
-                    onPress={() => submitFoodSchedule(false)}
-                    disabled={loading}
-                  >
-                    {loading ? (
-                      <ActivityIndicator size="small" color="#fff" />
-                    ) : (
-                      <Text style={styles.buttonText}>Guardar Horario</Text>
-                    )}
-                  </TouchableOpacity>
-                </>
-              ) : (
-                <>
-                  <Text>Seleccionar Horario Existente *</Text>
-                  {foodSchedules.length === 0 && !loading && (
-                    <Text style={styles.noResultsText}>No hay horarios registrados. Por favor, crea un horario primero.</Text>
-                  )}
-                  <Picker
-                    selectedValue={selectedFoodScheduleId}
-                    onValueChange={(itemValue) => setSelectedFoodScheduleId(itemValue)}
-                    style={styles.picker}
-                    enabled={!loading}
-                  >
-                    <Picker.Item label="Seleccione un horario" value="" />
-                    {foodSchedules.map((schedule) => (
-                      <Picker.Item
-                        key={schedule.id}
-                        label={formatFoodScheduleLabel(schedule)}
-                        value={schedule.id}
-                      />
-                    ))}
-                  </Picker>
-
-                  {selectedAlimentos.length > 0 && (
-                    <View style={styles.selectedContainer}>
-                      <Text>Alimentos seleccionados:</Text>
-                      <FlatList
-                        data={selectedAlimentos}
-                        keyExtractor={(item) => item.id.toString()}
-                        renderItem={({ item }) => (
-                          <TouchableOpacity
-                            style={[styles.selectedItem, { pointerEvents: loading ? "none" : "auto" }]}
-                            onPress={() => removeAlimento(item)}
-                            disabled={loading}
-                          >
-                            <Text style={styles.selectedText}>{item.nombre}</Text>
-                            <Icon name="x" size={16} color="#fff" />
-                          </TouchableOpacity>
-                        )}
-                        horizontal={true}
-                        showsHorizontalScrollIndicator={false}
-                      />
-                    </View>
-                  )}
-
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Buscar alimentos"
-                    value={searchQuery}
-                    onChangeText={setSearchQuery}
-                    editable={!loading}
-                  />
-
-                  <Text>Seleccionar Alimentos *</Text>
-                  {filteredAlimentos.length === 0 && !loading && (
-                    <Text style={styles.noResultsText}>No se encontraron alimentos</Text>
-                  )}
-                  <FlatList
-                    data={filteredAlimentos}
-                    keyExtractor={(item) => item.id.toString()}
-                    renderItem={({ item }) => (
-                      <TouchableOpacity
-                        style={[styles.alimentoButton, { pointerEvents: loading ? "none" : "auto" }]}
-                        onPress={() => addAlimento(item)}
-                        disabled={loading}
-                      >
-                        <Text style={styles.alimentoText}>{item.nombre}</Text>
-                      </TouchableOpacity>
-                    )}
-                    numColumns={2}
-                    ListFooterComponent={
-                      filteredAlimentos.length < alimentos.length && (
-                        <TouchableOpacity
-                          style={[styles.loadMoreButton, { pointerEvents: loading ? "none" : "auto" }]}
-                          onPress={loadMoreItems}
-                          disabled={loading}
-                        >
-                          <Text style={styles.buttonText}>Cargar Más</Text>
-                        </TouchableOpacity>
-                      )
-                    }
-                  />
-
-                  <TouchableOpacity
-                    style={[styles.submitButton, { pointerEvents: loading ? "none" : "auto" }, loading && styles.disabledButton]}
-                    onPress={() => submitFoodSchedule(true)}
-                    disabled={loading}
-                  >
-                    {loading ? (
-                      <ActivityIndicator size="small" color="#fff" />
-                    ) : (
-                      <Text style={styles.buttonText}>Agregar Alimentos</Text>
-                    )}
-                  </TouchableOpacity>
-                </>
+            <FlatList
+              data={filteredAlimentos}
+              keyExtractor={(item) => item.id.toString()}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={[styles.alimentoButton, { pointerEvents: loading ? "none" : "auto" }]}
+                  onPress={() => addAlimento(item)}
+                  disabled={loading}
+                >
+                  <Text style={styles.alimentoText}>{item.nombre}</Text>
+                </TouchableOpacity>
               )}
-            </View>
+              numColumns={2}
+              ListHeaderComponent={<RegistroForm />}
+              ListFooterComponent={
+                filteredAlimentos.length < alimentos.length && (
+                  <TouchableOpacity
+                    style={[styles.loadMoreButton, { pointerEvents: loading ? "none" : "auto" }]}
+                    onPress={loadMoreItems}
+                    disabled={loading}
+                  >
+                    <Text style={styles.buttonText}>Cargar Más</Text>
+                  </TouchableOpacity>
+                )
+              }
+              contentContainerStyle={{ paddingBottom: 40 }}
+              ListEmptyComponent={
+                !loading && (
+                  <Text style={styles.noResultsText}>No se encontraron alimentos</Text>
+                )
+              }
+            />
           </View>
         );
 
@@ -606,7 +666,6 @@ export default function NutricionUserScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Nutrición</Text>
       <View style={styles.tabs}>
         <Pressable
           style={[styles.tab, activeTab === "Resumen" && styles.activeTab, { pointerEvents: loading ? "none" : "auto" }]}
@@ -686,6 +745,7 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: "#fff",
     borderRadius: 10,
+    marginBottom: 20,
   },
   subtitle: {
     fontSize: 18,
@@ -722,6 +782,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#888",
     marginTop: 5,
+  },
+  nutritionText: {
+    fontSize: 14,
+    color: "#444",
+    marginTop: 5,
+    fontWeight: "500",
   },
   toggleButtons: {
     flexDirection: "row",

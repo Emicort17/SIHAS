@@ -13,7 +13,7 @@ export function AuthProvider({ children }) {
   const login = async (email, password) => {
     try {
       const response = await AxiosClient.post("/api/login", { email, password });
-      const data = response.data;
+      const data = response;
 
       const userInfo = {
         token: data.jwt,
@@ -30,7 +30,7 @@ export function AuthProvider({ children }) {
       console.log("Login exitoso:", userInfo);
       return userInfo;
     } catch (err) {
-      console.error("Error en el login:", err.response?.data || err.message);
+      console.log("Error en el login:", err.response?.data || err.message);
       return false;
     }
   };
@@ -67,9 +67,9 @@ export function AuthProvider({ children }) {
       }
     } catch (err) {
       if (err.response) {
-        console.error("Error en el registro:", err.response.data); // 👈 aquí verás el mensaje del backend
+        console.log("Error en el registro:", err.response.data); 
       } else {
-        console.error("Error en el registro:", err.message);
+        console.log("Error en el registro:", err.message);
       }
       return false
     }
@@ -81,9 +81,9 @@ export function AuthProvider({ children }) {
         destinatario: email,
         asunto: "Recuperación de contraseña",
       });
-      return response.data;
+      return response.result;
     } catch (err) {
-      console.error("Error en SendEmail:", err);
+      console.log("Error en SendEmail:", err);
       return false;
     }
   };
@@ -96,7 +96,7 @@ export function AuthProvider({ children }) {
       });
       return response.data;
     } catch (err) {
-      console.error("Error en ChangePassword:", err);
+      console.log("Error en ChangePassword:", err);
       return false;
     }
   };
@@ -113,7 +113,7 @@ export function AuthProvider({ children }) {
       console.log("Usuario obtenido:", data?.result)
       return data
     } catch (err) {
-      console.error("Error al obtener usuario por ID:", err)
+      console.log("Error al obtener usuario por ID:", err)
       return null
     }
   }

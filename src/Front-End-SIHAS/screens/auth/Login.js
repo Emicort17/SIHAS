@@ -1,5 +1,5 @@
 import React, { useState , useEffect} from "react";
-import { Text, StyleSheet, View, TextInput, SafeAreaView, TouchableOpacity, Image } from "react-native";
+import { Text, StyleSheet, View, TextInput, SafeAreaView, TouchableOpacity, Image, Alert } from "react-native";
 import Icon from 'react-native-vector-icons/Feather';
 import { useAuth } from "./context/AuthContext";
 
@@ -59,7 +59,6 @@ export default function LoginScreen({ navigation }) {
         } catch {
             setErrorMessage('');
             setTimeout(() => setErrorMessage('Usuario o contraseña incorrectos'), 10);
-            console.error(error);
             Alert.alert("Error inesperado", "Ocurrió un problema al iniciar sesión.");
         }
     }

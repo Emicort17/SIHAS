@@ -3,7 +3,7 @@ import { SafeAreaView, ScrollView, StyleSheet, View, TextInput, Text, Image, Tou
 import { Alert } from "react-native";
 import { useAuth } from "./context/AuthContext";
 
-export default function SendEmail() {
+export default function SendEmail({navigation}) {
 
     const [email, setEmail] = useState("");
     const [erroMessage, setErrorMessage] = useState(false);
@@ -36,7 +36,7 @@ export default function SendEmail() {
                 Alert.alert("Error", "No se pudo enviar el correo de recuperación.");
             } else {
                 Alert.alert("Éxito", "Se ha enviado un correo de recuperación.");
-                navigation.navigate("ChangePassword", { email });
+                navigation.navigate("Password", { email });
             }
         } catch (error) {
             console.error("Error en handleEmail:", error);
