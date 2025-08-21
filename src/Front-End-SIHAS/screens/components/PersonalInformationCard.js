@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
-import { Icon } from "@rneui/base";
+import ProfileDIcon from "../../assets/icons/profile-d.svg";
+import EditDIcon from "../../assets/icons/edit-d.svg";
+import CloseDIcon from "../../assets/icons/close-d.svg";
 import { useAuth } from "../auth/context/AuthContext";
 import { AxiosClient } from "../auth/context/http_client";
 
@@ -131,7 +133,7 @@ export default function PersonalInformationCard({ title, data, token, onUpdate, 
         rol: data?.role?.[0]?.name
       };
       console.log("datos enviados: ", userDto)
-      console.log("rol:",data)
+      console.log("rol:", data)
       const userResponse = await AxiosClient.put("/api/usuario/update", userDto, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -221,21 +223,13 @@ export default function PersonalInformationCard({ title, data, token, onUpdate, 
     <View style={styles.containerCard}>
       <View style={styles.ContainerHead}>
         <View style={styles.leftContent}>
-          <Icon
-            name="account-outline"
-            type="material-community"
-            color="black"
-            size={30}
-          />
+          <ProfileDIcon width={24} height={24} />
           <Text style={[styles.title, { marginLeft: 10 }]}>{title}</Text>
         </View>
         <TouchableOpacity onPress={handleEditToggle}>
-          <Icon
-            name={editing ? "close" : "square-edit-outline"}
-            type="material-community"
-            color="black"
-            size={30}
-          />
+          {editing ? <CloseDIcon width={24} height={24} />
+            : <EditDIcon width={24} height={24} />
+          }
         </TouchableOpacity>
       </View>
 
@@ -295,26 +289,26 @@ export default function PersonalInformationCard({ title, data, token, onUpdate, 
           ) : null}
 
           <View style={styles.buttonGroup}>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={[
-                styles.buttonCancel, 
+                styles.buttonCancel,
                 { opacity: isLoading ? 0.6 : 1, backgroundColor: isLoading ? "#ccc" : "#EBECF0" }
-              ]} 
+              ]}
               onPress={handleCancel}
               disabled={isLoading}
             >
               <Text style={styles.buttonTextCancel}>Cancelar</Text>
             </TouchableOpacity>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={[
-                styles.button, 
+                styles.button,
                 { opacity: isLoading ? 0.6 : 1, backgroundColor: isLoading ? "#ccc" : "#C8E6C9" }
-              ]} 
+              ]}
               onPress={handleSave}
               disabled={isLoading}
             >
               <Text style={styles.buttonText}>
-                 {isLoading ? "Guardando..." : "Guardar"}
+                {isLoading ? "Guardando..." : "Guardar"}
               </Text>
             </TouchableOpacity>
           </View>

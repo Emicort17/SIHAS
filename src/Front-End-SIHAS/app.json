@@ -4,40 +4,57 @@
     "slug": "SIHAS",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": false,
     "splash": {
+      "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.dulcearellano136.sihas",
+      "infoPlist": {
+        "UIBackgroundModes": [
+          "background-fetch",
+          "remote-notification"
+        ]
+      }
     },
     "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
-      "edgeToEdgeEnabled": true,
-      "package": "com.dulcearellano136.SIHAS"
+      "package": "com.dulcearellano136.sihas",
+      "permissions": [
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.WAKE_LOCK",
+        "android.permission.VIBRATE",
+        "android.permission.USE_FULL_SCREEN_INTENT"
+      ]
     },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    },
+    "web": {},
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "color": "#ffffff"
+        }
+      ],
+      [
+        "expo-background-fetch",
+        {
+          "android": {
+            "foregroundService": {
+              "notificationTitle": "Sincronizando alertas...",
+              "notificationText": "Manteniendo las notificaciones actualizadas"
+            }
+          }
+        }
+      ]
+    ],
     "extra": {
       "eas": {
         "projectId": "9755b043-0cfc-4a9d-9034-3f044cd8fda4"
       }
-    },
-    "owner": "dulcearellano136",
-    "runtimeVersion": {
-      "policy": "appVersion"
-    },
-    "updates": {
-      "url": "https://u.expo.dev/9755b043-0cfc-4a9d-9034-3f044cd8fda4"
-    },
-    "plugins": [
-      "expo-secure-store"
-    ]
+    }
   }
 }

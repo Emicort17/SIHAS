@@ -2,7 +2,6 @@ import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { Icon } from "@rneui/base";
 
 import HomeAdminScreen from "../medic/Home";
 import ProfileAdminScreen from "../medic/Profile";
@@ -21,6 +20,8 @@ import MoonSIcon from "../../assets/icons/moon-s.svg";
 import MoonDIcon from "../../assets/icons/moon-d.svg";
 import GroupSIcon from "../../assets/icons/group-s.svg";
 import GroupDIcon from "../../assets/icons/group-d.svg";
+import NotifiDIcon from "../../assets/icons/notifi-d.svg";
+import PushNotifications from "../notification/PushNotification";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -36,16 +37,11 @@ function CustomHeader({ title, navigation }) {
       <TouchableOpacity
         style={styles.notificationButton}
         onPress={() => {
-          navigation.navigate('Notifications'); // Puedes crear una pantalla de notificaciones si quieres
+          navigation.navigate('Notifications'); 
         }}
       >
         <View style={styles.notificationIcon}>
-          <Icon
-            name="bell-outline"
-            type="material-community"
-            color="#424242"
-            size={24}
-          />
+          <NotifiDIcon width={24} height={24} />
         </View>
       </TouchableOpacity>
     </View>
@@ -150,6 +146,22 @@ export default function MedicNavigator() {
         component={PatientDetailScreen}
         options={{ title: "Detalle de Paciente" }}
       />
+      <Stack.Screen
+              name="Notifications"
+              component={PushNotifications}
+              options={{
+                headerShown: true,
+                headerTitle: "Notificaciones",
+                headerBackTitle: "Atrás",
+                headerStyle: {
+                  backgroundColor: "#C8E6C9",
+                },
+                headerTintColor: "#2E7D32",
+                headerTitleStyle: {
+                  fontWeight: "600",
+                },
+              }}
+            />
     </Stack.Navigator>
   );
 }

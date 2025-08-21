@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Text, StyleSheet, View, TextInput, SafeAreaView, TouchableOpacity, Image, ScrollView, Switch, Alert, } from "react-native";
-import Icon from 'react-native-vector-icons/Feather';
+import { Feather } from '@expo/vector-icons'; // ✅ MIGRADO
 import { useAuth } from "../auth/context/AuthContext";
 
 export default function RegisterScreen({ navigation }) {
@@ -145,7 +145,7 @@ export default function RegisterScreen({ navigation }) {
                     <View style={styles.div}>
                         <TextInput onChangeText={handlePasswordChange} style={styles.input} secureTextEntry={!passwordVisible} placeholder="Contraseña" required />
                         <TouchableOpacity onPress={toggleVisibility} style={styles.icon}>
-                            <Icon name={passwordVisible ? 'eye' : 'eye-off'} size={20} color="#666" />
+                            <Feather name={passwordVisible ? 'eye' : 'eye-off'} size={20} color="#666" />
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -155,7 +155,7 @@ export default function RegisterScreen({ navigation }) {
                     <View style={styles.div}>
                         <TextInput onChangeText={verifyPassword} style={styles.input} secureTextEntry={!passwordVisible} placeholder="Repite tu Contraseña" required />
                         <TouchableOpacity onPress={toggleVisibility} style={styles.icon}>
-                            <Icon name={passwordVisible ? 'eye' : 'eye-off'} size={20} color="#666" />
+                            <Feather name={passwordVisible ? 'eye' : 'eye-off'} size={20} color="#666" />
                         </TouchableOpacity>
                     </View>
                 </View>

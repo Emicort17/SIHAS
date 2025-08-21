@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import NutritionSummary from "../../components/NutritionSummary";
 import { Text, StyleSheet, View, TextInput, TouchableOpacity, Pressable, ScrollView } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import Icon from "react-native-vector-icons/Feather";
+import { Feather } from "@expo/vector-icons"; // ✅ MIGRADO
 
 export default function NutritionAdminScreen() {
   const [activeTab, setActiveTab] = useState("Horarios");
@@ -24,7 +24,7 @@ export default function NutritionAdminScreen() {
         return (
           <View style={styles.content}>
             <View style={styles.summary2}>
-              <Icon name="clock" size={230} color="#a5d6a7bd" />
+              <Feather name="clock" size={230} color="#a5d6a7bd" />
               <Text style={styles.TextH}>Sin comidas por ahora. ¿Qué te gustaría agregar hoy?</Text>
             </View>
           </View>
@@ -62,15 +62,15 @@ export default function NutritionAdminScreen() {
       <Text style={styles.title}>Nutrición</Text>
       <View style={styles.tabs}>
         <Pressable style={[styles.tab, activeTab === "Resumen" && styles.activeTab]} onPress={() => setActiveTab("Resumen")}>
-          <Icon name="bar-chart-2" size={20} />
+          <Feather name="bar-chart-2" size={20} />
           <Text>Resumen</Text>
         </Pressable>
         <Pressable style={[styles.tab, activeTab === "Horarios" && styles.activeTab]} onPress={() => setActiveTab("Horarios")}>
-          <Icon name="clock" size={20} />
+          <Feather name="clock" size={20} />
           <Text>Horarios</Text>
         </Pressable>
         <Pressable style={[styles.tab, activeTab === "Registro" && styles.activeTab]} onPress={() => setActiveTab("Registro")}>
-          <Icon name="edit-3" size={20} />
+          <Feather name="edit-3" size={20} />
           <Text>Registro</Text>
         </Pressable>
       </View>

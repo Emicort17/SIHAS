@@ -8,7 +8,9 @@ import {
   ActivityIndicator,
   Alert
 } from "react-native";
-import { Icon } from "@rneui/base";
+import PluseDIcon from "../../assets/icons/pluse-d.svg";
+import EditDIcon from "../../assets/icons/edit-d.svg";
+import CloseDIcon from "../../assets/icons/close-d.svg";
 import { AxiosClient } from "../auth/context/http_client";
 
 export default function HealthMetricsCard({ token, userId, biologicalData, onUpdate }) {
@@ -97,18 +99,18 @@ export default function HealthMetricsCard({ token, userId, biologicalData, onUpd
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log("respuesta",response)
-      
-        Alert.alert("Éxito", "Datos biológicos actualizados correctamente");
-        setEditing(false);
-        onUpdate?.({
-          ...updateData,
-          peso: peso.toString(),
-          altura: altura.toString(),
-          imc: imc.toFixed(1),
-          shouldRefetch: true,
-        });
-      
+      console.log("respuesta", response)
+
+      Alert.alert("Éxito", "Datos biológicos actualizados correctamente");
+      setEditing(false);
+      onUpdate?.({
+        ...updateData,
+        peso: peso.toString(),
+        altura: altura.toString(),
+        imc: imc.toFixed(1),
+        shouldRefetch: true,
+      });
+
     } catch (error) {
       Alert.alert("Error", "Los datos biológicos no se pudieron actualizar");
       console.log("Error al actualizar métricas:", error);
@@ -134,16 +136,13 @@ export default function HealthMetricsCard({ token, userId, biologicalData, onUpd
     <View style={styles.containerCard}>
       <View style={styles.ContainerHead}>
         <View style={styles.leftContent}>
-          <Icon name="pulse" type="material-community" color="#3B82F6" size={30} />
+          <PluseDIcon width={24} height={24} />
           <Text style={[styles.title, { marginLeft: 10 }]}>Métricas de Salud</Text>
         </View>
         <TouchableOpacity onPress={() => setEditing(!editing)}>
-          <Icon
-            name={editing ? "close" : "square-edit-outline"}
-            type="material-community"
-            color="black"
-            size={30}
-          />
+          {editing ? <CloseDIcon width={24} height={24} />
+            : <EditDIcon width={24} height={24} />
+          }
         </TouchableOpacity>
       </View>
 

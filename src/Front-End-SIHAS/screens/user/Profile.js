@@ -8,11 +8,13 @@ import {
   ScrollView,
   SafeAreaView,
 } from "react-native";
-import { Icon } from "@rneui/base";
+import LogoutDIcon from "../../assets/icons/logout-d.svg";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import PersonalInformationCard from "../components/PersonalInformationCard";
 import HealthMetricsCard from "../components/HealthMetricsCard";
 import ChangePasswordCard from "../components/ChangePasswordCard";
 import BiologicalDataCard from "../components/BiologicalDataCard";
+import * as Notifications from "expo-notifications";
 import { useAuth } from "../auth/context/AuthContext";
 import { AxiosClient } from "../auth/context/http_client";
 
@@ -29,11 +31,24 @@ export default function Profile() {
     if (userData) {
       setProfileData(userData);
     }
+  
   }, [userData]);
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.multiRemove([
+        'scheduledAlerts',
+        'lastAlertSync',
+        'notificationHistory',
+        'userData',
+      ]);
 
-  const handleLogout = () => {
-    logout();
+      await Notifications.cancelAllScheduledNotificationsAsync();
+      logout();
+    } catch (error) {
+      console.error("Error durante logout:", error);
+    }
   };
+
 
   const fetchProfileData = async () => {
     if (!user?.token || !user?.userId) return;
@@ -173,12 +188,7 @@ export default function Profile() {
             >
               <View style={styles.ContainerHead}>
                 <View style={styles.leftContent}>
-                  <Icon
-                    name="logout"
-                    type="material-community"
-                    color="#D32F2F"
-                    size={24}
-                  />
+                  <LogoutDIcon width={24} height={24} />
                   <Text style={[styles.title, { marginLeft: 10 }]}>
                     Cerrar Sesión
                   </Text>

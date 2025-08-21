@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Alert, ActivityIndicator, View, Text, StyleSheet, TextInput, TouchableOpacity, Pressable, ScrollView, FlatList, Platform } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import Icon from "react-native-vector-icons/Feather";
+import { Feather } from '@expo/vector-icons'; // ✅ MIGRADO
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import debounce from "lodash.debounce";
 import { AxiosClient } from "../auth/context/http_client"; // Adjust path as needed
@@ -307,7 +307,7 @@ export default function NutricionUserScreen() {
             <Text style={styles.subtitle}>Horarios Registrados</Text>
             {foodSchedules.length === 0 && !loading ? (
               <View style={styles.summary2}>
-                <Icon name="clock" size={230} color="#a5d6a7bd" />
+                <Feather name="clock" size={230} color="#a5d6a7bd" />
                 <Text style={styles.TextH}>Sin comidas por ahora. ¿Qué te gustaría agregar hoy?</Text>
               </View>
             ) : (
@@ -445,7 +445,7 @@ export default function NutricionUserScreen() {
                             disabled={loading}
                           >
                             <Text style={styles.selectedText}>{item.nombre}</Text>
-                            <Icon name="x" size={16} color="#fff" />
+                            <Feather name="x" size={16} color="#fff" />
                           </TouchableOpacity>
                         )}
                         horizontal={true}
@@ -535,7 +535,7 @@ export default function NutricionUserScreen() {
                             disabled={loading}
                           >
                             <Text style={styles.selectedText}>{item.nombre}</Text>
-                            <Icon name="x" size={16} color="#fff" />
+                            <Feather name="x" size={16} color="#fff" />
                           </TouchableOpacity>
                         )}
                         horizontal={true}
@@ -613,7 +613,7 @@ export default function NutricionUserScreen() {
           onPress={() => setActiveTab("Resumen")}
           disabled={loading}
         >
-          <Icon name="bar-chart-2" size={20} color="#333" />
+          <Feather name="bar-chart-2" size={20} color="#333" />
           <Text style={styles.tabText}>Resumen</Text>
         </Pressable>
         <Pressable
@@ -621,7 +621,7 @@ export default function NutricionUserScreen() {
           onPress={() => setActiveTab("Horarios")}
           disabled={loading}
         >
-          <Icon name="clock" size={20} color="#333" />
+          <Feather name="clock" size={20} color="#333" />
           <Text style={styles.tabText}>Horarios</Text>
         </Pressable>
         <Pressable
@@ -629,7 +629,7 @@ export default function NutricionUserScreen() {
           onPress={() => setActiveTab("Registro")}
           disabled={loading}
         >
-          <Icon name="edit-3" size={20} color="#333" />
+          <Feather name="edit-3" size={20} color="#333" />
           <Text style={styles.tabText}>Registro</Text>
         </Pressable>
       </View>
@@ -643,7 +643,6 @@ export default function NutricionUserScreen() {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

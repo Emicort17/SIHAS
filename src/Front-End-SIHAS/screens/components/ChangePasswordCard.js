@@ -6,7 +6,11 @@ import {
   TouchableOpacity,
   StyleSheet
 } from "react-native";
-import { Icon } from "@rneui/base";
+import LockDIcon from "../../assets/icons/lock-d.svg";
+import ChevrDIcon from "../../assets/icons/chevr-d.svg";
+import CloseDIcon from "../../assets/icons/close-d.svg";
+import EyeOffDIcon from "../../assets/icons/eye-off.svg";
+import EyeDIcon from "../../assets/icons/eye.svg";
 import { Alert } from "react-native";
 import { AxiosClient } from "../auth/context/http_client";
 
@@ -148,23 +152,15 @@ export default function ChangePasswordCard({ token, userId }) {
     <View style={styles.containerCard}>
       <View style={styles.ContainerHead}>
         <View style={styles.leftContent}>
-          <Icon
-            name="lock-outline"
-            type="material-community"
-            color="black"
-            size={24}
-          />
+          <LockDIcon width={24} height={24} />
           <Text style={[styles.title, { marginLeft: 10 }]}>
             Cambiar Contraseña
           </Text>
         </View>
         <TouchableOpacity onPress={expanded ? handleCancel : handleExpand}>
-          <Icon
-            name={expanded ? "close" : "chevron-right"}
-            type="material-community"
-            color={expanded ? "black" : "#666"}
-            size={expanded ? 24 : 30}
-          />
+          {expanded ? <CloseDIcon width={24} height={24} />
+            : <ChevrDIcon width={24} height={24} />
+          }
         </TouchableOpacity>
       </View>
 
@@ -181,7 +177,9 @@ export default function ChangePasswordCard({ token, userId }) {
               editable={!isLoading}
             />
             <TouchableOpacity onPress={toggleVisibility} style={styles.icon}>
-              <Icon name={passwordVisible ? 'eye-outline' : 'eye-off-outline'} type="material-community" size={24} color="#666" />
+              {passwordVisible
+                ? <EyeDIcon width={24} height={24} />
+                : <EyeOffDIcon width={24} height={24} />}
             </TouchableOpacity>
           </View>
           {errors.nueva && <Text style={styles.errorText}>{errors.nueva}</Text>}
@@ -195,9 +193,10 @@ export default function ChangePasswordCard({ token, userId }) {
               value={form.confirmar}
               onChangeText={(text) => handleChange("confirmar", text)}
               editable={!isLoading}
-            />
-            <TouchableOpacity onPress={toggleVisibility} style={styles.icon}>
-              <Icon name={passwordVisible ? 'eye-outline' : 'eye-off-outline'} type="material-community" size={24} color="#666" />
+            /><TouchableOpacity onPress={toggleVisibility} style={styles.icon}>
+              {passwordVisible
+                ? <EyeDIcon width={24} height={24} />
+                : <EyeOffDIcon width={24} height={24} />}
             </TouchableOpacity>
           </View>
           {errors.confirmar && <Text style={styles.errorText}>{errors.confirmar}</Text>}
@@ -211,29 +210,30 @@ export default function ChangePasswordCard({ token, userId }) {
               value={form.antigua}
               onChangeText={(text) => handleChange("antigua", text)}
               editable={!isLoading}
-            />
-            <TouchableOpacity onPress={toggleVisibility} style={styles.icon}>
-              <Icon name={passwordVisible ? 'eye-outline' : 'eye-off-outline'} type="material-community" size={24} color="#666" />
+            /><TouchableOpacity onPress={toggleVisibility} style={styles.icon}>
+              {passwordVisible
+                ? <EyeDIcon width={24} height={24} />
+                : <EyeOffDIcon width={24} height={24} />}
             </TouchableOpacity>
           </View>
           {errors.antigua && <Text style={styles.errorText}>{errors.antigua}</Text>}
 
           <View style={styles.buttonGroup}>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={[
-                styles.buttonCancel, 
+                styles.buttonCancel,
                 { opacity: isLoading ? 0.6 : 1, backgroundColor: isLoading ? "#ccc" : "#EBECF0" }
-              ]} 
+              ]}
               onPress={handleCancel}
               disabled={isLoading}
             >
               <Text style={styles.buttonTextCancel}>Cancelar</Text>
             </TouchableOpacity>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={[
-                styles.button, 
+                styles.button,
                 { opacity: isLoading ? 0.6 : 1, backgroundColor: isLoading ? "#ccc" : "#C8E6C9" }
-              ]} 
+              ]}
               onPress={handleSave}
               disabled={isLoading}
             >

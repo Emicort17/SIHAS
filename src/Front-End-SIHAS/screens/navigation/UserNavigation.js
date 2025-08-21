@@ -2,8 +2,7 @@ import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { Icon } from "@rneui/base";
-
+import { MaterialIcons } from '@expo/vector-icons';
 import HomeUserScreen from "../user/Home";
 import ProfileScreen from "../user/Profile";
 import NutricionUserScreen from "../user/Nutricion";
@@ -17,6 +16,7 @@ import NutriSIcon from "../../assets/icons/nutri-s.svg";
 import NutriDIcon from "../../assets/icons/nutri-d.svg";
 import MoonSIcon from "../../assets/icons/moon-s.svg";
 import MoonDIcon from "../../assets/icons/moon-d.svg";
+import NotifiDIcon from "../../assets/icons/notifi-d.svg";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -35,12 +35,7 @@ function CustomHeader({ title, navigation }) {
         }}
       >
         <View style={styles.notificationIcon}>
-          <Icon
-            name="bell-outline"
-            type="material-community"
-            color="#424242"
-            size={24}
-          />
+          <NotifiDIcon width={24} height={24} />
         </View>
       </TouchableOpacity>
     </View>

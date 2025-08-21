@@ -5,14 +5,17 @@ import Fuego from "../../assets/icons/fuego.svg";
 import Luna from "../../assets/icons/lunam.svg";
 import Comida from "../../assets/icons/comim.svg";
 import Ejercicio from "../../assets/icons/ejerciciom.svg";
-import { useAuth } from "../auth/context/AuthContext";
 import Run from "../../assets/icons/run.svg";
 import WelcomeModal from "../components/WelcomeModal";
+import { useAuth } from "../auth/context/AuthContext";
 import { AxiosClient } from "../auth/context/http_client";
+import * as Notifications from "expo-notifications";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { NOTIFICATION_TYPES } from "../../utils/constants";
 
-export default function Home() {
+export default function HomeUserScreen() {
     const navigation = useNavigation();
-    const { getUserById, user, userData } = useAuth();
+    const { user, userData } = useAuth();
     const [profileData, setProfileData] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [weekExerciseCount, setWeekExerciseCount] = useState(0);
@@ -25,7 +28,6 @@ export default function Home() {
 
     const comidasRegistradas = foodSchedules.filter(f => f.time <= currentTime).length;
     const totalComidas = foodSchedules.length;
-
 
     useEffect(() => {
         if (userData) {
@@ -51,7 +53,6 @@ export default function Home() {
             const response = await AxiosClient.get(`/api/usuario/horario/dormir/${userId}`);
             const result = response.result || response.data?.result;
             const today = new Date().toLocaleDateString('sv-SE');
-
             if (Array.isArray(result)) {
                 const todaySleep = result.find(r => r.date === today);
                 setSleepHours(todaySleep?.totalHours || 0);
@@ -69,7 +70,6 @@ export default function Home() {
         try {
             const response = await AxiosClient.get(`/api/usuario/horarioalimento/day/${userId}`);
             const result = response.result || response.data?.result || [];
-            console.log("Food schedules:", result);
             setFoodSchedules(Array.isArray(result) ? result : []);
         } catch (error) {
             setFoodSchedules([]);
@@ -121,7 +121,6 @@ export default function Home() {
                             );
                             fetchWeekExercise(profileData?.id_user);
                         } catch (error) {
-                            console.error("Error al registrar ejercicio:", error);
                             Alert.alert("Error", "No se pudo registrar el ejercicio.");
                         }
                     },
@@ -129,6 +128,68 @@ export default function Home() {
             ]
         );
     };
+
+    // Polling para sincronizar notificaciones desde Home (simula real-time)
+    useEffect(() => {
+        const syncAlerts = async () => {
+            if (!user?.userId || !user?.token) return;
+
+            try {
+                const response = await AxiosClient.get(`/api/usuario/alert/${user.userId}`, {
+                    headers: {
+                        Authorization: `Bearer ${user.token}`,
+                    },
+                });
+
+                if (response.result) {
+                    const now = new Date();
+                    const alerts = response.result.map((alert) => {
+                        const scheduledTime = new Date(`${alert.scheduled_date}T${alert.scheduled_time}`);
+                        return {
+                            id: alert.id_alerta,
+                            message: alert.description,
+                            type: alert.type_alert,
+                            isActive: alert.status,
+                            scheduledTime,
+                            isValid: scheduledTime > now,
+                        };
+                    });
+
+                    const validAlerts = alerts.filter(alert => alert.isActive && alert.isValid);
+
+                    await Notifications.cancelAllScheduledNotificationsAsync();
+
+                    // Función para programar (duplicada aquí para independencia)
+                    const scheduleAlert = async (alert) => {
+                        const config = NOTIFICATION_TYPES[alert.type] || NOTIFICATION_TYPES.NUTRITION;
+                        if (alert.scheduledTime <= now) return null;
+                        return await Notifications.scheduleNotificationAsync({
+                            content: {
+                                title: config.title,
+                                body: alert.message,
+                                data: { type: alert.type, alertId: alert.id, timestamp: alert.scheduledTime.toISOString() },
+                            },
+                            trigger: { date: alert.scheduledTime },
+                        });
+                    };
+
+                    for (const alert of validAlerts) {
+                        await scheduleAlert(alert);
+                    }
+
+                    await AsyncStorage.setItem('scheduledAlerts', JSON.stringify(validAlerts));
+                    await AsyncStorage.setItem('lastAlertSync', new Date().toISOString());
+                }
+            } catch (error) {
+                console.error("Error sincronizando alertas en Home:", error);
+            }
+        };
+
+        syncAlerts();
+        const interval = setInterval(syncAlerts, 300000); // Cada 5 min para simular real-time
+
+        return () => clearInterval(interval);
+    }, [user]);
 
     useEffect(() => {
         if (profileData?.id_user) {

@@ -7,7 +7,7 @@ import {
   StyleSheet,
   Alert,
 } from "react-native";
-import { Icon } from "@rneui/base";
+import PluseDIcon from "../../assets/icons/pluse-d.svg";
 import { AxiosClient } from "../auth/context/http_client";
 
 export default function BiologicalDataCard({
@@ -153,8 +153,7 @@ export default function BiologicalDataCard({
       });
 
       if (onSave) {
-        // CORRECCIÓN: Verificar que resData y result existan
-        const result = resData?.result || resData; // Fallback si la estructura es diferente
+        const result = resData?.result || resData;
 
         if (result && result.weight !== undefined) {
           const formattedData = {
@@ -175,7 +174,6 @@ export default function BiologicalDataCard({
             "La respuesta del servidor no tiene la estructura esperada:",
             resData
           );
-          // Opcional: llamar onSave con null o datos por defecto
           onSave(null);
         }
       }
@@ -214,12 +212,7 @@ export default function BiologicalDataCard({
   return (
     <View style={styles.containerCard}>
       <View style={styles.header}>
-        <Icon
-          name="pulse"
-          type="material-community"
-          color="#3B82F6"
-          size={30}
-        />
+        <PluseDIcon width={24} height={24} />
         <Text style={styles.title}>Datos biológicos</Text>
       </View>
 
