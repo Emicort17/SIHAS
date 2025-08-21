@@ -34,6 +34,7 @@ export default function SendEmail({navigation}) {
 
             if (!response) {
                 Alert.alert("Error", "No se pudo enviar el correo de recuperación.");
+                navigation.navigate("Login");
             } else {
                 Alert.alert("Éxito", "Se ha enviado un correo de recuperación.");
                 navigation.navigate("Password", { email });

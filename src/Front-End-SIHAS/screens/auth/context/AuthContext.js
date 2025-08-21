@@ -13,14 +13,13 @@ export function AuthProvider({ children }) {
   const login = async (email, password) => {
     try {
       const response = await AxiosClient.post("/api/login", { email, password });
-      const data = response;
 
       const userInfo = {
-        token: data.jwt,
-        userId: data.userId,
-        username: data.username,
-        rol: data.rol,
-        status: data.status,
+        token: response.jwt,
+        userId: response.userId,
+        username: response.username,
+        rol: response.rol,
+        status: response.status,
       };
 
       setUser(userInfo);
@@ -88,11 +87,11 @@ export function AuthProvider({ children }) {
     }
   };
 
-  const ChangePassword = async (email, newPassword) => {
+  const ChangePassword = async (email, NewPassword) => {
     try {
       const response = await AxiosClient.patch("/api/email/change-password", {
         email,
-        newPassword,
+        NewPassword,
       });
       return response.data;
     } catch (err) {
